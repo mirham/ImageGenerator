@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/mirham/ImageGenerator/blob/main/Images/AppLogo.png" width="370"/>
+  <img src="https://github.com/mirham/ImageGenerator/blob/main/Images/AppLogo.png" width="420"/>
 </p>
 
 <p align="center" style="text-align: center">
