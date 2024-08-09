@@ -11,6 +11,8 @@ import SwiftUI
 struct ImageGeneratorApp: App {
     let appState = AppState.shared
     
+    @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    
     var body: some Scene {
         WindowGroup {
             MainView()
@@ -19,5 +21,10 @@ struct ImageGeneratorApp: App {
                 .frame(minWidth: 500, maxWidth: 500, minHeight: 250, maxHeight: 250)
         }
         .windowResizability(.contentSize)
+        .commands {
+            CommandGroup(replacing: CommandGroupPlacement.appInfo) {
+                Button("About \(Bundle.main.bundleURL.lastPathComponent.replacing(".\(Bundle.main.bundleURL.pathExtension)", with: String()))") { appDelegate.showInfoWindow() }
+            }
+        } 
     }
 }

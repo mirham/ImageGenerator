@@ -35,6 +35,9 @@ struct Constants {
     // MARK: Icons
     static let iconImages = "photo.stack"
     
+    // MARK: Window IDs
+    static let windowIdInfo = "info-view"
+    
     // MARK: Hints
     static let hintWidth = "\(minWidth)..\(maxWidth)"
     static let hintHeight = "\(minHeight)..\(maxHeight)"
@@ -53,8 +56,21 @@ struct Constants {
     static let elChoose = "Choose..."
     static let elGenerate = "Generate"
     static let elProgressbarText = "Generating %1$@"
+    static let elInfo = "Info"
     
     // MARK: Dialogs
     static let dialogHeaderNonexistentFolder = "Output folder not found"
     static let dialogBodyNonexistentFolder = "Select a valid output folder"
+    
+    // MARK: About
+    static let aboutSupportMail = "bWlyaGFtQGFidi5iZw=="
+    static let aboutGitHubLink = "https://github.com/mirham/ImageGenerator"
+    
+    static let aboutBackground = "AppInfo"
+    
+    static let aboutVersionKey = "CFBundleShortVersionString"
+    static let aboutGetSupport = "Get support:"
+    static let aboutVersion = "Version: %1$@"
+    static let aboutMailTo = "mailto:%1$@"
+    static let aboutGitHub = "GitHub"
 }
