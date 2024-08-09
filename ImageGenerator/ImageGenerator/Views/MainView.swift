@@ -194,9 +194,10 @@ struct MainView: View {
         folderPicker.begin { response in
             
             if response == .OK {
-                let pickedFolders = folderPicker.urls.first
+                let pickedFolder = folderPicker.urls.first
+                let path = pickedFolder?.path(percentEncoded: false).utf8.description ?? String()
                 
-                self.outputFolderPath = pickedFolders?.path() ?? String()
+                self.outputFolderPath = path
                 
                 nonexistentFolder = false
             }
