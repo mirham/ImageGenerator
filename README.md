@@ -23,11 +23,11 @@ MirHam ImageGenerator is a macOS application for QA Engineers for generating a s
 - Up to 16350 pixels width/height
 - Export formats: JPG, JPEG, PNG, BMP
 
-### Compatibility
+## Compatibility
 
 This application is compatible with macOS 14.0 and above.
 
-### Installation
+## Installation
 
 Download the DMG installer from the [releases](https://github.com/mirham/ImageGenerator/releases), mount it, and drag and drop the application to the Applications folder. That's it! However, you will need to allow launching applications from unidentified developers to start the application, as I don't have an Apple developer license.
 
