@@ -20,6 +20,7 @@
 		355359992C64F4BA004C172A /* ImageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 355359982C64F4BA004C172A /* ImageService.swift */; };
 		3553599C2C6556C6004C172A /* ViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3553599B2C6556C6004C172A /* ViewExtensions.swift */; };
 		3553599F2C655710004C172A /* IsHiddenModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3553599E2C655710004C172A /* IsHiddenModifier.swift */; };
+		35EFF9102C7B1D32002BCA04 /* NoInsetHostingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35EFF90F2C7B1D32002BCA04 /* NoInsetHostingView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -38,6 +39,7 @@
 		355359982C64F4BA004C172A /* ImageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageService.swift; sourceTree = "<group>"; };
 		3553599B2C6556C6004C172A /* ViewExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewExtensions.swift; sourceTree = "<group>"; };
 		3553599E2C655710004C172A /* IsHiddenModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IsHiddenModifier.swift; sourceTree = "<group>"; };
+		35EFF90F2C7B1D32002BCA04 /* NoInsetHostingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoInsetHostingView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -112,6 +114,7 @@
 		3553598D2C64C832004C172A /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				35EFF90E2C7B1D19002BCA04 /* Controls */,
 				3553599D2C6556FB004C172A /* Modifiers */,
 				3553599A2C6556B6004C172A /* Extensions */,
 				3553597D2C64C747004C172A /* MainView.swift */,
@@ -150,6 +153,14 @@
 				3553599E2C655710004C172A /* IsHiddenModifier.swift */,
 			);
 			path = Modifiers;
+			sourceTree = "<group>";
+		};
+		35EFF90E2C7B1D19002BCA04 /* Controls */ = {
+			isa = PBXGroup;
+			children = (
+				35EFF90F2C7B1D32002BCA04 /* NoInsetHostingView.swift */,
+			);
+			path = Controls;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -224,6 +235,7 @@
 			files = (
 				3514C5032C66210F004523CC /* AppDelegate.swift in Sources */,
 				355359942C64C91E004C172A /* Constants.swift in Sources */,
+				35EFF9102C7B1D32002BCA04 /* NoInsetHostingView.swift in Sources */,
 				3553599F2C655710004C172A /* IsHiddenModifier.swift in Sources */,
 				355359972C64D9A3004C172A /* OutputFormatType.swift in Sources */,
 				3553599C2C6556C6004C172A /* ViewExtensions.swift in Sources */,
@@ -379,7 +391,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.MirHam.ImageGenerator;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = macosx;
@@ -411,7 +423,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.1;
+				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.MirHam.ImageGenerator;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = macosx;
