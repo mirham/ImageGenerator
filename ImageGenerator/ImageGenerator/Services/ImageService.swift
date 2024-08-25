@@ -17,10 +17,12 @@ class ImageService {
     @MainActor 
     func renderImageAsync(imageNumber: Int) async {
         let outputFormat = OutputFormatType(rawValue: appState.userData.format) ?? OutputFormatType.jpeg
-        let renderer = ImageRenderer(content: ImageRawView(imageNumber: imageNumber, width: appState.userData.width, height: appState.userData.height))
+        let view = ImageRawView(imageNumber: imageNumber, width: appState.userData.width, height: appState.userData.height)
+        let image = view.renderAsImage()
+        guard image != nil else { return }
         let url = URL(fileURLWithPath: "\(appState.userData.folder)\(imageNumber).\(outputFormat.description)", isDirectory: false)
         let destination = CGImageDestinationCreateWithURL(url as CFURL, getUtType(formatType: outputFormat).description as CFString, 1, nil)
-        CGImageDestinationAddImage(destination!, renderer.cgImage!, nil)
+        CGImageDestinationAddImage(destination!, image!, nil)
         CGImageDestinationFinalize(destination!)
     }
     
