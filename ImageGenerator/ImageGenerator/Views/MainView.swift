@@ -7,19 +7,18 @@
 
 import SwiftUI
 
-struct MainView: View {
+struct MainView: ImageGeneratorView {
     @EnvironmentObject var appState: AppState
     
-    @State private var width: Int = 0
-    @State private var height: Int = 0
-    @State private var count: Int = 0
-    @State private var selectedFormat: Int = OutputFormatType.jpeg.rawValue
+    @State private var selectedTab: Int = 0
+    
     @State private var outputFolderPath: String = .init()
     
     @State private var generatedCount = 0
     @State private var progress = 0.0
     
-    @State private var nonexistentFolder = false
+    @State private var wrongInputFile = false
+    @State private var nonexistentOutputFolder = false
     @State private var generationInProgress = false
     
     private let imageService = ImageService.shared
@@ -30,74 +29,44 @@ struct MainView: View {
         in: .common)
         .autoconnect()
     
+    private let generateTabId = 0
+    private let duplicateTabId = 1
+    
     var body: some View {
+        TabView(selection: $selectedTab) {
+            GenerateView()
+                .tabItem {
+                    Text(Constants.tabGenerate)
+                }
+                .tag(generateTabId)
+            DuplicateView()
+                .tabItem {
+                    Text(Constants.tabDuplicate)
+                }
+                .tag(duplicateTabId)
+                .alert(isPresented: $wrongInputFile) {
+                    Alert(title: Text(Constants.dialogHeaderWrongInputFile),
+                          message: Text(Constants.dialogBodyWrongInputFile),
+                          dismissButton: .default(Text(Constants.elOk)))
+                }
+        }
+        .alert(isPresented: $nonexistentOutputFolder) {
+            Alert(title: Text(Constants.dialogHeaderNonexistentOutputFolder),
+                  message: Text(Constants.dialogBodyNonexistentOutputFolder),
+                  dismissButton: .default(Text(Constants.elOk)))
+        }
         VStack {
             HStack {
-                Image(systemName: Constants.iconImages)
-                Text(Constants.elLetsGenerate)
-            }
-            .font(.title2)
-            HStack {
-                TextField(Constants.hintCount, value: $count, formatter: NumberFormatter())
-                    .foregroundColor(checkIfCountValid(count: count) ? .primary : .red)
-                    .onChange(of: count) {
-                        if checkIfCountValid(count: count) {
-                            appState.userData.count = count
-                        }
-                    }
-                    .textFieldStyle(.roundedBorder)
-                    .frame(width: 80)
-                Picker(String(), selection: $selectedFormat) {
-                    ForEach(OutputFormatType.allCases, id: \.id) {
-                        Text($0.description).tag($0.rawValue)
-                    }
-                }
-                .pickerStyle(.segmented)
-                .colorMultiply(.blue)
-                .onChange(of: selectedFormat) {
-                    appState.userData.format = selectedFormat
-                }
-                Text(Constants.elImages)
-            }
-            Spacer()
-                .frame(height: 20)
-            HStack {
-                Text(Constants.elWith)
-                TextField(Constants.hintWidth, value: $width, formatter: NumberFormatter())
-                    .foregroundColor(checkIfWidthValid(width: width) ? .primary : .red)
-                    .onChange(of: width) {
-                        if checkIfWidthValid(width: width) {
-                            appState.userData.width = width
-                        }
-                    }
-                    .textFieldStyle(.roundedBorder)
-                    .frame(width: 80)
-                Text(Constants.elPxAsWidth)
-                Text(Constants.elAnd)
-                TextField(Constants.hintHeight, value: $height, formatter: NumberFormatter())
-                    .foregroundColor(checkIfHeightValid(height: height) ? .primary : .red)
-                    .onChange(of: height) {
-                        if checkIfHeightValid(height: height) {
-                            appState.userData.height = height
-                        }
-                    }
-                    .textFieldStyle(.roundedBorder)
-                    .frame(width: 80)
-                Text(Constants.elPxAsHeight)
-            }
-            Spacer()
-                .frame(height: 20)
-            HStack {
                 Text(Constants.elIntoFolder)
-                TextField(Constants.hintFolder, text: $outputFolderPath)
+                TextField(Constants.hintOutputFolder, text: $outputFolderPath)
                     .onChange(of: outputFolderPath) {
-                        appState.userData.folder = outputFolderPath
+                        appState.userData.outputFolder = outputFolderPath
                     }
                     .textFieldStyle(.roundedBorder)
                     .frame(width: 290)
                     .disabled(/*@START_MENU_TOKEN@*/true/*@END_MENU_TOKEN@*/)
                 Button(Constants.elChoose) {
-                    selectFolder()
+                    selectOutputFolder()
                 }
             }
             Spacer()
@@ -127,61 +96,52 @@ struct MainView: View {
             .padding()
             Spacer()
         }
-        .alert(isPresented: $nonexistentFolder) {
-            Alert(title: Text(Constants.dialogHeaderNonexistentFolder),
-                  message: Text(Constants.dialogBodyNonexistentFolder),
-                  dismissButton: .default(Text(Constants.elOk)))
-        }
         .onAppear(perform: initValues)
-        .padding()
-        .frame(maxWidth: 500, maxHeight: 250)
     }
     
     // MARK: Private functions
     
     private func initValues() {
-        self.width = appState.userData.width
-        self.height = appState.userData.height
-        self.count = appState.userData.count
-        self.selectedFormat = appState.userData.format
-        self.outputFolderPath = appState.userData.folder
-    }
-    
-    private func checkIfWidthValid(width: Int) -> Bool {
-        let result = width >= Constants.minWidth && width <= Constants.maxWidth
-        
-        return result
-    }
-    
-    private func checkIfHeightValid(height: Int) -> Bool {
-        let result = height >= Constants.minHeight && height <= Constants.maxHeight
-        
-        return result
-    }
-    
-    private func checkIfCountValid(count: Int) -> Bool {
-        let result = count >= Constants.minCount && count <= Constants.maxCount
-        
-        return result
-    }
-    
-    private func checkIfOutputFolderExists() -> Bool {
-        let fileManager = FileManager.default
-        var isDir: ObjCBool = false
-        let result = fileManager.fileExists(atPath: appState.userData.folder, isDirectory: &isDir) && isDir.boolValue
-        
-        return result
+        self.selectedTab = appState.userData.mode == .generate ? generateTabId : duplicateTabId
+        self.outputFolderPath = appState.userData.outputFolder
     }
     
     private func checkIfCanGenerate() -> Bool {
-        let result = checkIfCountValid(count: count)
-            && checkIfWidthValid(width: width)
-            && checkIfHeightValid(height: height)
+        var result = false
+        
+        switch appState.userData.mode {
+            case .generate:
+                result = checkIfCountValid(count: appState.userData.count)
+                    && checkIfWidthValid(width: appState.userData.width)
+                    && checkIfHeightValid(height: appState.userData.height)
+            case .duplicate:
+                result = checkIfCountValid(count: appState.userData.count)
+                && !appState.userData.inputImage.isEmpty
+        }
         
         return result
     }
     
-    private func selectFolder() {
+    private func checkFilesAndFoldersExistense() -> Bool {
+        wrongInputFile = false
+        nonexistentOutputFolder = false
+        
+        var result = true
+        
+        nonexistentOutputFolder = !checkIfFolderExists(folderPath: appState.userData.outputFolder)
+        result = !nonexistentOutputFolder
+        
+        if(result
+           && appState.userData.mode == .duplicate
+           && !checkIfFileExists(filePath: appState.userData.inputImage)) {
+            wrongInputFile = true
+            result = false
+        }
+        
+        return result
+    }
+    
+    private func selectOutputFolder() {
         let folderChooserPoint = CGPoint(x: 0, y: 0)
         let folderChooserSize = CGSize(width: 500, height: 600)
         let folderChooserRectangle = CGRect(origin: folderChooserPoint, size: folderChooserSize)
@@ -198,8 +158,6 @@ struct MainView: View {
                 let path = pickedFolder?.path(percentEncoded: false).utf8.description ?? String()
                 
                 self.outputFolderPath = path
-                
-                nonexistentFolder = false
             }
         }
     }
@@ -207,8 +165,7 @@ struct MainView: View {
     private func generateImages() {
         resetProgress()
         
-        guard checkIfOutputFolderExists() else {
-            nonexistentFolder = true
+        guard checkFilesAndFoldersExistense() else {
             return
         }
         
@@ -222,20 +179,41 @@ struct MainView: View {
         }
         
         for threadNumber in (0...threads) {
-            Task.detached(priority: .utility) {
+            Task.detached(priority: .userInitiated) {
                 var begin = threadNumber * Constants.threadChunk
                 begin = begin == 0 ? Constants.minCount : begin + Constants.step
                 var end = begin + Constants.threadChunk - Constants.step
                 end = await end <= appState.userData.count ? end : appState.userData.count
+                let imageData = await loadInputImageAsync()
                 
                 for element in (begin...end) {
-                    await imageService.renderImageAsync(imageNumber: element)
+                    await imageService.makeImageAsync(
+                        imageNumber: element,
+                        image: imageData?.image,
+                        size: imageData?.size)
                     DispatchQueue.main.async {
                         self.generatedCount += Constants.step
                     }
                 }
             }
         }
+    }
+    
+    private func loadInputImageAsync() async -> (image: Image, size: NSSize)? {
+        guard appState.userData.mode == .duplicate else { return nil }
+        
+        let nsImage = NSImage.init(byReferencingFile: appState.userData.inputImage)
+        
+        guard nsImage != nil else {
+            wrongInputFile = true
+            
+            return nil
+        }
+        
+        let image = Image(nsImage: nsImage!)
+        let size = nsImage!.size
+
+        return (image, size)
     }
     
     private func updateProgress() {

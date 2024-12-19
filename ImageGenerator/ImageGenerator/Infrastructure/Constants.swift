@@ -26,11 +26,13 @@ struct Constants {
     static let maxPercentage: Double = 100
     
     // MARK: Settings key names
+    static let settingsKeyMode = "mode"
     static let settingsKeyWidth = "width"
     static let settingsKeyHeight = "height"
     static let settingsKeyFormat = "format"
     static let settingsKeyCount = "count"
-    static let settingsKeyFolder = "folder"
+    static let settingsKeyOutputFolder = "folder"
+    static let settingsKeyInputImage = "image"
     
     // MARK: Icons
     static let iconImages = "photo.stack"
@@ -42,11 +44,15 @@ struct Constants {
     static let hintWidth = "\(minWidth)..\(maxWidth)"
     static let hintHeight = "\(minHeight)..\(maxHeight)"
     static let hintCount = "\(minCount)..\(maxCount)"
-    static let hintFolder = "Select a folder..."
+    static let hintOutputFolder = "Select a folder..."
+    static let hintInputImage = "Select an image..."
     
     // MARK: Element names
     static let elLetsGenerate = "Let's generate"
+    static let elImage = "image"
     static let elImages = "images"
+    static let elCopies = "copies of image"
+    static let elInAmount = "in the amount of"
     static let elWith = "with"
     static let elPxAsWidth = "pixels as width"
     static let elAnd = "and"
@@ -54,13 +60,19 @@ struct Constants {
     static let elPxAsHeight = "pixels as height"
     static let elIntoFolder = "into the folder"
     static let elChoose = "Choose..."
-    static let elGenerate = "Generate"
+    static let elGenerate = "Go"
     static let elProgressbarText = "Generating %1$@"
     static let elInfo = "Info"
     
+    // MARK: Tab names
+    static let tabGenerate = "Generate"
+    static let tabDuplicate = "Duplicate"
+    
     // MARK: Dialogs
-    static let dialogHeaderNonexistentFolder = "Output folder not found"
-    static let dialogBodyNonexistentFolder = "Select a valid output folder"
+    static let dialogHeaderWrongInputFile = "Input image file is not found or wrong one"
+    static let dialogBodyWrongInputFile = "Select a valid input image file."
+    static let dialogHeaderNonexistentOutputFolder = "Output folder not found"
+    static let dialogBodyNonexistentOutputFolder = "Select a valid output folder."
     
     // MARK: About
     static let aboutSupportMail = "bWlyaGFtQGFidi5iZw=="
