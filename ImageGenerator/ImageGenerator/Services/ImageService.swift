@@ -14,17 +14,42 @@ class ImageService {
     
     static let shared = ImageService()
     
-    @MainActor 
-    func renderImageAsync(imageNumber: Int) async {
+    func makeImageAsync(imageNumber: Int, image: Image? = nil, size: NSSize? = nil) async {
+        if (image == nil) {
+            await generateImageAsync(imageNumber: imageNumber)
+        }
+        else {
+            await duplicateImageAsync(imageNumber: imageNumber, image: image!, size: size!)
+        }
+    }
+    
+    func generateImageAsync(imageNumber: Int) async {
         let outputFormat = OutputFormatType(rawValue: appState.userData.format) ?? OutputFormatType.jpeg
-        let view = ImageRawView(imageNumber: imageNumber, width: appState.userData.width, height: appState.userData.height)
-        let image = view.renderAsImage()
+        let view = await GeneratedImageRawView(imageNumber: imageNumber, width: appState.userData.width, height: appState.userData.height)
+        let image = await view.renderAsImage()
         guard image != nil else { return }
-        let url = URL(fileURLWithPath: "\(appState.userData.folder)\(imageNumber).\(outputFormat.description)", isDirectory: false)
+        let url = URL(fileURLWithPath: "\(appState.userData.outputFolder)\(imageNumber).\(outputFormat.description)", isDirectory: false)
         let destination = CGImageDestinationCreateWithURL(url as CFURL, getUtType(formatType: outputFormat).description as CFString, 1, nil)
         CGImageDestinationAddImage(destination!, image!, nil)
         CGImageDestinationFinalize(destination!)
     }
+    
+    func duplicateImageAsync(imageNumber: Int, image: Image, size: NSSize) async {
+        let view =  await DuplicatedImageRawView(imageNumber: imageNumber, image: image, size: size)
+        let image = await view.renderAsImage()
+        guard image != nil else { return }
+        
+        let imageUrl = URL(string: appState.userData.inputImage)
+        let imageName = imageUrl!.deletingPathExtension().lastPathComponent
+        let imageExtension = imageUrl!.pathExtension
+        
+        let url = URL(fileURLWithPath: "\(appState.userData.outputFolder)\(imageName) \(imageNumber).\(imageExtension)", isDirectory: false)
+        let destination = CGImageDestinationCreateWithURL(url as CFURL, getUtType(formatType: .jpeg).description as CFString, 1, nil)
+        CGImageDestinationAddImage(destination!, image!, nil)
+        CGImageDestinationFinalize(destination!)
+    }
+    
+    // MARK: Private functions
     
     private func getUtType(formatType: OutputFormatType) -> UTType {
         switch formatType {
@@ -40,7 +65,34 @@ class ImageService {
 
 // MARK: Inner types
 
-private struct ImageRawView : View {
+private protocol ColorfulNumberView {}
+
+extension ColorfulNumberView {
+    @ViewBuilder
+    func makeNumber(number: Int, blendMode: BlendMode, width: Int, height: Int) -> some View{
+        HStack {
+            Text("\(number, format: .number.grouping(.never))")
+                .font(.system(size: CGFloat(Constants.maxWidth)))
+                .blendMode(blendMode)
+                .scaledToFit()
+                .minimumScaleFactor(0.0001)
+                .lineLimit(1)
+                .frame(width:CGFloat(width), height: CGFloat(height))
+        }
+        .fixedSize()
+        .frame(width:CGFloat(width), height: CGFloat(height))
+    }
+    
+    func getRandomColor() -> Color {
+        Color(
+            red: .random(in: 0...1),
+            green: .random(in: 0...1),
+            blue: .random(in: 0...1)
+        )
+    }
+}
+
+private struct GeneratedImageRawView : View, ColorfulNumberView {
     private let imageNumber: Int
     private let width: Int
     private let height: Int
@@ -52,25 +104,36 @@ private struct ImageRawView : View {
     }
     
     var body: some View {
-        HStack {
-            Text("\(imageNumber, format: .number.grouping(.never))")
-                .font(.system(size: CGFloat(Constants.maxWidth)))
-                .blendMode(.overlay)
-                .scaledToFit()
-                .minimumScaleFactor(0.0001)
-                .lineLimit(1)
-                .frame(width:CGFloat(width), height: CGFloat(height))
-        }
-        .fixedSize()
-        .frame(width:CGFloat(width), height: CGFloat(height))
+        makeNumber(number: imageNumber,
+                   blendMode: .overlay,
+                   width: width,
+                   height: height)
         .background(getRandomColor())
     }
+}
+
+private struct DuplicatedImageRawView : View, ColorfulNumberView {
+    private let imageNumber: Int
+    private let image: Image
+    private let imageSize: NSSize
     
-    private func getRandomColor() -> Color {
-        Color(
-            red: .random(in: 0...1),
-            green: .random(in: 0...1),
-            blue: .random(in: 0...1)
-        )
+    init(imageNumber: Int, image: Image, size: NSSize) {
+        self.imageNumber = imageNumber
+        self.image = image
+        self.imageSize = size
+    }
+    
+    var body: some View {
+        image
+            .resizable()
+            .aspectRatio(contentMode: .fill)
+            .frame(width: imageSize.width, height: imageSize.height)
+            .overlay(content: {
+                makeNumber(
+                    number: imageNumber,
+                    blendMode: .difference,
+                    width: Int(imageSize.width),
+                    height: Int(imageSize.height))
+            })
     }
 }

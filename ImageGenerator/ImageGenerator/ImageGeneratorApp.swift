@@ -18,7 +18,7 @@ struct ImageGeneratorApp: App {
             MainView()
                 .environmentObject(appState)
                 .navigationTitle(Constants.appName)
-                .frame(minWidth: 500, maxWidth: 500, minHeight: 250, maxHeight: 250)
+                .frame(minWidth: 500, maxWidth: 500, minHeight: 200, maxHeight: 200)
         }
         .windowResizability(.contentSize)
         .commands {
