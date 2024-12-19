@@ -18,7 +18,7 @@
 MirHam ImageGenerator is a macOS application for QA Engineers for generating a set of images for software testing purposes.
 
 ## Features
-- Fast generation
+- Fast generation from scratch or existing image
 - Up to 100000 images
 - Up to 16350 pixels width/height
 - Export formats: JPG, JPEG, PNG, BMP
@@ -40,11 +40,18 @@ Download the DMG installer from the [releases](https://github.com/mirham/ImageGe
 <p align="left">
   <img src="https://github.com/mirham/ImageGenerator/blob/main/Images/Screen2.png" width="400">
 </p>
+<p align="left">
+  <img src="https://github.com/mirham/ImageGenerator/blob/main/Images/Screen3.png" width="400">
+</p>
 
 ### Output
 <p align="left">
   <img src="https://github.com/mirham/ImageGenerator/blob/main/Images/Output.png" width="800">
 </p>
+<p align="left">
+  <img src="https://github.com/mirham/ImageGenerator/blob/main/Images/Output2.png" width="800">
+</p>
+
 
 ## Improvement
 > [!TIP]
