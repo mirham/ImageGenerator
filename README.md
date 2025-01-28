@@ -21,6 +21,7 @@ MirHam ImageGenerator is a macOS application for QA Engineers for generating a s
 - Fast generation from scratch or existing image
 - Up to 100000 images
 - Up to 16350 pixels width/height
+- Prefix and postfix for output images
 - Export formats: JPG, JPEG, PNG, BMP, and source format for existing image
 
 ## Compatibility
