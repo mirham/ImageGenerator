@@ -103,9 +103,6 @@ struct MainView: ImageGeneratorView {
                 .disabled(!checkIfCanGenerate())
                 .isHidden(hidden: generationInProgress, remove: true)
                 ProgressView("Generating \(generatedCount) of \(appState.userData.count) images (\(progress, specifier: "%.1f")%)", value: progress, total:100)
-                    .onReceive(timer) { _ in
-                        self.updateProgress()
-                    }
                     .padding(7)
                     .overlay(
                         RoundedRectangle(cornerRadius: 5)
@@ -215,6 +212,7 @@ struct MainView: ImageGeneratorView {
                         size: imageData?.size)
                     DispatchQueue.main.async {
                         self.generatedCount += Constants.step
+                        updateProgress()
                     }
                 }
             }
