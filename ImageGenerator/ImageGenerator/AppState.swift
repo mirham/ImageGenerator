@@ -34,6 +34,12 @@ extension AppState {
         var outputFolder: String = String() {
             didSet { writeSetting(newValue: outputFolder, key: Constants.settingsKeyOutputFolder) }
         }
+        var prefix: String = String() {
+            didSet { writeSetting(newValue: prefix, key: Constants.settingsPrefix) }
+        }
+        var postfix: String = String() {
+            didSet { writeSetting(newValue: postfix, key: Constants.settingsPostfix) }
+        }
         
         var inputImage: String = String() {
             didSet { writeSetting(newValue: inputImage, key: Constants.settingsKeyInputImage) }
@@ -46,6 +52,8 @@ extension AppState {
             && lhs.count == rhs.count
             && lhs.format == rhs.format
             && lhs.outputFolder == rhs.outputFolder
+            && lhs.prefix == rhs.prefix
+            && lhs.postfix == rhs.postfix
             && lhs.inputImage == rhs.inputImage
             
             return result
@@ -58,6 +66,8 @@ extension AppState {
             count = readSetting(key: Constants.settingsKeyCount) ?? Constants.defaultCount
             format = readSetting(key: Constants.settingsKeyFormat) ?? OutputFormatType.jpeg.rawValue
             outputFolder = readSetting(key: Constants.settingsKeyOutputFolder) ?? String()
+            prefix = readSetting(key: Constants.settingsPrefix) ?? String()
+            postfix = readSetting(key: Constants.settingsPostfix) ?? String()
             inputImage = readSetting(key: Constants.settingsKeyInputImage) ?? String()
         }
     }

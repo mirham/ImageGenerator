@@ -13,6 +13,8 @@ struct MainView: ImageGeneratorView {
     @State private var selectedTab: Int = 0
     
     @State private var outputFolderPath: String = .init()
+    @State private var prefix: String = .init()
+    @State private var postfix: String = .init()
     
     @State private var generatedCount = 0
     @State private var progress = 0.0
@@ -57,6 +59,24 @@ struct MainView: ImageGeneratorView {
         }
         VStack {
             HStack {
+                Text(Constants.elWithPrefix)
+                TextField(Constants.hintPrefix, text: $prefix)
+                    .onChange(of: prefix) {
+                        appState.userData.prefix = prefix
+                    }
+                    .textFieldStyle(.roundedBorder)
+                    .frame(width: 150)
+                Text(Constants.elWithPostfix)
+                TextField(Constants.hintPostfix, text: $postfix)
+                    .onChange(of: postfix) {
+                        appState.userData.postfix = postfix
+                    }
+                    .textFieldStyle(.roundedBorder)
+                    .frame(width: 150)
+            }
+            Spacer()
+                .frame(height: 20)
+            HStack {
                 Text(Constants.elIntoFolder)
                 TextField(Constants.hintOutputFolder, text: $outputFolderPath)
                     .onChange(of: outputFolderPath) {
@@ -73,7 +93,7 @@ struct MainView: ImageGeneratorView {
             HStack {
                 Button(action: generateImages) {
                     Text(Constants.elGenerate)
-                        .frame(height: 30)
+                        .frame(height: 50)
                         .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/)
                         .background(
                             RoundedRectangle(cornerRadius: 5, style: .continuous).fill(Color.blue)
@@ -103,6 +123,8 @@ struct MainView: ImageGeneratorView {
     
     private func initValues() {
         self.selectedTab = appState.userData.mode == .generate ? generateTabId : duplicateTabId
+        self.prefix = appState.userData.prefix
+        self.postfix = appState.userData.postfix
         self.outputFolderPath = appState.userData.outputFolder
     }
     
