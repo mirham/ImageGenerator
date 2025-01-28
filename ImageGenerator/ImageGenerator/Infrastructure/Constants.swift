@@ -33,6 +33,8 @@ struct Constants {
     static let settingsKeyCount = "count"
     static let settingsKeyOutputFolder = "folder"
     static let settingsKeyInputImage = "image"
+    static let settingsPrefix = "prefix"
+    static let settingsPostfix = "postfix"
     
     // MARK: Icons
     static let iconImages = "photo.stack"
@@ -46,6 +48,8 @@ struct Constants {
     static let hintCount = "\(minCount)..\(maxCount)"
     static let hintOutputFolder = "Select a folder..."
     static let hintInputImage = "Select an image..."
+    static let hintPrefix = "Add a prefix..."
+    static let hintPostfix = "Add a postfix..."
     
     // MARK: Element names
     static let elLetsGenerate = "Let's generate"
@@ -63,6 +67,8 @@ struct Constants {
     static let elGenerate = "Go"
     static let elProgressbarText = "Generating %1$@"
     static let elInfo = "Info"
+    static let elWithPrefix = "with prefix"
+    static let elWithPostfix = "and postfix"
     
     // MARK: Tab names
     static let tabGenerate = "Generate"

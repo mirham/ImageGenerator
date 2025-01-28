@@ -27,26 +27,30 @@ class ImageService {
         let outputFormat = OutputFormatType(rawValue: appState.userData.format) ?? OutputFormatType.jpeg
         let view = await GeneratedImageRawView(imageNumber: imageNumber, width: appState.userData.width, height: appState.userData.height)
         let image = await view.renderAsImage()
+        
         guard image != nil else { return }
-        let url = URL(fileURLWithPath: "\(appState.userData.outputFolder)\(imageNumber).\(outputFormat.description)", isDirectory: false)
-        let destination = CGImageDestinationCreateWithURL(url as CFURL, getUtType(formatType: outputFormat).description as CFString, 1, nil)
-        CGImageDestinationAddImage(destination!, image!, nil)
-        CGImageDestinationFinalize(destination!)
+        
+        let prefix = appState.userData.prefix.replacingOccurrences(of: "/", with: String())
+        let postfix = appState.userData.postfix.replacingOccurrences(of: "/", with: String())
+        let url = URL(fileURLWithPath: "\(appState.userData.outputFolder)\(prefix)\(imageNumber)\(postfix).\(outputFormat.description)", isDirectory: false)
+        
+        saveImage(image: image!, url: url, outputFormat: getUtType(formatType: outputFormat))
     }
     
     func duplicateImageAsync(imageNumber: Int, image: Image, size: NSSize) async {
         let view =  await DuplicatedImageRawView(imageNumber: imageNumber, image: image, size: size)
         let image = await view.renderAsImage()
+        
         guard image != nil else { return }
         
         let imageUrl = URL(string: appState.userData.inputImage)
         let imageName = imageUrl!.deletingPathExtension().lastPathComponent
         let imageExtension = imageUrl!.pathExtension
+        let prefix = appState.userData.prefix.replacingOccurrences(of: "/", with: String())
+        let postfix = appState.userData.postfix.replacingOccurrences(of: "/", with: String())
+        let url = URL(fileURLWithPath: "\(appState.userData.outputFolder)\(prefix)\(imageName) \(imageNumber)\(postfix).\(imageExtension)", isDirectory: false)
         
-        let url = URL(fileURLWithPath: "\(appState.userData.outputFolder)\(imageName) \(imageNumber).\(imageExtension)", isDirectory: false)
-        let destination = CGImageDestinationCreateWithURL(url as CFURL, getUtType(formatType: .jpeg).description as CFString, 1, nil)
-        CGImageDestinationAddImage(destination!, image!, nil)
-        CGImageDestinationFinalize(destination!)
+        saveImage(image: image!, url: url, outputFormat: getUtType(formatType: .jpeg))
     }
     
     // MARK: Private functions
@@ -60,6 +64,12 @@ class ImageService {
             case.bmp:
                 return UTType.bmp
         }
+    }
+    
+    private func saveImage(image: CGImage, url: URL, outputFormat: UTType) {
+        let destination = CGImageDestinationCreateWithURL(url as CFURL, outputFormat.description as CFString, 1, nil)
+        CGImageDestinationAddImage(destination!, image, nil)
+        CGImageDestinationFinalize(destination!)
     }
 }
 
