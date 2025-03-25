@@ -38,6 +38,7 @@ struct Constants {
     
     // MARK: Icons
     static let iconImages = "photo.stack"
+    static let iconStop = "stop.circle"
     
     // MARK: Window IDs
     static let windowIdInfo = "info-view"
@@ -79,6 +80,9 @@ struct Constants {
     static let dialogBodyWrongInputFile = "Select a valid input image file."
     static let dialogHeaderNonexistentOutputFolder = "Output folder not found"
     static let dialogBodyNonexistentOutputFolder = "Select a valid output folder."
+    
+    // MARK: Basic
+    static let slash = "/"
     
     // MARK: About
     static let aboutSupportMail = "bWlyaGFtQGFidi5iZw=="
