@@ -23,6 +23,9 @@ struct MainView: ImageGeneratorView {
     @State private var nonexistentOutputFolder = false
     @State private var generationInProgress = false
     
+    @State private var isCancelRequested: Bool = false
+    @State private var overCancelButton = false
+    
     private let imageService = ImageService.shared
     
     private let timer = Timer.publish(
@@ -109,6 +112,20 @@ struct MainView: ImageGeneratorView {
                             .stroke(.blue, lineWidth: 2)
                     )
                 .isHidden(hidden: !generationInProgress, remove: true)
+                Button(action: cancelGeneration, label: {
+                    Image(systemName: Constants.iconStop)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 35, height: 35)
+                        .padding(7)
+                })
+                .buttonStyle(.plain)
+                .focusEffectDisabled()
+                .foregroundStyle(overCancelButton ? .red : .blue)
+                .isHidden(hidden: !generationInProgress, remove: true)
+                .onHover(perform: {over in
+                    overCancelButton = over
+                })
             }
             .padding()
             Spacer()
@@ -196,25 +213,31 @@ struct MainView: ImageGeneratorView {
         if(remainder == 0) {
             threads -= 1
         }
-        
-        for threadNumber in (0...threads) {
+                
+        for threadNumber in 0...threads {
             Task.detached(priority: .userInitiated) {
                 var begin = threadNumber * Constants.threadChunk
                 begin = begin == 0 ? Constants.minCount : begin + Constants.step
                 var end = begin + Constants.threadChunk - Constants.step
                 end = await end <= appState.userData.count ? end : appState.userData.count
                 let imageData = await loadInputImageAsync()
-                
-                for element in (begin...end) {
+                        
+                for element in begin...end {
+                    guard await !isCancelRequested else { return }
+                        
                     await imageService.makeImageAsync(
                         imageNumber: element,
                         image: imageData?.image,
-                        size: imageData?.size)
+                        size: imageData?.size
+                    )
+                            
                     DispatchQueue.main.async {
                         self.generatedCount += Constants.step
                         updateProgress()
                     }
                 }
+                        
+                await Task.yield()
             }
         }
     }
@@ -244,9 +267,15 @@ struct MainView: ImageGeneratorView {
         }
     }
     
+    private func cancelGeneration() {
+        isCancelRequested = true
+        generationInProgress = false
+    }
+    
     private func resetProgress() {
         progress = Constants.minPercentage
         generatedCount = 0
+        isCancelRequested = false
     }
 }
 

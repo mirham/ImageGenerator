@@ -30,8 +30,8 @@ class ImageService {
         
         guard image != nil else { return }
         
-        let prefix = appState.userData.prefix.replacingOccurrences(of: "/", with: String())
-        let postfix = appState.userData.postfix.replacingOccurrences(of: "/", with: String())
+        let prefix = appState.userData.prefix.replacingOccurrences(of: Constants.slash, with: String())
+        let postfix = appState.userData.postfix.replacingOccurrences(of: Constants.slash, with: String())
         let url = URL(fileURLWithPath: "\(appState.userData.outputFolder)\(prefix)\(imageNumber)\(postfix).\(outputFormat.description)", isDirectory: false)
         
         saveImage(image: image!, url: url, outputFormat: getUtType(formatType: outputFormat))
@@ -46,8 +46,8 @@ class ImageService {
         let imageUrl = URL(string: appState.userData.inputImage)
         let imageName = imageUrl!.deletingPathExtension().lastPathComponent
         let imageExtension = imageUrl!.pathExtension
-        let prefix = appState.userData.prefix.replacingOccurrences(of: "/", with: String())
-        let postfix = appState.userData.postfix.replacingOccurrences(of: "/", with: String())
+        let prefix = appState.userData.prefix.replacingOccurrences(of: Constants.slash, with: String())
+        let postfix = appState.userData.postfix.replacingOccurrences(of: Constants.slash, with: String())
         let url = URL(fileURLWithPath: "\(appState.userData.outputFolder)\(prefix)\(imageName) \(imageNumber)\(postfix).\(imageExtension)", isDirectory: false)
         
         saveImage(image: image!, url: url, outputFormat: getUtType(formatType: .jpeg))
