@@ -20,6 +20,7 @@
 		355359992C64F4BA004C172A /* ImageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 355359982C64F4BA004C172A /* ImageService.swift */; };
 		3553599C2C6556C6004C172A /* ViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3553599B2C6556C6004C172A /* ViewExtensions.swift */; };
 		3553599F2C655710004C172A /* IsHiddenModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3553599E2C655710004C172A /* IsHiddenModifier.swift */; };
+		3557DC1B2DCE010B00BE779E /* NSImageExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3557DC1A2DCE010100BE779E /* NSImageExtensions.swift */; };
 		356760DB2D1404E500625233 /* GenerateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 356760DA2D1404E500625233 /* GenerateView.swift */; };
 		356760DD2D1406F500625233 /* DuplicateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 356760DC2D1406F500625233 /* DuplicateView.swift */; };
 		356760E32D141AAC00625233 /* GenerationMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 356760E22D141AAC00625233 /* GenerationMode.swift */; };
@@ -42,6 +43,7 @@
 		355359982C64F4BA004C172A /* ImageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageService.swift; sourceTree = "<group>"; };
 		3553599B2C6556C6004C172A /* ViewExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewExtensions.swift; sourceTree = "<group>"; };
 		3553599E2C655710004C172A /* IsHiddenModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IsHiddenModifier.swift; sourceTree = "<group>"; };
+		3557DC1A2DCE010100BE779E /* NSImageExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSImageExtensions.swift; sourceTree = "<group>"; };
 		356760DA2D1404E500625233 /* GenerateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerateView.swift; sourceTree = "<group>"; };
 		356760DC2D1406F500625233 /* DuplicateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DuplicateView.swift; sourceTree = "<group>"; };
 		356760E22D141AAC00625233 /* GenerationMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerationMode.swift; sourceTree = "<group>"; };
@@ -87,6 +89,7 @@
 				3553597F2C64C74A004C172A /* Assets.xcassets */,
 				355359842C64C74A004C172A /* ImageGenerator.entitlements */,
 				3553598B2C64C814004C172A /* Infrastructure */,
+				3557DC192DCE00F800BE779E /* Extensions */,
 				355359902C64C87C004C172A /* Protocols */,
 				355359952C64D970004C172A /* Enums */,
 				3553598C2C64C823004C172A /* Services */,
@@ -167,6 +170,14 @@
 				3553599E2C655710004C172A /* IsHiddenModifier.swift */,
 			);
 			path = Modifiers;
+			sourceTree = "<group>";
+		};
+		3557DC192DCE00F800BE779E /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				3557DC1A2DCE010100BE779E /* NSImageExtensions.swift */,
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 		35EFF90E2C7B1D19002BCA04 /* Controls */ = {
@@ -260,6 +271,7 @@
 				3553598F2C64C855004C172A /* AppState.swift in Sources */,
 				355359922C64C8A8004C172A /* Settable.swift in Sources */,
 				3553597E2C64C747004C172A /* MainView.swift in Sources */,
+				3557DC1B2DCE010B00BE779E /* NSImageExtensions.swift in Sources */,
 				356760DB2D1404E500625233 /* GenerateView.swift in Sources */,
 				3553597C2C64C747004C172A /* ImageGeneratorApp.swift in Sources */,
 				3514C5012C661B3E004523CC /* InfoView.swift in Sources */,
@@ -414,7 +426,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 2.2;
+				MARKETING_VERSION = 2.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.MirHam.ImageGenerator;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = macosx;
@@ -447,7 +459,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 2.2;
+				MARKETING_VERSION = 2.3;
 				PRODUCT_BUNDLE_IDENTIFIER = com.MirHam.ImageGenerator;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = macosx;

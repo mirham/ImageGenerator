@@ -254,7 +254,7 @@ struct MainView: ImageGeneratorView {
         }
         
         let image = Image(nsImage: nsImage!)
-        let size = nsImage!.size
+        let size = nsImage!.pixelSize ?? nsImage!.size
 
         return (image, size)
     }
