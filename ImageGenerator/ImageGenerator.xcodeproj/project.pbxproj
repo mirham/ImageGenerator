@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 70;
+	objectVersion = 56;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -21,10 +21,10 @@
 		3553599C2C6556C6004C172A /* ViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3553599B2C6556C6004C172A /* ViewExtensions.swift */; };
 		3553599F2C655710004C172A /* IsHiddenModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3553599E2C655710004C172A /* IsHiddenModifier.swift */; };
 		3557DC1B2DCE010B00BE779E /* NSImageExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3557DC1A2DCE010100BE779E /* NSImageExtensions.swift */; };
+		3557DC242DCE415700BE779E /* ImageGeneratorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3557DC222DCE415700BE779E /* ImageGeneratorView.swift */; };
 		356760DB2D1404E500625233 /* GenerateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 356760DA2D1404E500625233 /* GenerateView.swift */; };
 		356760DD2D1406F500625233 /* DuplicateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 356760DC2D1406F500625233 /* DuplicateView.swift */; };
 		356760E32D141AAC00625233 /* GenerationMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 356760E22D141AAC00625233 /* GenerationMode.swift */; };
-		35EFF9102C7B1D32002BCA04 /* NoInsetHostingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35EFF90F2C7B1D32002BCA04 /* NoInsetHostingView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -44,15 +44,11 @@
 		3553599B2C6556C6004C172A /* ViewExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewExtensions.swift; sourceTree = "<group>"; };
 		3553599E2C655710004C172A /* IsHiddenModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IsHiddenModifier.swift; sourceTree = "<group>"; };
 		3557DC1A2DCE010100BE779E /* NSImageExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSImageExtensions.swift; sourceTree = "<group>"; };
+		3557DC222DCE415700BE779E /* ImageGeneratorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageGeneratorView.swift; sourceTree = "<group>"; };
 		356760DA2D1404E500625233 /* GenerateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerateView.swift; sourceTree = "<group>"; };
 		356760DC2D1406F500625233 /* DuplicateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DuplicateView.swift; sourceTree = "<group>"; };
 		356760E22D141AAC00625233 /* GenerationMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerationMode.swift; sourceTree = "<group>"; };
-		35EFF90F2C7B1D32002BCA04 /* NoInsetHostingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoInsetHostingView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
-
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		356760DE2D1409E800625233 /* Protocols */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Protocols; sourceTree = "<group>"; };
-/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		355359752C64C747004C172A /* Frameworks */ = {
@@ -127,8 +123,7 @@
 		3553598D2C64C832004C172A /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				356760DE2D1409E800625233 /* Protocols */,
-				35EFF90E2C7B1D19002BCA04 /* Controls */,
+				3557DC232DCE415700BE779E /* Protocols */,
 				3553599D2C6556FB004C172A /* Modifiers */,
 				3553599A2C6556B6004C172A /* Extensions */,
 				3553597D2C64C747004C172A /* MainView.swift */,
@@ -180,12 +175,12 @@
 			path = Extensions;
 			sourceTree = "<group>";
 		};
-		35EFF90E2C7B1D19002BCA04 /* Controls */ = {
+		3557DC232DCE415700BE779E /* Protocols */ = {
 			isa = PBXGroup;
 			children = (
-				35EFF90F2C7B1D32002BCA04 /* NoInsetHostingView.swift */,
+				3557DC222DCE415700BE779E /* ImageGeneratorView.swift */,
 			);
-			path = Controls;
+			path = Protocols;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -202,9 +197,6 @@
 			buildRules = (
 			);
 			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				356760DE2D1409E800625233 /* Protocols */,
 			);
 			name = ImageGenerator;
 			productName = ImageGenerator;
@@ -264,7 +256,6 @@
 				3514C5032C66210F004523CC /* AppDelegate.swift in Sources */,
 				356760E32D141AAC00625233 /* GenerationMode.swift in Sources */,
 				355359942C64C91E004C172A /* Constants.swift in Sources */,
-				35EFF9102C7B1D32002BCA04 /* NoInsetHostingView.swift in Sources */,
 				3553599F2C655710004C172A /* IsHiddenModifier.swift in Sources */,
 				355359972C64D9A3004C172A /* OutputFormatType.swift in Sources */,
 				3553599C2C6556C6004C172A /* ViewExtensions.swift in Sources */,
@@ -277,6 +268,7 @@
 				3514C5012C661B3E004523CC /* InfoView.swift in Sources */,
 				355359992C64F4BA004C172A /* ImageService.swift in Sources */,
 				356760DD2D1406F500625233 /* DuplicateView.swift in Sources */,
+				3557DC242DCE415700BE779E /* ImageGeneratorView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
