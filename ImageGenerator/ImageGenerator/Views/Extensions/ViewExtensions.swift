@@ -12,26 +12,26 @@ extension View {
         modifier(IsHiddenModifier(hidden: hidden, remove: remove))
     }
     
-    func fastRenderAsImageAsync(scaleFactor: CGFloat) async -> CGImage? {
+    func fastRenderAsImageAsync() async -> CGImage? {
         let renderer = ImageRenderer(content: self)
-        renderer.scale = scaleFactor
+        renderer.scale = Constants.defaultScaleFactor
         renderer.isOpaque = true
         let result = renderer.cgImage
         
         return result
     }
     
-    func renderAsImage(scaleFactor: CGFloat) async -> CGImage? {
+    func renderAsImage(size: NSSize) -> CGImage? {
         let view = NoInsetHostingView(rootView: self)
-        view.setFrameSize(view.fittingSize)
-        let result = view.asImage(scaleFactor: scaleFactor)
+        view.setFrameSize(size)
+        let result = view.asImage(size: size)
 
         return result
     }
 }
 
 public extension NSView {
-    func asImage(scaleFactor: CGFloat) -> CGImage? {
+    func asImage(size: NSSize) -> CGImage? {
         guard let rep = bitmapImageRepForCachingDisplay(in: bounds) else {
             return nil
         }
@@ -42,11 +42,7 @@ public extension NSView {
             return nil
         }
         
-        if (scaleFactor > Constants.defaultScaleFactor) {
-            result = result.resize(
-                size: CGSize(width: bounds.width / scaleFactor,
-                             height: bounds.height / scaleFactor))!
-        }
+        result = result.resize(size: CGSize(width: size.width, height: size.height))!
         
         return result
     }
