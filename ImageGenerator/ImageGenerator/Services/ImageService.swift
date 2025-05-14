@@ -14,6 +14,8 @@ class ImageService {
     
     static let shared = ImageService()
     
+    private let scaleFactor = NSScreen.main?.backingScaleFactor ?? Constants.defaultScaleFactor
+    
     func makeImageAsync(imageNumber: Int, image: Image? = nil, size: NSSize? = nil) async {
         if (image == nil) {
             await generateImageAsync(imageNumber: imageNumber)
@@ -26,7 +28,7 @@ class ImageService {
     func generateImageAsync(imageNumber: Int) async {
         let outputFormat = OutputFormatType(rawValue: appState.userData.format) ?? OutputFormatType.jpeg
         let view = await GeneratedImageRawView(imageNumber: imageNumber, width: appState.userData.width, height: appState.userData.height)
-        let image = await view.renderAsImage()
+        let image = await view.fastRenderAsImageAsync(scaleFactor: scaleFactor)
         
         guard image != nil else { return }
         
@@ -39,7 +41,7 @@ class ImageService {
     
     func duplicateImageAsync(imageNumber: Int, image: Image, size: NSSize) async {
         let view =  await DuplicatedImageRawView(imageNumber: imageNumber, image: image, size: size)
-        let image = await view.renderAsImage()
+        let image = await view.renderAsImage(scaleFactor: scaleFactor)
         
         guard image != nil else { return }
         
@@ -70,80 +72,5 @@ class ImageService {
         let destination = CGImageDestinationCreateWithURL(url as CFURL, outputFormat.description as CFString, 1, nil)
         CGImageDestinationAddImage(destination!, image, nil)
         CGImageDestinationFinalize(destination!)
-    }
-}
-
-// MARK: Inner types
-
-private protocol ColorfulNumberView {}
-
-extension ColorfulNumberView {
-    @ViewBuilder
-    func makeNumber(number: Int, blendMode: BlendMode, width: Int, height: Int) -> some View{
-        HStack {
-            Text("\(number, format: .number.grouping(.never))")
-                .font(.system(size: CGFloat(Constants.maxWidth)))
-                .blendMode(blendMode)
-                .scaledToFit()
-                .minimumScaleFactor(0.0001)
-                .lineLimit(1)
-                .frame(width:CGFloat(width), height: CGFloat(height))
-        }
-        .fixedSize()
-        .frame(width:CGFloat(width), height: CGFloat(height))
-    }
-    
-    func getRandomColor() -> Color {
-        Color(
-            red: .random(in: 0...1),
-            green: .random(in: 0...1),
-            blue: .random(in: 0...1)
-        )
-    }
-}
-
-private struct GeneratedImageRawView : View, ColorfulNumberView {
-    private let imageNumber: Int
-    private let width: Int
-    private let height: Int
-    
-    init(imageNumber: Int, width: Int, height: Int) {
-        self.imageNumber = imageNumber
-        self.width = width
-        self.height = height
-    }
-    
-    var body: some View {
-        makeNumber(number: imageNumber,
-                   blendMode: .overlay,
-                   width: width,
-                   height: height)
-        .background(getRandomColor())
-    }
-}
-
-private struct DuplicatedImageRawView : View, ColorfulNumberView {
-    private let imageNumber: Int
-    private let image: Image
-    private let imageSize: NSSize
-    
-    init(imageNumber: Int, image: Image, size: NSSize) {
-        self.imageNumber = imageNumber
-        self.image = image
-        self.imageSize = size
-    }
-    
-    var body: some View {
-        image
-            .resizable()
-            .aspectRatio(contentMode: .fill)
-            .frame(width: imageSize.width, height: imageSize.height)
-            .overlay(content: {
-                makeNumber(
-                    number: imageNumber,
-                    blendMode: .difference,
-                    width: Int(imageSize.width),
-                    height: Int(imageSize.height))
-            })
     }
 }
