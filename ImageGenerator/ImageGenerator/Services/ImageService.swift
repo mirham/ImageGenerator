@@ -26,7 +26,7 @@ class ImageService {
     func generateImageAsync(imageNumber: Int) async {
         let outputFormat = OutputFormatType(rawValue: appState.userData.format) ?? OutputFormatType.jpeg
         let view = await GeneratedImageRawView(imageNumber: imageNumber, width: appState.userData.width, height: appState.userData.height)
-        let image = await view.renderAsImage()
+        let image = await view.renderAsImageAsync()
         
         guard image != nil else { return }
         
@@ -39,7 +39,7 @@ class ImageService {
     
     func duplicateImageAsync(imageNumber: Int, image: Image, size: NSSize) async {
         let view =  await DuplicatedImageRawView(imageNumber: imageNumber, image: image, size: size)
-        let image = await view.renderAsImage()
+        let image = await view.renderAsImageAsync()
         
         guard image != nil else { return }
         

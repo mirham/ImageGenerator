@@ -12,28 +12,12 @@ extension View {
         modifier(IsHiddenModifier(hidden: hidden, remove: remove))
     }
     
-    func renderAsImage() -> CGImage? {
-        let view = NoInsetHostingView(rootView: self)
-        view.setFrameSize(view.fittingSize)
+    func renderAsImageAsync() async -> CGImage? {
+        let renderer = ImageRenderer(content: self)
+        renderer.scale = NSScreen.main?.backingScaleFactor ?? Constants.defaultScaleFactor
+        renderer.isOpaque = true
+        let image = renderer.cgImage
         
-        let result = view.asImage()
-        
-        return result
-    }
-}
-
-public extension NSView {
-    func asImage() -> CGImage? {
-        guard let rep = bitmapImageRepForCachingDisplay(in: bounds) else {
-            return nil
-        }
-        
-        cacheDisplay(in: bounds, to: rep)
-        
-        guard let result = rep.cgImage else {
-            return nil
-        }
-        
-        return result
+        return image
     }
 }
