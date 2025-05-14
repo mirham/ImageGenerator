@@ -96,7 +96,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "158"
             endingLineNumber = "158"
-            landmarkName = "checkIfCanGenerate()"
+            landmarkName = "checkGenerationPossibility()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
