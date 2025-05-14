@@ -103,7 +103,7 @@ struct MainView: ImageGeneratorView {
                         )
                 }
                 .buttonStyle(.plain)
-                .disabled(!checkIfCanGenerate())
+                .disabled(!checkGenerationPossibility())
                 .isHidden(hidden: generationInProgress, remove: true)
                 ProgressView("Generating \(generatedCount) of \(appState.userData.count) images (\(progress, specifier: "%.1f")%)", value: progress, total:100)
                     .padding(7)
@@ -142,7 +142,7 @@ struct MainView: ImageGeneratorView {
         self.outputFolderPath = appState.userData.outputFolder
     }
     
-    private func checkIfCanGenerate() -> Bool {
+    private func checkGenerationPossibility() -> Bool {
         var result = false
         
         switch appState.userData.mode {
