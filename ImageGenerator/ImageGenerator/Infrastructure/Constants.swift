@@ -21,7 +21,7 @@ struct Constants {
     static let maxCount: Int = 100000
     static let step: Int = 1
     static let progressBarUpdateInterval: Double = 0.1
-    static let threadChunk = 500
+    static let threadChunk = 200
     static let minPercentage: Double = 0
     static let maxPercentage: Double = 100
     static let defaultScaleFactor: CGFloat = 1.0

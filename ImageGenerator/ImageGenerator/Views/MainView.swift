@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Factory
 
 struct MainView: ImageGeneratorView {
     @EnvironmentObject var appState: AppState
@@ -26,7 +27,7 @@ struct MainView: ImageGeneratorView {
     @State private var isCancelRequested: Bool = false
     @State private var overCancelButton = false
     
-    private let imageService = ImageService.shared
+    @Injected(\.imageService) private var imageService
     
     private let timer = Timer.publish(
         every: Constants.progressBarUpdateInterval,
@@ -36,6 +37,8 @@ struct MainView: ImageGeneratorView {
     
     private let generateTabId = 0
     private let duplicateTabId = 1
+    
+    private var generationTask: Task<Void, Never>?
     
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -188,7 +191,6 @@ struct MainView: ImageGeneratorView {
         folderPicker.allowsMultipleSelection = false
         
         folderPicker.begin { response in
-            
             if response == .OK {
                 let pickedFolder = folderPicker.urls.first
                 let path = pickedFolder?.path(percentEncoded: false).utf8.description ?? String()
@@ -207,37 +209,58 @@ struct MainView: ImageGeneratorView {
         
         generationInProgress = true
         
-        var threads = Int(appState.userData.count / Constants.threadChunk)
-        let remainder = appState.userData.count % Constants.threadChunk
+        let totalItems = appState.userData.count
+        let chunkSize = Constants.threadChunk
+        let concurrencyLimit = min(ProcessInfo.processInfo.activeProcessorCount * 2, 16)
         
-        if(remainder == 0) {
-            threads -= 1
-        }
+        Task.detached(priority: .userInitiated) {
+            await withTaskGroup(of: Void.self) { group in
+                var activeTasks = 0
                 
-        for threadNumber in 0...threads {
-            Task.detached(priority: .userInitiated) {
-                var begin = threadNumber * Constants.threadChunk
-                begin = begin == 0 ? Constants.minCount : begin + Constants.step
-                var end = begin + Constants.threadChunk - Constants.step
-                end = await end <= appState.userData.count ? end : appState.userData.count
-                let imageData = await loadInputImageAsync()
+                let loadedImageData = await loadInputImageAsync()
+                
+                for chunkStart in stride(from: Constants.minCount,
+                                         through: totalItems,
+                                         by: chunkSize) {
+                    if Task.isCancelled { break }
+                    
+                    if activeTasks >= concurrencyLimit {
+                        _ = await group.next()
+                        activeTasks -= 1
+                    }
+                    
+                    activeTasks += 1
+                    
+                    group.addTask {
+                        defer { activeTasks -= 1 }
                         
-                for element in begin...end {
-                    guard await !isCancelRequested else { return }
+                        let chunkEnd = min(chunkStart + chunkSize - 1, totalItems)
                         
-                    await imageService.makeImageAsync(
-                        imageNumber: element,
-                        image: imageData?.image,
-                        size: imageData?.size
-                    )
+                        for element in chunkStart...chunkEnd {
+                            guard !Task.isCancelled, await !isCancelRequested else {
+                                return
+                            }
                             
-                    DispatchQueue.main.async {
-                        self.generatedCount += Constants.step
-                        updateProgress()
+                            let imageData = await ImageData(
+                                imageNumber: element,
+                                mode: appState.userData.mode,
+                                image: loadedImageData?.image,
+                                size: loadedImageData?.size)
+                            
+                            await imageService.makeImageAsync(imageData: imageData)
+                            
+                            await MainActor.run {
+                                self.generatedCount += Constants.step
+                                updateProgress()
+                            }
+                        }
                     }
                 }
-                        
-                await Task.yield()
+                
+                await group.waitForAll()
+                await MainActor.run {
+                    self.generationInProgress = false
+                }
             }
         }
     }
@@ -269,6 +292,7 @@ struct MainView: ImageGeneratorView {
     
     private func cancelGeneration() {
         isCancelRequested = true
+        generationTask?.cancel()
         generationInProgress = false
     }
     

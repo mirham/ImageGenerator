@@ -29,6 +29,17 @@
 		356760DB2D1404E500625233 /* GenerateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 356760DA2D1404E500625233 /* GenerateView.swift */; };
 		356760DD2D1406F500625233 /* DuplicateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 356760DC2D1406F500625233 /* DuplicateView.swift */; };
 		356760E32D141AAC00625233 /* GenerationMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 356760E22D141AAC00625233 /* GenerationMode.swift */; };
+		35B8A1382DD6577D000CFA1B /* Factory in Frameworks */ = {isa = PBXBuildFile; productRef = 35B8A1372DD6577D000CFA1B /* Factory */; };
+		35B8A13A2DD657BD000CFA1B /* ContainerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B8A1392DD657B5000CFA1B /* ContainerExtensions.swift */; };
+		35B8A13D2DD65807000CFA1B /* ImageServiceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B8A13C2DD65802000CFA1B /* ImageServiceType.swift */; };
+		35B8A1402DD65A28000CFA1B /* ImageData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B8A13F2DD65A0F000CFA1B /* ImageData.swift */; };
+		35B8A1432DD662F2000CFA1B /* ImageGenerationStrategyFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B8A1422DD662E7000CFA1B /* ImageGenerationStrategyFactory.swift */; };
+		35B8A1452DD66369000CFA1B /* ImageGenerationStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B8A1442DD66367000CFA1B /* ImageGenerationStrategy.swift */; };
+		35B8A1472DD6642C000CFA1B /* ImageGenerationStrategyFactoryType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B8A1462DD66427000CFA1B /* ImageGenerationStrategyFactoryType.swift */; };
+		35B8A1492DD66598000CFA1B /* ImageGenerationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B8A1482DD66598000CFA1B /* ImageGenerationService.swift */; };
+		35B8A14B2DD665CE000CFA1B /* ImageGenerationServiceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B8A14A2DD665CE000CFA1B /* ImageGenerationServiceType.swift */; };
+		35B8A14D2DD667B9000CFA1B /* GenerateImageStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B8A14C2DD667A7000CFA1B /* GenerateImageStrategy.swift */; };
+		35B8A14F2DD668FD000CFA1B /* DuplicateImageStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B8A14E2DD668FD000CFA1B /* DuplicateImageStrategy.swift */; };
 		35EFF9102C7B1D32002BCA04 /* NoInsetHostingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35EFF90F2C7B1D32002BCA04 /* NoInsetHostingView.swift */; };
 /* End PBXBuildFile section */
 
@@ -57,6 +68,16 @@
 		356760DA2D1404E500625233 /* GenerateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerateView.swift; sourceTree = "<group>"; };
 		356760DC2D1406F500625233 /* DuplicateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DuplicateView.swift; sourceTree = "<group>"; };
 		356760E22D141AAC00625233 /* GenerationMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerationMode.swift; sourceTree = "<group>"; };
+		35B8A1392DD657B5000CFA1B /* ContainerExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContainerExtensions.swift; sourceTree = "<group>"; };
+		35B8A13C2DD65802000CFA1B /* ImageServiceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageServiceType.swift; sourceTree = "<group>"; };
+		35B8A13F2DD65A0F000CFA1B /* ImageData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageData.swift; sourceTree = "<group>"; };
+		35B8A1422DD662E7000CFA1B /* ImageGenerationStrategyFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageGenerationStrategyFactory.swift; sourceTree = "<group>"; };
+		35B8A1442DD66367000CFA1B /* ImageGenerationStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageGenerationStrategy.swift; sourceTree = "<group>"; };
+		35B8A1462DD66427000CFA1B /* ImageGenerationStrategyFactoryType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageGenerationStrategyFactoryType.swift; sourceTree = "<group>"; };
+		35B8A1482DD66598000CFA1B /* ImageGenerationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageGenerationService.swift; sourceTree = "<group>"; };
+		35B8A14A2DD665CE000CFA1B /* ImageGenerationServiceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageGenerationServiceType.swift; sourceTree = "<group>"; };
+		35B8A14C2DD667A7000CFA1B /* GenerateImageStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerateImageStrategy.swift; sourceTree = "<group>"; };
+		35B8A14E2DD668FD000CFA1B /* DuplicateImageStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DuplicateImageStrategy.swift; sourceTree = "<group>"; };
 		35EFF90F2C7B1D32002BCA04 /* NoInsetHostingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoInsetHostingView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -65,6 +86,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				35B8A1382DD6577D000CFA1B /* Factory in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -84,6 +106,7 @@
 			isa = PBXGroup;
 			children = (
 				3553597A2C64C747004C172A /* ImageGenerator */,
+				35B8A1352DD65742000CFA1B /* Frameworks */,
 				355359792C64C747004C172A /* Products */,
 			);
 			sourceTree = "<group>";
@@ -105,8 +128,9 @@
 				3553598B2C64C814004C172A /* Infrastructure */,
 				3557DC192DCE00F800BE779E /* Extensions */,
 				355359902C64C87C004C172A /* Protocols */,
-				3553598C2C64C823004C172A /* Services */,
 				355359952C64D970004C172A /* Enums */,
+				35B8A13E2DD6597A000CFA1B /* Models */,
+				3553598C2C64C823004C172A /* Services */,
 				3553598D2C64C832004C172A /* Views */,
 				355359812C64C74A004C172A /* Preview Content */,
 			);
@@ -134,7 +158,9 @@
 		3553598C2C64C823004C172A /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				35B8A1412DD662CB000CFA1B /* Strategies */,
 				355359982C64F4BA004C172A /* ImageService.swift */,
+				35B8A1482DD66598000CFA1B /* ImageGenerationService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -158,6 +184,7 @@
 			isa = PBXGroup;
 			children = (
 				355359912C64C8A8004C172A /* Settable.swift */,
+				35B8A13B2DD657F7000CFA1B /* Services */,
 			);
 			path = Protocols;
 			sourceTree = "<group>";
@@ -190,10 +217,47 @@
 		3557DC192DCE00F800BE779E /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				35B8A1392DD657B5000CFA1B /* ContainerExtensions.swift */,
 				3500FA882DD5308900B7A0A7 /* CGImageExtensions.swift */,
 				3557DC1A2DCE010100BE779E /* NSImageExtensions.swift */,
 			);
 			path = Extensions;
+			sourceTree = "<group>";
+		};
+		35B8A1352DD65742000CFA1B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		35B8A13B2DD657F7000CFA1B /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				35B8A1462DD66427000CFA1B /* ImageGenerationStrategyFactoryType.swift */,
+				35B8A1442DD66367000CFA1B /* ImageGenerationStrategy.swift */,
+				35B8A13C2DD65802000CFA1B /* ImageServiceType.swift */,
+				35B8A14A2DD665CE000CFA1B /* ImageGenerationServiceType.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		35B8A13E2DD6597A000CFA1B /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				35B8A13F2DD65A0F000CFA1B /* ImageData.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		35B8A1412DD662CB000CFA1B /* Strategies */ = {
+			isa = PBXGroup;
+			children = (
+				35B8A1422DD662E7000CFA1B /* ImageGenerationStrategyFactory.swift */,
+				35B8A14C2DD667A7000CFA1B /* GenerateImageStrategy.swift */,
+				35B8A14E2DD668FD000CFA1B /* DuplicateImageStrategy.swift */,
+			);
+			path = Strategies;
 			sourceTree = "<group>";
 		};
 		35EFF90E2C7B1D19002BCA04 /* Controls */ = {
@@ -250,6 +314,9 @@
 				Base,
 			);
 			mainGroup = 3553596F2C64C747004C172A;
+			packageReferences = (
+				35B8A1362DD6577D000CFA1B /* XCRemoteSwiftPackageReference "Factory" */,
+			);
 			productRefGroup = 355359792C64C747004C172A /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -276,8 +343,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				35B8A13D2DD65807000CFA1B /* ImageServiceType.swift in Sources */,
 				3514C5032C66210F004523CC /* AppDelegate.swift in Sources */,
+				35B8A13A2DD657BD000CFA1B /* ContainerExtensions.swift in Sources */,
 				356760E32D141AAC00625233 /* GenerationMode.swift in Sources */,
+				35B8A1432DD662F2000CFA1B /* ImageGenerationStrategyFactory.swift in Sources */,
+				35B8A1492DD66598000CFA1B /* ImageGenerationService.swift in Sources */,
 				355359942C64C91E004C172A /* Constants.swift in Sources */,
 				35EFF9102C7B1D32002BCA04 /* NoInsetHostingView.swift in Sources */,
 				3553599F2C655710004C172A /* IsHiddenModifier.swift in Sources */,
@@ -285,18 +356,24 @@
 				3553599C2C6556C6004C172A /* ViewExtensions.swift in Sources */,
 				3500FA8C2DD532F900B7A0A7 /* ColorfulNumberView.swift in Sources */,
 				3553598F2C64C855004C172A /* AppState.swift in Sources */,
+				35B8A14F2DD668FD000CFA1B /* DuplicateImageStrategy.swift in Sources */,
 				355359922C64C8A8004C172A /* Settable.swift in Sources */,
+				35B8A1472DD6642C000CFA1B /* ImageGenerationStrategyFactoryType.swift in Sources */,
 				3553597E2C64C747004C172A /* MainView.swift in Sources */,
+				35B8A1452DD66369000CFA1B /* ImageGenerationStrategy.swift in Sources */,
 				3557DC1B2DCE010B00BE779E /* NSImageExtensions.swift in Sources */,
 				356760DB2D1404E500625233 /* GenerateView.swift in Sources */,
 				3500FA8E2DD5335E00B7A0A7 /* GeneratedImageRawView.swift in Sources */,
 				3553597C2C64C747004C172A /* ImageGeneratorApp.swift in Sources */,
 				3500FA892DD5309200B7A0A7 /* CGImageExtensions.swift in Sources */,
+				35B8A14B2DD665CE000CFA1B /* ImageGenerationServiceType.swift in Sources */,
 				3514C5012C661B3E004523CC /* InfoView.swift in Sources */,
 				355359992C64F4BA004C172A /* ImageService.swift in Sources */,
 				356760DD2D1406F500625233 /* DuplicateView.swift in Sources */,
 				3500FA902DD5339E00B7A0A7 /* DuplicatedImageRawView.swift in Sources */,
+				35B8A14D2DD667B9000CFA1B /* GenerateImageStrategy.swift in Sources */,
 				3500FA872DD52EFA00B7A0A7 /* ImageGeneratorView.swift in Sources */,
+				35B8A1402DD65A28000CFA1B /* ImageData.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -446,7 +523,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 2.6;
+				MARKETING_VERSION = 2.7;
 				PRODUCT_BUNDLE_IDENTIFIER = com.MirHam.ImageGenerator;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = macosx;
@@ -479,7 +556,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 2.6;
+				MARKETING_VERSION = 2.7;
 				PRODUCT_BUNDLE_IDENTIFIER = com.MirHam.ImageGenerator;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = macosx;
@@ -511,6 +588,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		35B8A1362DD6577D000CFA1B /* XCRemoteSwiftPackageReference "Factory" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/hmlongco/Factory";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.5.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		35B8A1372DD6577D000CFA1B /* Factory */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 35B8A1362DD6577D000CFA1B /* XCRemoteSwiftPackageReference "Factory" */;
+			productName = Factory;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 355359702C64C747004C172A /* Project object */;
 }
