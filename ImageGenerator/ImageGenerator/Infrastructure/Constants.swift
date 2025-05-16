@@ -20,11 +20,12 @@ struct Constants {
     static let minCount: Int = 1
     static let maxCount: Int = 100000
     static let step: Int = 1
-    static let progressBarUpdateInterval: Double = 0.1
+    static let progressBarUpdateInterval: Double = 0.5
     static let threadChunk = 200
     static let minPercentage: Double = 0
     static let maxPercentage: Double = 100
     static let defaultScaleFactor: CGFloat = 1.0
+    static let maxConcurrencyLimit: Int = 16
     
     // MARK: Settings key names
     static let settingsKeyMode = "mode"
@@ -43,6 +44,10 @@ struct Constants {
     
     // MARK: Window IDs
     static let windowIdInfo = "info-view"
+    
+    // MARK: Tab tags
+    static let tabIdGenerate = 0
+    static let tabIdDuplicate = 1
     
     // MARK: Hints
     static let hintWidth = "\(minWidth)..\(maxWidth)"

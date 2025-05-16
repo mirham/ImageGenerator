@@ -9,5 +9,7 @@ import Foundation
 import SwiftUICore
 
 protocol ImageServiceType {
-    func makeImageAsync(imageData: ImageData) async
+    var generationTask: Task<Void, Never>? { get }
+    
+    func makeImages()
 }

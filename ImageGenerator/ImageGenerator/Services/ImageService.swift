@@ -15,7 +15,83 @@ class ImageService : ImageServiceType {
     
     private let appState = AppState.shared
     
-    func makeImageAsync(imageData: ImageData) async {
+    var generationTask: Task<Void, Never>?
+    
+    func makeImages() {
+        let totalItems = appState.userData.count
+        let chunkSize = Constants.threadChunk
+        let concurrencyLimit = min(
+            ProcessInfo.processInfo.activeProcessorCount * 2,
+            Constants.maxConcurrencyLimit)
+        
+        generationTask = Task.detached(priority: .userInitiated) {
+            await withTaskGroup(of: Void.self) { group in
+                var activeTasks = 0
+                
+                let loadedImageData = await self.loadInputImageAsync()
+                
+                for chunkStart in stride(from: Constants.minCount,
+                                         through: totalItems,
+                                         by: chunkSize) {
+                    if Task.isCancelled { break }
+                    
+                    if activeTasks >= concurrencyLimit {
+                        _ = await group.next()
+                        activeTasks -= 1
+                    }
+                    
+                    activeTasks += 1
+                    
+                    group.addTask {
+                        defer { activeTasks -= 1 }
+                        
+                        let chunkEnd = min(chunkStart + chunkSize - 1, totalItems)
+                        
+                        for element in chunkStart...chunkEnd {
+                            guard !Task.isCancelled,  !self.appState.generation.isCancelRequested else {
+                                return
+                            }
+                            
+                            let imageData = ImageData(
+                                imageNumber: element,
+                                mode: self.appState.userData.mode,
+                                image: loadedImageData?.image,
+                                size: loadedImageData?.size)
+                            
+                            await self.makeImageAsync(imageData: imageData)
+                            
+                            await MainActor.run {
+                                self.appState.generation.generatedCount += Constants.step
+                            }
+                        }
+                    }
+                }
+                
+                await group.waitForAll()
+            }
+        }
+    }
+    
+    // MARK: Private functions
+    
+    private func loadInputImageAsync() async -> (image: Image, size: NSSize)? {
+        guard appState.userData.mode == .duplicate else { return nil }
+        
+        let nsImage = NSImage.init(byReferencingFile: appState.userData.inputImage)
+        
+        guard nsImage != nil else {
+            appState.generation.wrongInputFile = true
+            
+            return nil
+        }
+        
+        let image = Image(nsImage: nsImage!)
+        let size = nsImage!.pixelSize ?? nsImage!.size
+        
+        return (image, size)
+    }
+    
+    private func makeImageAsync(imageData: ImageData) async {
         let strategy = imageGenerationStrategyFactory.getStrategy(mode: imageData.mode)
         let image = await strategy?.generateImageAsync(imageData: imageData)
         
@@ -25,8 +101,6 @@ class ImageService : ImageServiceType {
         
         saveImage(image: image!, url: imageUrl, outputFormat: getUtType(formatType: .jpeg))
     }
-    
-    // MARK: Private functions
     
     private func sanitarizeSlashes() -> (prefix: String, postfix: String) {
         let prefix = appState.userData.prefix
