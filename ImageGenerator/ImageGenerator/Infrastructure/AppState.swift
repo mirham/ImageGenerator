@@ -8,9 +8,34 @@
 import Foundation
 
 class AppState : ObservableObject {
-    @Published var userData = UserData()
+    @Published var userData = UserData() { didSet { setGenerationTotalCount() } }
+    @Published var generation = Generation()
     
     static let shared = AppState()
+    
+    private func setGenerationTotalCount() {
+        generation.totalCount = userData.count
+    }
+}
+
+extension AppState {
+    struct Generation {
+        var inProgress : Bool = false
+        var isCancelRequested: Bool = false
+        var generatedCount: Int = 0 { didSet {
+            guard generatedCount != 0 || totalCount != 0
+            else { return }
+            
+            progress = (Double(generatedCount) / Double(totalCount)) * Constants.maxPercentage
+            if (progress == Constants.maxPercentage
+                || generatedCount == totalCount) {
+                inProgress = false
+            }
+        } }
+        var wrongInputFile: Bool = false
+        var progress: Double = 0.0
+        var totalCount: Int = 0
+    }
 }
 
 extension AppState {

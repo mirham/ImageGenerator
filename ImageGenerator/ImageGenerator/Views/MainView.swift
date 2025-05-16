@@ -6,27 +6,19 @@
 //
 
 import SwiftUI
+import Factory
 
 struct MainView: ImageGeneratorView {
     @EnvironmentObject var appState: AppState
     
-    @State private var selectedTab: Int = 0
+    @Injected(\.imageService) private var imageService
     
+    @State private var selectedTab: Int = 0
     @State private var outputFolderPath: String = .init()
     @State private var prefix: String = .init()
     @State private var postfix: String = .init()
-    
-    @State private var generatedCount = 0
-    @State private var progress = 0.0
-    
-    @State private var wrongInputFile = false
     @State private var nonexistentOutputFolder = false
-    @State private var generationInProgress = false
-    
-    @State private var isCancelRequested: Bool = false
     @State private var overCancelButton = false
-    
-    private let imageService = ImageService.shared
     
     private let timer = Timer.publish(
         every: Constants.progressBarUpdateInterval,
@@ -34,30 +26,27 @@ struct MainView: ImageGeneratorView {
         in: .common)
         .autoconnect()
     
-    private let generateTabId = 0
-    private let duplicateTabId = 1
-    
     var body: some View {
         TabView(selection: $selectedTab) {
             GenerateView()
                 .tabItem {
                     Text(Constants.tabGenerate)
                 }
-                .tag(generateTabId)
+                .tag(Constants.tabIdGenerate)
             DuplicateView()
                 .tabItem {
                     Text(Constants.tabDuplicate)
                 }
-                .tag(duplicateTabId)
-                .alert(isPresented: $wrongInputFile) {
-                    Alert(title: Text(Constants.dialogHeaderWrongInputFile),
-                          message: Text(Constants.dialogBodyWrongInputFile),
-                          dismissButton: .default(Text(Constants.elOk)))
-                }
+                .tag(Constants.tabIdDuplicate)
         }
         .alert(isPresented: $nonexistentOutputFolder) {
             Alert(title: Text(Constants.dialogHeaderNonexistentOutputFolder),
                   message: Text(Constants.dialogBodyNonexistentOutputFolder),
+                  dismissButton: .default(Text(Constants.elOk)))
+        }
+        .alert(isPresented: $appState.generation.wrongInputFile) {
+            Alert(title: Text(Constants.dialogHeaderWrongInputFile),
+                  message: Text(Constants.dialogBodyWrongInputFile),
                   dismissButton: .default(Text(Constants.elOk)))
         }
         VStack {
@@ -94,7 +83,7 @@ struct MainView: ImageGeneratorView {
             }
             Spacer()
             HStack {
-                Button(action: generateImages) {
+                Button(action: makeImages) {
                     Text(Constants.elGenerate)
                         .frame(height: 50)
                         .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/)
@@ -104,14 +93,14 @@ struct MainView: ImageGeneratorView {
                 }
                 .buttonStyle(.plain)
                 .disabled(!checkGenerationPossibility())
-                .isHidden(hidden: generationInProgress, remove: true)
-                ProgressView("Generating \(generatedCount) of \(appState.userData.count) images (\(progress, specifier: "%.1f")%)", value: progress, total:100)
+                .isHidden(hidden: appState.generation.inProgress, remove: true)
+                ProgressView("Generating \(appState.generation.generatedCount) of \(appState.userData.count) images (\(appState.generation.progress, specifier: "%.1f")%)", value: appState.generation.progress, total:100)
                     .padding(7)
                     .overlay(
                         RoundedRectangle(cornerRadius: 5)
                             .stroke(.blue, lineWidth: 2)
                     )
-                .isHidden(hidden: !generationInProgress, remove: true)
+                    .isHidden(hidden: !appState.generation.inProgress, remove: true)
                 Button(action: cancelGeneration, label: {
                     Image(systemName: Constants.iconStop)
                         .resizable()
@@ -122,7 +111,7 @@ struct MainView: ImageGeneratorView {
                 .buttonStyle(.plain)
                 .focusEffectDisabled()
                 .foregroundStyle(overCancelButton ? .red : .blue)
-                .isHidden(hidden: !generationInProgress, remove: true)
+                .isHidden(hidden: !appState.generation.inProgress, remove: true)
                 .onHover(perform: {over in
                     overCancelButton = over
                 })
@@ -136,7 +125,8 @@ struct MainView: ImageGeneratorView {
     // MARK: Private functions
     
     private func initValues() {
-        self.selectedTab = appState.userData.mode == .generate ? generateTabId : duplicateTabId
+        self.selectedTab = appState.userData.mode == .generate
+        ? Constants.tabIdGenerate : Constants.tabIdDuplicate
         self.prefix = appState.userData.prefix
         self.postfix = appState.userData.postfix
         self.outputFolderPath = appState.userData.outputFolder
@@ -159,7 +149,7 @@ struct MainView: ImageGeneratorView {
     }
     
     private func checkFilesAndFoldersExistense() -> Bool {
-        wrongInputFile = false
+        appState.generation.wrongInputFile = false
         nonexistentOutputFolder = false
         
         var result = true
@@ -170,7 +160,7 @@ struct MainView: ImageGeneratorView {
         if(result
            && appState.userData.mode == .duplicate
            && !checkIfFileExists(filePath: appState.userData.inputImage)) {
-            wrongInputFile = true
+            appState.generation.wrongInputFile = true
             result = false
         }
         
@@ -188,7 +178,6 @@ struct MainView: ImageGeneratorView {
         folderPicker.allowsMultipleSelection = false
         
         folderPicker.begin { response in
-            
             if response == .OK {
                 let pickedFolder = folderPicker.urls.first
                 let path = pickedFolder?.path(percentEncoded: false).utf8.description ?? String()
@@ -198,84 +187,24 @@ struct MainView: ImageGeneratorView {
         }
     }
     
-    private func generateImages() {
+    private func makeImages() {
         resetProgress()
         
-        guard checkFilesAndFoldersExistense() else {
-            return
-        }
+        guard checkFilesAndFoldersExistense() else { return }
         
-        generationInProgress = true
-        
-        var threads = Int(appState.userData.count / Constants.threadChunk)
-        let remainder = appState.userData.count % Constants.threadChunk
-        
-        if(remainder == 0) {
-            threads -= 1
-        }
-                
-        for threadNumber in 0...threads {
-            Task.detached(priority: .userInitiated) {
-                var begin = threadNumber * Constants.threadChunk
-                begin = begin == 0 ? Constants.minCount : begin + Constants.step
-                var end = begin + Constants.threadChunk - Constants.step
-                end = await end <= appState.userData.count ? end : appState.userData.count
-                let imageData = await loadInputImageAsync()
-                        
-                for element in begin...end {
-                    guard await !isCancelRequested else { return }
-                        
-                    await imageService.makeImageAsync(
-                        imageNumber: element,
-                        image: imageData?.image,
-                        size: imageData?.size
-                    )
-                            
-                    DispatchQueue.main.async {
-                        self.generatedCount += Constants.step
-                        updateProgress()
-                    }
-                }
-                        
-                await Task.yield()
-            }
-        }
-    }
-    
-    private func loadInputImageAsync() async -> (image: Image, size: NSSize)? {
-        guard appState.userData.mode == .duplicate else { return nil }
-        
-        let nsImage = NSImage.init(byReferencingFile: appState.userData.inputImage)
-        
-        guard nsImage != nil else {
-            wrongInputFile = true
-            
-            return nil
-        }
-        
-        let image = Image(nsImage: nsImage!)
-        let size = nsImage!.pixelSize ?? nsImage!.size
-
-        return (image, size)
-    }
-    
-    private func updateProgress() {
-        progress = (Double(generatedCount) / Double(appState.userData.count)) * Constants.maxPercentage
-        
-        if(progress == Constants.maxPercentage) {
-            generationInProgress = false
-        }
+        imageService.makeImages()
     }
     
     private func cancelGeneration() {
-        isCancelRequested = true
-        generationInProgress = false
+        appState.generation.inProgress = false
+        appState.generation.isCancelRequested = true
+        imageService.generationTask?.cancel()
     }
     
     private func resetProgress() {
-        progress = Constants.minPercentage
-        generatedCount = 0
-        isCancelRequested = false
+        appState.generation.inProgress = true
+        appState.generation.generatedCount = 0
+        appState.generation.isCancelRequested = false
     }
 }
 
