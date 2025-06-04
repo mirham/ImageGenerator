@@ -20,12 +20,6 @@ struct MainView: ImageGeneratorView {
     @State private var nonexistentOutputFolder = false
     @State private var overCancelButton = false
     
-    private let timer = Timer.publish(
-        every: Constants.progressBarUpdateInterval,
-        on: .main,
-        in: .common)
-        .autoconnect()
-    
     var body: some View {
         TabView(selection: $selectedTab) {
             GenerateView()
@@ -39,6 +33,7 @@ struct MainView: ImageGeneratorView {
                 }
                 .tag(Constants.tabIdDuplicate)
         }
+        .disabled(appState.generation.inProgress)
         .alert(isPresented: $nonexistentOutputFolder) {
             Alert(title: Text(Constants.dialogHeaderNonexistentOutputFolder),
                   message: Text(Constants.dialogBodyNonexistentOutputFolder),
@@ -66,6 +61,7 @@ struct MainView: ImageGeneratorView {
                     .textFieldStyle(.roundedBorder)
                     .frame(width: 150)
             }
+            .disabled(appState.generation.inProgress)
             Spacer()
                 .frame(height: 20)
             HStack {
@@ -81,6 +77,7 @@ struct MainView: ImageGeneratorView {
                     selectOutputFolder()
                 }
             }
+            .disabled(appState.generation.inProgress)
             Spacer()
             HStack {
                 Button(action: makeImages) {
@@ -94,7 +91,10 @@ struct MainView: ImageGeneratorView {
                 .buttonStyle(.plain)
                 .disabled(!checkGenerationPossibility())
                 .isHidden(hidden: appState.generation.inProgress, remove: true)
-                ProgressView("Generating \(appState.generation.generatedCount) of \(appState.userData.count) images (\(appState.generation.progress, specifier: "%.1f")%)", value: appState.generation.progress, total:100)
+                ProgressView(
+                    value: appState.generation.progress,
+                    total: 100,
+                    label: { Text("Generating \(appState.generation.generatedCount) of \(appState.userData.count) images (\(appState.generation.progress, specifier: "%.1f")%)" ) })
                     .padding(7)
                     .overlay(
                         RoundedRectangle(cornerRadius: 5)

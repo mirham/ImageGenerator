@@ -19,7 +19,9 @@ class ImageService : ImageServiceType {
     
     func makeImages() {
         let totalItems = appState.userData.count
-        let chunkSize = Constants.threadChunk
+        let chunkSize = appState.userData.mode == .generate
+            ? Constants.threadChunkGenerate
+            : Constants.threadChunkDuplicate
         let concurrencyLimit = min(
             ProcessInfo.processInfo.activeProcessorCount * 2,
             Constants.maxConcurrencyLimit)
