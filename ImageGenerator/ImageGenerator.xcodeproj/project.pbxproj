@@ -32,7 +32,6 @@
 		3562D9642FBE082400A1301B /* ImageGenerationStateUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3562D9632FBE082100A1301B /* ImageGenerationStateUpdate.swift */; };
 		3562D9662FBF18E800A1301B /* ImageCreationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3562D9652FBF18D800A1301B /* ImageCreationService.swift */; };
 		3562D9682FBF198200A1301B /* ImageCreationServiceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3562D9672FBF197E00A1301B /* ImageCreationServiceType.swift */; };
-		3562D96B2FBF350900A1301B /* ImageWriterQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3562D96A2FBF350600A1301B /* ImageWriterQueue.swift */; };
 		356760DB2D1404E500625233 /* GenerateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 356760DA2D1404E500625233 /* GenerateView.swift */; };
 		356760DD2D1406F500625233 /* DuplicateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 356760DC2D1406F500625233 /* DuplicateView.swift */; };
 		356760E32D141AAC00625233 /* GenerationMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 356760E22D141AAC00625233 /* GenerationMode.swift */; };
@@ -97,7 +96,6 @@
 		3562D9632FBE082100A1301B /* ImageGenerationStateUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageGenerationStateUpdate.swift; sourceTree = "<group>"; };
 		3562D9652FBF18D800A1301B /* ImageCreationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCreationService.swift; sourceTree = "<group>"; };
 		3562D9672FBF197E00A1301B /* ImageCreationServiceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCreationServiceType.swift; sourceTree = "<group>"; };
-		3562D96A2FBF350600A1301B /* ImageWriterQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageWriterQueue.swift; sourceTree = "<group>"; };
 		356760DA2D1404E500625233 /* GenerateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerateView.swift; sourceTree = "<group>"; };
 		356760DC2D1406F500625233 /* DuplicateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DuplicateView.swift; sourceTree = "<group>"; };
 		356760E22D141AAC00625233 /* GenerationMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerationMode.swift; sourceTree = "<group>"; };
@@ -210,7 +208,6 @@
 		3553598C2C64C823004C172A /* Services */ = {
 			isa = PBXGroup;
 			children = (
-				3562D9692FBF34FA00A1301B /* Actors */,
 				3562D9602FBE07FB00A1301B /* Builders */,
 				35B8A1412DD662CB000CFA1B /* Strategies */,
 				3562D9652FBF18D800A1301B /* ImageCreationService.swift */,
@@ -292,14 +289,6 @@
 				3562D9612FBE080900A1301B /* ImageGenerationStateUpdateBuilder.swift */,
 			);
 			path = Builders;
-			sourceTree = "<group>";
-		};
-		3562D9692FBF34FA00A1301B /* Actors */ = {
-			isa = PBXGroup;
-			children = (
-				3562D96A2FBF350600A1301B /* ImageWriterQueue.swift */,
-			);
-			path = Actors;
 			sourceTree = "<group>";
 		};
 		35B8A1352DD65742000CFA1B /* Frameworks */ = {
@@ -446,7 +435,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				35CDEF062FC5CD6000BEB092 /* ImageWritingStrategyFactoryType.swift in Sources */,
-				3562D96B2FBF350900A1301B /* ImageWriterQueue.swift in Sources */,
 				35B8A13D2DD65807000CFA1B /* ImageServiceType.swift in Sources */,
 				3562D95D2FBDFA7700A1301B /* ImageOutputSize.swift in Sources */,
 				35CDEF132FC5F7A100BEB092 /* TiffWritingStrategy.swift in Sources */,

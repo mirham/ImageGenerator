@@ -21,7 +21,7 @@ final class ImageCreationService: ImageCreationServiceType {
         let background = CIImage(color: color)
             .cropped(to: CGRect(x: 0, y: 0, width: width, height: height))
         
-        let numberImage = renderNumberImage(
+        let numberImage = renderNumberOverlay(
             number: number,
             width: width,
             height: height)
@@ -32,7 +32,7 @@ final class ImageCreationService: ImageCreationServiceType {
     func duplicate(number: Int, source: CGImage) -> CIImage {
         let background = CIImage(cgImage: source)
         let size = CGSize(width: source.width, height: source.height)
-        let number = renderNumberImage(
+        let number = renderNumberOverlay(
             number: number,
             width: Int(size.width),
             height: Int(size.height))
@@ -44,46 +44,7 @@ final class ImageCreationService: ImageCreationServiceType {
     
     // MARK: Private functions
     
-    /*private func getContext(size: CGSize) -> CGContext? {
-        let threadDict = Thread.current.threadDictionary
-        let key = String(
-            format: Constants.sizedContextKey,
-            Int(size.width),
-            (Int(size.height)))
-        
-        if let box = threadDict[key] as? CGContextBox {
-            return box.context
-        }
-        
-        let bytesPerRow = alignTo64(Int(size.width) * Constants.bypesPerPixel)
-        
-        let context = CGContext(
-            data: nil,
-            width: Int(size.width),
-            height: Int(size.height),
-            bitsPerComponent: Constants.bitsPerComponent,
-            bytesPerRow: bytesPerRow,
-            space: colorSpace,
-            bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue
-        )
-        
-        if let context {
-            threadDict[key] = CGContextBox(context)
-        }
-        
-        return context
-    }
-    
-    private func alignTo64(_ value: Int) -> Int {
-        let remainder = value % Constants.alignmentTo64
-        
-        guard remainder != 0
-        else { return value }
-        
-        return value + (Constants.alignmentTo64 - remainder)
-    } */
-    
-    private func renderNumberImage(number: Int, width: Int, height: Int) -> CIImage {
+    private func renderNumberOverlay(number: Int, width: Int, height: Int) -> CIImage {
         let fontSize = min(CGFloat(width), CGFloat(height))
             * Constants.defaultNumberSizePercentage
         let font = font(size: fontSize)
@@ -94,7 +55,10 @@ final class ImageCreationService: ImageCreationServiceType {
         ]
         
         let text = "\(number)" as CFString
-        let attributed = CFAttributedStringCreate(nil, text, attributes as CFDictionary)!
+        let attributed = CFAttributedStringCreate(
+            nil,
+            text,
+            attributes as CFDictionary)!
         let line = CTLineCreateWithAttributedString(attributed)
         var ascent: CGFloat = 0
         var descent: CGFloat = 0
@@ -131,16 +95,6 @@ final class ImageCreationService: ImageCreationServiceType {
             systemFont.fontName as CFString,
             size,
             nil)
-    }
-    
-    // MARK: Inner types
-    
-    private final class CGContextBox {
-        let context: CGContext
-        
-        init(_ context: CGContext) {
-            self.context = context
-        }
     }
 }
 

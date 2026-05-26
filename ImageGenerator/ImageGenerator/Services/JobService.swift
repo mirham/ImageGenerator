@@ -41,78 +41,106 @@ class JobService: JobServiceType {
         guard let chunkingStrategy = chunkingStrategyFactory.getStrategy(for: .image)
         else { return }
         
-        let cpuWorkers = computerService.getOptimalWorkerCount()
-        let concurrencyLimit = computerService.isAppleSilicon()
-            ? cpuWorkers * Constants.defaultAppleSiliconLimitMultiplier
-            : cpuWorkers
+        let concurrencyLimit = getConcurrencyLimit()
         let chunkSize = chunkingStrategy.calculateChunkSize(count: snapshot.count)
-        let writer = ImageWriterQueue()
         
         for chunkStart in stride(
             from: Constants.step,
             through: snapshot.count,
             by: chunkSize) {
+            
             if Task.isCancelled { break }
             if await appState.generation.isCancelRequested { break }
             
-            let chunkEnd = min(chunkStart + chunkSize - Constants.step, snapshot.count)
+            let chunkEnd = min(
+                chunkStart + chunkSize - Constants.step,
+                snapshot.count)
             
-            await withTaskGroup(of: Void.self) { group in
-                var inFlight = 0
-                
-                for element in chunkStart...chunkEnd {
-                    if Task.isCancelled { break }
-                    
-                    if inFlight >= concurrencyLimit {
-                        await group.next()
-                        inFlight -= Constants.step
-                    }
-                    
-                    inFlight += Constants.step
-                    
-                    group.addTask { [self] in
-                        if Task.isCancelled { return }
-                        
-                        let imageData = ImageData(
-                            imageNumber: element,
-                            mode: snapshot.mode,
-                            image: loadedImage?.image,
-                            size: loadedImage?.size
-                        )
-                        
-                        guard let strategy = imageGenerationStrategyFactory
-                            .getStrategy(mode: imageData.mode)
-                        else { return }
-                        guard let image = await strategy
-                            .generateImageAsync(imageData: imageData)
-                        else { return }
-                        
-                        if Task.isCancelled { return }
-                        
-                        let url = makeImageUrl(
-                            imageData: imageData,
-                            snapshot: snapshot)
-                        
-                        mediaWritingService.writeImage(
-                            image, to: url,
-                            format: snapshot.outputFormat,
-                            colorSpace: snapshot.colorSpace)
-                        
-                        await self.updateStatusAsync { $0.withGeneratedCount(Constants.step)
-                        }
-                    }
-                }
-                
-                await group.waitForAll()
-            }
-        }
-        
-        if Task.isCancelled {
-            await writer.cancelAsync()
-        } else {
-            await writer.finishAsync()
+            await processImageChunkAsync(
+                chunkStart: chunkStart,
+                chunkEnd: chunkEnd,
+                snapshot: snapshot,
+                loadedImage: loadedImage,
+                concurrencyLimit: concurrencyLimit)
         }
     }
+    
+    private func getConcurrencyLimit() -> Int {
+        let cpuWorkers = computerService.getOptimalWorkerCount()
+        
+        return computerService.isAppleSilicon()
+            ? cpuWorkers * Constants.defaultAppleSiliconLimitMultiplier
+            : cpuWorkers
+    }
+    
+    private func processImageChunkAsync(
+        chunkStart: Int,
+        chunkEnd: Int,
+        snapshot: StateSnapshot,
+        loadedImage: LoadedImage?,
+        concurrencyLimit: Int) async {
+        await withTaskGroup(of: Void.self) { group in
+            var inFlight = 0
+                
+            for element in chunkStart...chunkEnd {
+                if Task.isCancelled { break }
+                
+                if inFlight >= concurrencyLimit {
+                    await group.next()
+                    inFlight -= Constants.step
+                }
+                
+                inFlight += Constants.step
+                
+                group.addTask { [self] in
+                    await processImageAsync(
+                        element: element,
+                        snapshot: snapshot,
+                        loadedImage: loadedImage)
+                }
+            }
+            
+            await group.waitForAll()
+        }
+    }
+    
+    private func processImageAsync(
+        element: Int,
+        snapshot: StateSnapshot,
+        loadedImage: LoadedImage?) async {
+            guard !Task.isCancelled
+            else { return }
+            
+            let imageData = ImageData(
+                imageNumber: element,
+                mode: snapshot.mode,
+                image: loadedImage?.image,
+                size: loadedImage?.size)
+            
+            guard let strategy = imageGenerationStrategyFactory
+                .getStrategy(mode: imageData.mode)
+            else { return }
+            
+            guard let image = await strategy
+                .generateImageAsync(imageData: imageData)
+            else { return }
+            
+            guard !Task.isCancelled
+            else { return }
+            
+            let url = makeImageUrl(imageData: imageData, snapshot: snapshot)
+            
+            mediaWritingService.writeImage(
+                image,
+                to: url,
+                format: snapshot.outputFormat,
+                colorSpace: snapshot.colorSpace
+            )
+            
+            await updateStatusAsync {
+                $0.withGeneratedCount(Constants.step)
+            }
+        }
     
     private func loadInputImageAsync(snapshot: StateSnapshot) async -> LoadedImage? {
         guard snapshot.mode == .duplicateImages

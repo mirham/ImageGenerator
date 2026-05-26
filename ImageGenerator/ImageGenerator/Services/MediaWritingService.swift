@@ -16,7 +16,7 @@ final class MediaWritingService : MediaWritingServiceType {
         to url: URL,
         format: ImageOutputFormat,
         colorSpace: ImageColorSpace = .rgb) {
-        let quality = jpegQuality(for: ciImage.extent.size)
+        let quality = getJpegQuality(for: ciImage.extent.size)
         let targetColorSpace = colorSpace.cgColorSpace
         let strategy = imageWritingStrategyFactory.getStrategy(
             for: format,
@@ -31,7 +31,7 @@ final class MediaWritingService : MediaWritingServiceType {
     
     // MARK: Private functions
     
-    private func jpegQuality(for size: CGSize) -> Double {
+    private func getJpegQuality(for size: CGSize) -> Double {
         let area = size.width * size.height
         let threshold = Constants.defaultJpegQualityThreshold
             * Constants.defaultJpegQualityThreshold
