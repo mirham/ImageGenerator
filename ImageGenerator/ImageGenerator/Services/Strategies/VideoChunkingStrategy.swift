@@ -7,7 +7,7 @@
 
 import Factory
 
-final class VideoChunkingStrategy: ChunkingStrategy {
+final class VideoChunkingStrategy: ChunkingStrategyType {
     @Injected(\.computerService) private var computerService
     
     let mediaType: MediaType = .video

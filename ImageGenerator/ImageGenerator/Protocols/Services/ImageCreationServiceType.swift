@@ -11,5 +11,4 @@ import CoreImage
 protocol ImageCreationServiceType {
     func generate(number: Int, width: Int, height: Int) -> CIImage?
     func duplicate(number: Int, source: CGImage) -> CIImage
-    func writeImage(_ ciImage: CIImage, to url: URL, format: OutputFormatType)
 }

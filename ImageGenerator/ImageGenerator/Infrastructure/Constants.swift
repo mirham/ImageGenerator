@@ -42,7 +42,7 @@ struct Constants {
     static let cpuTypeAppleSilicon: UInt32 = 12
     static let defaultAppleSiliconLimitMultiplier = 3
     static let bypesPerPixel = 4
-    static let bitsPerComponent = 8
+    static let bitsPerComponent: UInt32 = 8
     static let alignmentTo64 = 64
     
     // MARK: Settings key names

@@ -8,5 +8,5 @@
 import Foundation
 
 protocol ChunkingStrategyFactoryType {
-    func getStrategy(for mediaType: MediaType) -> ChunkingStrategy?
+    func getStrategy(for mediaType: MediaType) -> ChunkingStrategyType?
 }

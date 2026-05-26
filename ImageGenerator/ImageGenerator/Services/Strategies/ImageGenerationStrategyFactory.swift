@@ -9,7 +9,7 @@ import Foundation
 import Factory
 
 final class ImageGenerationStrategyFactory : ImageGenerationStrategyFactoryType {
-    func getStrategy(mode: GenerationMode) -> (any ImageGenerationStrategy)? {
+    func getStrategy(mode: GenerationMode) -> (any ImageGenerationStrategyType)? {
         let result = Container.shared.imageGenerationStrategies()
             .first(where: { $0.mode == mode })
         

@@ -38,6 +38,12 @@ extension Container {
         }.singleton
     }
     
+    var mediaWritingService: Factory<MediaWritingServiceType> {
+        Factory(self) {
+            MediaWritingService()
+        }.singleton
+    }
+    
     var computerService: Factory<ComputerServiceType> {
         Factory(self) {
             ComputerService()
@@ -46,12 +52,12 @@ extension Container {
     
     // MARK: Image generation strategies registration
     
-    static var imageGenerationStrategies: [KeyPath<Container, Factory<ImageGenerationStrategy>>] = [
+    static var imageGenerationStrategies: [KeyPath<Container, Factory<ImageGenerationStrategyType>>] = [
          \.generateImageStrategy,
          \.duplicateImageStrategy
     ]
     
-    func imageGenerationStrategies() -> [ImageGenerationStrategy] {
+    func imageGenerationStrategies() -> [ImageGenerationStrategyType] {
         Container.imageGenerationStrategies.map { self[keyPath: $0]() }
     }
     
@@ -63,12 +69,12 @@ extension Container {
     
     // MARK: Chunking strategies registration
     
-    static var chunkingStrategies: [KeyPath<Container, Factory<ChunkingStrategy>>] = [
+    static var chunkingStrategies: [KeyPath<Container, Factory<ChunkingStrategyType>>] = [
          \.imageChunkingStrategy,
          \.videoChunkingStrategy
     ]
     
-    func chunkingStrategies() -> [ChunkingStrategy] {
+    func chunkingStrategies() -> [ChunkingStrategyType] {
         Container.chunkingStrategies.map { self[keyPath: $0]() }
     }
     
@@ -77,19 +83,39 @@ extension Container {
             ChunkingStrategyFactory()
         }.singleton
     }
+    
+    // MARK: Image writing strategies registration
+    
+    static var imageWritingStrategies: [KeyPath<Container, Factory<ImageWritingStrategyType>>] = [
+         \.cmykWritingStrategy,
+         \.jpegWritingStrategy,
+         \.pngWritingStrategy,
+         \.bmpWritingStrategy,
+         \.tiffWritingStrategy
+    ]
+    
+    func imageWritingStrategies() -> [ImageWritingStrategyType] {
+        Container.imageWritingStrategies.map { self[keyPath: $0]() }
+    }
+    
+    var imageWritingStrategyFactory: Factory<ImageWritingStrategyFactoryType> {
+        Factory(self) {
+            ImageWritingStrategyFactory()
+        }.singleton
+    }
 }
 
 
 extension SharedContainer {
     // MARK: Image generation strategies registration
     
-    var generateImageStrategy: Factory<ImageGenerationStrategy> {
+    var generateImageStrategy: Factory<ImageGenerationStrategyType> {
         Factory(self) {
             GenerateImageStrategy()
         }.singleton
     }
     
-    var duplicateImageStrategy: Factory<ImageGenerationStrategy> {
+    var duplicateImageStrategy: Factory<ImageGenerationStrategyType> {
         Factory(self) {
             DuplicateImageStrategy()
         }.singleton
@@ -97,15 +123,47 @@ extension SharedContainer {
     
     // MARK: Chunking strategies registration
     
-    var imageChunkingStrategy: Factory<ChunkingStrategy> {
+    var imageChunkingStrategy: Factory<ChunkingStrategyType> {
         Factory(self) {
             ImageChunkingStrategy()
         }.singleton
     }
     
-    var videoChunkingStrategy: Factory<ChunkingStrategy> {
+    var videoChunkingStrategy: Factory<ChunkingStrategyType> {
         Factory(self) {
             VideoChunkingStrategy()
+        }.singleton
+    }
+    
+    // MARK: Image writing strategies registration
+    
+    var cmykWritingStrategy: Factory<ImageWritingStrategyType> {
+        Factory(self) {
+            CmykWritingStrategy()
+        }.singleton
+    }
+    
+    var jpegWritingStrategy: Factory<ImageWritingStrategyType> {
+        Factory(self) {
+            JpegWritingStrategy()
+        }.singleton
+    }
+    
+    var pngWritingStrategy: Factory<ImageWritingStrategyType> {
+        Factory(self) {
+            PngWritingStrategy()
+        }.singleton
+    }
+    
+    var bmpWritingStrategy: Factory<ImageWritingStrategyType> {
+        Factory(self) {
+            BmpWritingStrategy()
+        }.singleton
+    }
+    
+    var tiffWritingStrategy: Factory<ImageWritingStrategyType> {
+        Factory(self) {
+            TiffWritingStrategy()
         }.singleton
     }
 }

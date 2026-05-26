@@ -13,6 +13,7 @@ class JobService: JobServiceType {
     @Injected(\.imageGenerationStrategyFactory) private var imageGenerationStrategyFactory
     @Injected(\.chunkingStrategyFactory) private var chunkingStrategyFactory
     @Injected(\.imageCreationService) private var imageCreationService
+    @Injected(\.mediaWritingService) private var mediaWritingService
     @Injected(\.computerService) private var computerService
     
     var generationTask: Task<Void, Never>?
@@ -92,9 +93,10 @@ class JobService: JobServiceType {
                             imageData: imageData,
                             snapshot: snapshot)
                         
-                        imageCreationService.writeImage(
+                        mediaWritingService.writeImage(
                             image, to: url,
-                            format: snapshot.outputFormat)
+                            format: snapshot.outputFormat,
+                            colorSpace: snapshot.colorSpace)
                         
                         await self.updateStatusAsync { $0.withGeneratedCount(Constants.step)
                         }
@@ -165,7 +167,8 @@ class JobService: JobServiceType {
     private struct StateSnapshot {
         let count: Int
         let mode: GenerationMode
-        let outputFormat: OutputFormatType
+        let colorSpace: ImageColorSpace
+        let outputFormat: ImageOutputFormat
         let inputImage: String
         let outputFolder: String
         let prefix: String
@@ -177,8 +180,10 @@ class JobService: JobServiceType {
         init(_ appState: AppState) {
             self.count = appState.userData.count
             self.mode = appState.userData.mode
-            let rawFormat = appState.userData.format
-            self.outputFormat = OutputFormatType(rawValue: rawFormat) ?? .jpeg
+            let colorSpaceRawFormat = appState.userData.colorSpace
+            self.colorSpace = ImageColorSpace(rawValue: colorSpaceRawFormat) ?? .rgb
+            let outputRawFormat = appState.userData.format
+            self.outputFormat = ImageOutputFormat(rawValue: outputRawFormat) ?? .jpeg
             self.inputImage = appState.userData.inputImage
             self.outputFolder = appState.userData.outputFolder
             self.prefix = appState.userData.prefix.replacingOccurrences(

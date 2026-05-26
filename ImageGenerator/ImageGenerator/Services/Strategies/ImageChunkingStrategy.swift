@@ -8,7 +8,7 @@
 import CoreImage
 import Factory
 
-final class ImageChunkingStrategy: ChunkingStrategy {
+final class ImageChunkingStrategy: ChunkingStrategyType {
     @Injected(\.computerService) private var computerService
     
     let mediaType: MediaType = .image

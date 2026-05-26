@@ -13,9 +13,9 @@ struct GenerateView: ImageGeneratorView {
     @State private var width: Int = 0
     @State private var height: Int = 0
     @State private var count: Int = 0
-    @State private var selectedFormat: Int = OutputFormatType.jpeg.rawValue
-    @State private var selectedColorSpace: Int = ColorSpaceType.rgb.rawValue
-    @State private var selectedSize: Int = OutputSizeType.custom.rawValue
+    @State private var selectedFormat: Int = ImageOutputFormat.jpeg.rawValue
+    @State private var selectedColorSpace: Int = ImageColorSpace.rgb.rawValue
+    @State private var selectedSize: Int = ImageOutputSize.custom.rawValue
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -35,7 +35,7 @@ struct GenerateView: ImageGeneratorView {
                 Text("Format:")
                     .frame(width: 100, alignment: .leading)
                 Picker(String(), selection: $selectedFormat) {
-                    ForEach(OutputFormatType.allCases, id: \.id) {
+                    ForEach(ImageOutputFormat.allCases, id: \.id) {
                         Text($0.description).tag($0.rawValue)
                     }
                 }
@@ -50,7 +50,7 @@ struct GenerateView: ImageGeneratorView {
                 Text("Color space:")
                     .frame(width: 100, alignment: .leading)
                 Picker(String(), selection: $selectedColorSpace) {
-                    ForEach(ColorSpaceType.allCases, id: \.id) {
+                    ForEach(ImageColorSpace.allCases, id: \.id) {
                         Text($0.description).tag($0.rawValue)
                     }
                 }
@@ -58,14 +58,14 @@ struct GenerateView: ImageGeneratorView {
                 .pickerStyle(.segmented)
                 .colorMultiply(.blue)
                 .onChange(of: selectedColorSpace) {
-                    appState.userData.format = selectedColorSpace
+                    appState.userData.colorSpace = selectedColorSpace
                 }
             }
             HStack {
                 Text("Size:")
                     .frame(width: 100, alignment: .leading)
                 Picker(String(), selection: $selectedSize) {
-                    ForEach(OutputSizeType.allCases, id: \.id) {
+                    ForEach(ImageOutputSize.allCases, id: \.id) {
                         Text($0.description).tag($0.rawValue)
                     }
                 }
@@ -156,6 +156,7 @@ struct GenerateView: ImageGeneratorView {
         self.height = appState.userData.height
         self.count = appState.userData.count
         self.selectedFormat = appState.userData.format
+        self.selectedColorSpace = appState.userData.colorSpace
         
         appState.userData.mode = .generateImages
     }

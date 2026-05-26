@@ -70,13 +70,13 @@ extension AppState {
         var count: Int = Constants.defaultCount {
             didSet { writeSetting(newValue: count, key: Constants.settingsKeyCount) }
         }
-        var format: Int = OutputFormatType.jpeg.rawValue {
+        var format: Int = ImageOutputFormat.jpeg.rawValue {
             didSet { writeSetting(newValue: format, key: Constants.settingsKeyFormat) }
         }
-        var colorSpace: Int = ColorSpaceType.rgb.rawValue {
+        var colorSpace: Int = ImageColorSpace.rgb.rawValue {
             didSet { writeSetting(newValue: colorSpace, key: Constants.settingsKeyColorSpace) }
         }
-        var size: Int = OutputSizeType.custom.rawValue {
+        var size: Int = ImageOutputSize.custom.rawValue {
             didSet { writeSetting(newValue: size, key: Constants.settingsKeySize) }
         }
         var outputFolder: String = String() {
@@ -113,9 +113,9 @@ extension AppState {
             width = readSetting(key: Constants.settingsKeyWidth) ?? Constants.defaultWidth
             height = readSetting(key: Constants.settingsKeyHeight) ?? Constants.defaultHeight
             count = readSetting(key: Constants.settingsKeyCount) ?? Constants.defaultCount
-            format = readSetting(key: Constants.settingsKeyFormat) ?? OutputFormatType.jpeg.rawValue
-            colorSpace = readSetting(key: Constants.settingsKeyColorSpace) ?? ColorSpaceType.rgb.rawValue
-            size = readSetting(key: Constants.settingsKeySize) ?? OutputSizeType.custom.rawValue
+            format = readSetting(key: Constants.settingsKeyFormat) ?? ImageOutputFormat.jpeg.rawValue
+            colorSpace = readSetting(key: Constants.settingsKeyColorSpace) ?? ImageColorSpace.rgb.rawValue
+            size = readSetting(key: Constants.settingsKeySize) ?? ImageOutputSize.custom.rawValue
             outputFolder = readSetting(key: Constants.settingsKeyOutputFolder) ?? String()
             prefix = readSetting(key: Constants.settingsPrefix) ?? String()
             postfix = readSetting(key: Constants.settingsPostfix) ?? String()

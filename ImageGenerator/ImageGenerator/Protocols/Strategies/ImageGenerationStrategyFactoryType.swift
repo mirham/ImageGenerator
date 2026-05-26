@@ -8,5 +8,5 @@
 import Foundation
 
 protocol ImageGenerationStrategyFactoryType {
-    func getStrategy(mode: GenerationMode) -> ImageGenerationStrategy?
+    func getStrategy(mode: GenerationMode) -> ImageGenerationStrategyType?
 }

@@ -9,7 +9,7 @@ import Foundation
 import CoreImage
 import Factory
 
-final class GenerateImageStrategy : ImageGenerationStrategy {
+final class GenerateImageStrategy : ImageGenerationStrategyType {
     @Injected(\.imageGenerationService) private var imageGenerationService
     
     let mode = GenerationMode.generateImages

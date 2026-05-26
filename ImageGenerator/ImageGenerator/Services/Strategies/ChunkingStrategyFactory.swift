@@ -9,7 +9,7 @@ import Foundation
 import Factory
 
 final class ChunkingStrategyFactory : ChunkingStrategyFactoryType {
-    func getStrategy(for mediaType: MediaType) -> (any ChunkingStrategy)? {
+    func getStrategy(for mediaType: MediaType) -> (any ChunkingStrategyType)? {
         let result = Container.shared.chunkingStrategies()
             .first(where: { $0.mediaType == mediaType })
         

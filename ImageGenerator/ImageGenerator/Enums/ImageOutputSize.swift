@@ -1,5 +1,5 @@
 //
-//  OutputSizeType.swift
+//  ImageOutputSize.swift
 //  ImageGenerator
 //
 //  Created by UglyGeorge on 20.05.2026.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum OutputSizeType : Int, CaseIterable, Identifiable, Codable, Equatable {
+enum ImageOutputSize : Int, CaseIterable, Identifiable, Codable, Equatable {
     var id: Int { return self.rawValue }
     
     case custom = 0
