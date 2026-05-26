@@ -6,17 +6,17 @@
 //
 
 import Foundation
+import CoreImage
 import Factory
-import CoreGraphics
 
-class DuplicateImageStrategy : ImageGenerationStrategy {
+final class DuplicateImageStrategy : ImageGenerationStrategy {
     @Injected(\.imageGenerationService) private var imageGenerationService
     
-    let mode = GenerationMode.duplicate
+    let mode = GenerationMode.duplicateImages
     
-    func generateImageAsync(imageData: ImageData) async -> CGImage? {
+    func generateImageAsync(imageData: ImageData) async -> CIImage? {
         let result = await imageGenerationService
-            .duplicateImageAsync(imageData: imageData)
+            .duplicateAsync(imageData: imageData)
         
         return result
     }

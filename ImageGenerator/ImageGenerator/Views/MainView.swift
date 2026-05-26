@@ -11,7 +11,7 @@ import Factory
 struct MainView: ImageGeneratorView {
     @EnvironmentObject var appState: AppState
     
-    @Injected(\.imageService) private var imageService
+    @Injected(\.jobService) private var jobService
     
     @State private var selectedTab: Int = 0
     @State private var outputFolderPath: String = .init()
@@ -24,15 +24,21 @@ struct MainView: ImageGeneratorView {
         TabView(selection: $selectedTab) {
             GenerateView()
                 .tabItem {
-                    Text(Constants.tabGenerate)
+                    Text(Constants.tabGeneratePhotos)
                 }
                 .tag(Constants.tabIdGenerate)
             DuplicateView()
                 .tabItem {
-                    Text(Constants.tabDuplicate)
+                    Text(Constants.tabDuplicatePhotos)
                 }
                 .tag(Constants.tabIdDuplicate)
+            GenerateView()
+                .tabItem {
+                    Text(Constants.tabGenerateVideos)
+                }
+                .tag(Constants.tabIdGenerate)
         }
+        .tabViewStyle(.automatic)
         .disabled(appState.generation.inProgress)
         .alert(isPresented: $nonexistentOutputFolder) {
             Alert(title: Text(Constants.dialogHeaderNonexistentOutputFolder),
@@ -80,7 +86,7 @@ struct MainView: ImageGeneratorView {
             .disabled(appState.generation.inProgress)
             Spacer()
             HStack {
-                Button(action: makeImages) {
+                Button(action: { Task { await makeImagesAsync() }}) {
                     Text(Constants.elGenerate)
                         .frame(height: 50)
                         .frame(maxWidth: /*@START_MENU_TOKEN@*/.infinity/*@END_MENU_TOKEN@*/)
@@ -90,7 +96,7 @@ struct MainView: ImageGeneratorView {
                 }
                 .buttonStyle(.plain)
                 .disabled(!checkGenerationPossibility())
-                .isHidden(hidden: appState.generation.inProgress, remove: true)
+                .isHidden(appState.generation.inProgress)
                 ProgressView(
                     value: appState.generation.progress,
                     total: 100,
@@ -100,7 +106,7 @@ struct MainView: ImageGeneratorView {
                         RoundedRectangle(cornerRadius: 5)
                             .stroke(.blue, lineWidth: 2)
                     )
-                    .isHidden(hidden: !appState.generation.inProgress, remove: true)
+                    .isHidden(!appState.generation.inProgress)
                 Button(action: cancelGeneration, label: {
                     Image(systemName: Constants.iconStop)
                         .resizable()
@@ -111,7 +117,7 @@ struct MainView: ImageGeneratorView {
                 .buttonStyle(.plain)
                 .focusEffectDisabled()
                 .foregroundStyle(overCancelButton ? .red : .blue)
-                .isHidden(hidden: !appState.generation.inProgress, remove: true)
+                .isHidden(!appState.generation.inProgress)
                 .onHover(perform: {over in
                     overCancelButton = over
                 })
@@ -125,7 +131,7 @@ struct MainView: ImageGeneratorView {
     // MARK: Private functions
     
     private func initValues() {
-        self.selectedTab = appState.userData.mode == .generate
+        self.selectedTab = appState.userData.mode == .generateImages
         ? Constants.tabIdGenerate : Constants.tabIdDuplicate
         self.prefix = appState.userData.prefix
         self.postfix = appState.userData.postfix
@@ -136,13 +142,15 @@ struct MainView: ImageGeneratorView {
         var result = false
         
         switch appState.userData.mode {
-            case .generate:
+            case .generateImages:
                 result = checkIfCountValid(count: appState.userData.count)
                     && checkIfWidthValid(width: appState.userData.width)
                     && checkIfHeightValid(height: appState.userData.height)
-            case .duplicate:
+            case .duplicateImages:
                 result = checkIfCountValid(count: appState.userData.count)
                 && !appState.userData.inputImage.isEmpty
+            case .generateVideos:
+                return true
         }
         
         return result
@@ -158,7 +166,7 @@ struct MainView: ImageGeneratorView {
         result = !nonexistentOutputFolder
         
         if(result
-           && appState.userData.mode == .duplicate
+           && appState.userData.mode == .duplicateImages
            && !checkIfFileExists(filePath: appState.userData.inputImage)) {
             appState.generation.wrongInputFile = true
             result = false
@@ -187,18 +195,20 @@ struct MainView: ImageGeneratorView {
         }
     }
     
-    private func makeImages() {
+    private func makeImagesAsync() async {
         resetProgress()
         
-        guard checkFilesAndFoldersExistense() else { return }
+        guard checkFilesAndFoldersExistense()
+        else { return }
         
-        imageService.makeImages()
+        await jobService.runImageGenerationJobAsync()
     }
     
     private func cancelGeneration() {
         appState.generation.inProgress = false
         appState.generation.isCancelRequested = true
-        imageService.generationTask?.cancel()
+        
+        jobService.generationTask?.cancel()
     }
     
     private func resetProgress() {

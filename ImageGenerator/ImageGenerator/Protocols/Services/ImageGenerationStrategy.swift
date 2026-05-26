@@ -7,9 +7,10 @@
 
 import Foundation
 import CoreGraphics
+import CoreImage
 
 protocol ImageGenerationStrategy {
     var mode: GenerationMode { get }
     
-    func generateImageAsync(imageData: ImageData) async -> CGImage?
+    func generateImageAsync(imageData: ImageData) async -> CIImage?
 }

@@ -7,6 +7,7 @@
 
 import Foundation
 
+@MainActor
 class AppState : ObservableObject {
     @Published var userData = UserData() { didSet { setGenerationTotalCount() } }
     @Published var generation = Generation()
@@ -15,6 +16,22 @@ class AppState : ObservableObject {
     
     private func setGenerationTotalCount() {
         generation.totalCount = userData.count
+    }
+    
+    func applyImageGenerationStateUpdate(_ update: ImageGenerationStateUpdate) {
+        var updatedGeneration = generation
+        
+        if let generatedCount = update.generatedCount {
+            updatedGeneration.generatedCount += generatedCount
+        }
+        if let wrongInputFile = update.wrongInputFile {
+            updatedGeneration.wrongInputFile = wrongInputFile
+        }
+        if let isCancelRequested = update.isCancelRequested {
+            updatedGeneration.isCancelRequested = isCancelRequested
+        }
+        
+        generation = updatedGeneration
     }
 }
 
@@ -40,7 +57,7 @@ extension AppState {
 
 extension AppState {
     struct UserData : Settable, Equatable {
-        var mode: GenerationMode = GenerationMode.duplicate {
+        var mode: GenerationMode = GenerationMode.duplicateImages {
             didSet { writeSetting(newValue: mode, key: Constants.settingsKeyMode) }
         }
         
@@ -55,6 +72,12 @@ extension AppState {
         }
         var format: Int = OutputFormatType.jpeg.rawValue {
             didSet { writeSetting(newValue: format, key: Constants.settingsKeyFormat) }
+        }
+        var colorSpace: Int = ColorSpaceType.rgb.rawValue {
+            didSet { writeSetting(newValue: colorSpace, key: Constants.settingsKeyColorSpace) }
+        }
+        var size: Int = OutputSizeType.custom.rawValue {
+            didSet { writeSetting(newValue: size, key: Constants.settingsKeySize) }
         }
         var outputFolder: String = String() {
             didSet { writeSetting(newValue: outputFolder, key: Constants.settingsKeyOutputFolder) }
@@ -76,6 +99,7 @@ extension AppState {
             && lhs.height == rhs.height
             && lhs.count == rhs.count
             && lhs.format == rhs.format
+            && lhs.size == rhs.size
             && lhs.outputFolder == rhs.outputFolder
             && lhs.prefix == rhs.prefix
             && lhs.postfix == rhs.postfix
@@ -85,11 +109,13 @@ extension AppState {
         }
         
         init() {
-            mode = readSetting(key: Constants.settingsKeyMode) ?? GenerationMode.duplicate
+            mode = readSetting(key: Constants.settingsKeyMode) ?? GenerationMode.duplicateImages
             width = readSetting(key: Constants.settingsKeyWidth) ?? Constants.defaultWidth
             height = readSetting(key: Constants.settingsKeyHeight) ?? Constants.defaultHeight
             count = readSetting(key: Constants.settingsKeyCount) ?? Constants.defaultCount
             format = readSetting(key: Constants.settingsKeyFormat) ?? OutputFormatType.jpeg.rawValue
+            colorSpace = readSetting(key: Constants.settingsKeyColorSpace) ?? ColorSpaceType.rgb.rawValue
+            size = readSetting(key: Constants.settingsKeySize) ?? OutputSizeType.custom.rawValue
             outputFolder = readSetting(key: Constants.settingsKeyOutputFolder) ?? String()
             prefix = readSetting(key: Constants.settingsPrefix) ?? String()
             postfix = readSetting(key: Constants.settingsPostfix) ?? String()

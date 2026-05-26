@@ -67,7 +67,7 @@ struct DuplicateView: ImageGeneratorView {
         self.inputImage = appState.userData.inputImage
         self.count = appState.userData.count
         
-        appState.userData.mode = .duplicate
+        appState.userData.mode = .duplicateImages
     }
     
     private func selectImageToDuplicateDialogResultHandler(dialogResult: Result<URL, any Error>) {

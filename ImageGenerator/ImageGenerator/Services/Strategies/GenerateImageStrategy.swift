@@ -6,17 +6,17 @@
 //
 
 import Foundation
+import CoreImage
 import Factory
-import CoreGraphics
 
-class GenerateImageStrategy : ImageGenerationStrategy {
+final class GenerateImageStrategy : ImageGenerationStrategy {
     @Injected(\.imageGenerationService) private var imageGenerationService
     
-    let mode = GenerationMode.generate
+    let mode = GenerationMode.generateImages
     
-    func generateImageAsync(imageData: ImageData) async -> CGImage? {
+    func generateImageAsync(imageData: ImageData) async -> CIImage? {
         let result = await imageGenerationService
-            .generateImageAsync(imageData: imageData)
+            .generateAsync(imageData: imageData)
         
         return result
     }

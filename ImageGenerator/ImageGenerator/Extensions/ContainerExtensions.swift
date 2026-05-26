@@ -11,21 +11,43 @@ import Factory
 // MARK: DI registrations
 
 extension Container {
+    // MARK: App state
+    
+    var appState: Factory<AppState> {
+        Factory(self) {
+            MainActor.assumeIsolated { AppState.shared }
+        }.singleton
+    }
     
     // MARK: Services registrations
     
-    var imageService: Factory<ImageServiceType> {
-        Factory(self) { ImageService() }
+    var jobService: Factory<JobServiceType> {
+        Factory(self) {
+            JobService()
+        }
+        .singleton
     }
     
     var imageGenerationService: Factory<ImageGenerationService> {
         Factory(self) { ImageGenerationService() }
     }
     
+    var imageCreationService: Factory<ImageCreationServiceType> {
+        Factory(self) {
+            ImageCreationService()
+        }.singleton
+    }
+    
+    var computerService: Factory<ComputerServiceType> {
+        Factory(self) {
+            ComputerService()
+        }.singleton
+    }
+    
     // MARK: Image generation strategies registration
     
     static var imageGenerationStrategies: [KeyPath<Container, Factory<ImageGenerationStrategy>>] = [
-        \.generateImageStrategy,
+         \.generateImageStrategy,
          \.duplicateImageStrategy
     ]
     
@@ -34,7 +56,9 @@ extension Container {
     }
     
     var imageGenerationStrategyFactory: Factory<ImageGenerationStrategyFactoryType> {
-        Factory(self) { ImageGenerationStrategyFactory() }
+        Factory(self) {
+            ImageGenerationStrategyFactory()
+        }.singleton
     }
 }
 
@@ -43,10 +67,14 @@ extension SharedContainer {
     // MARK: Image generation strategies registration
     
     var generateImageStrategy: Factory<ImageGenerationStrategy> {
-        Factory(self) { GenerateImageStrategy() }
+        Factory(self) {
+            GenerateImageStrategy()
+        }.singleton
     }
     
     var duplicateImageStrategy: Factory<ImageGenerationStrategy> {
-        Factory(self) { DuplicateImageStrategy() }
+        Factory(self) {
+            DuplicateImageStrategy()
+        }.singleton
     }
 }

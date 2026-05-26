@@ -14,9 +14,87 @@ struct GenerateView: ImageGeneratorView {
     @State private var height: Int = 0
     @State private var count: Int = 0
     @State private var selectedFormat: Int = OutputFormatType.jpeg.rawValue
+    @State private var selectedColorSpace: Int = ColorSpaceType.rgb.rawValue
+    @State private var selectedSize: Int = OutputSizeType.custom.rawValue
     
     var body: some View {
-        VStack {
+        VStack(alignment: .leading) {
+            HStack() {
+                Text("Items count:")
+                    .frame(width: 100, alignment: .leading)
+                TextField(Constants.hintCount, value: $count, formatter: NumberFormatter())
+                    .foregroundColor(checkIfCountValid(count: count) ? .primary : .red)
+                    .onChange(of: count) {
+                        if checkIfCountValid(count: count) {
+                            appState.userData.count = count
+                        }
+                    }
+                    .textFieldStyle(.roundedBorder)
+            }
+            HStack {
+                Text("Format:")
+                    .frame(width: 100, alignment: .leading)
+                Picker(String(), selection: $selectedFormat) {
+                    ForEach(OutputFormatType.allCases, id: \.id) {
+                        Text($0.description).tag($0.rawValue)
+                    }
+                }
+                .frame(width: 200)
+                .pickerStyle(.segmented)
+                .colorMultiply(.blue)
+                .onChange(of: selectedFormat) {
+                    appState.userData.format = selectedFormat
+                }
+            }
+            HStack {
+                Text("Color space:")
+                    .frame(width: 100, alignment: .leading)
+                Picker(String(), selection: $selectedColorSpace) {
+                    ForEach(ColorSpaceType.allCases, id: \.id) {
+                        Text($0.description).tag($0.rawValue)
+                    }
+                }
+                .frame(width: 200)
+                .pickerStyle(.segmented)
+                .colorMultiply(.blue)
+                .onChange(of: selectedColorSpace) {
+                    appState.userData.format = selectedColorSpace
+                }
+            }
+            HStack {
+                Text("Size:")
+                    .frame(width: 100, alignment: .leading)
+                Picker(String(), selection: $selectedSize) {
+                    ForEach(OutputSizeType.allCases, id: \.id) {
+                        Text($0.description).tag($0.rawValue)
+                    }
+                }
+                .pickerStyle(.radioGroup)
+                .colorMultiply(.blue)
+                .onChange(of: selectedFormat) {
+                    appState.userData.format = selectedSize
+                }
+                TextField(Constants.hintWidth, value: $width, formatter: NumberFormatter())
+                    .foregroundColor(checkIfWidthValid(width: width) ? .primary : .red)
+                    .onChange(of: width) {
+                        if checkIfWidthValid(width: width) {
+                            appState.userData.width = width
+                        }
+                    }
+                    .textFieldStyle(.roundedBorder)
+                    .frame(width: 80)
+                TextField(Constants.hintHeight, value: $height, formatter: NumberFormatter())
+                    .foregroundColor(checkIfHeightValid(height: height) ? .primary : .red)
+                    .onChange(of: height) {
+                        if checkIfHeightValid(height: height) {
+                            appState.userData.height = height
+                        }
+                    }
+                    .textFieldStyle(.roundedBorder)
+                    .frame(width: 80)
+            }
+        }
+        /*VStack {
             HStack {
                 TextField(Constants.hintCount, value: $count, formatter: NumberFormatter())
                     .foregroundColor(checkIfCountValid(count: count) ? .primary : .red)
@@ -65,7 +143,8 @@ struct GenerateView: ImageGeneratorView {
                     .frame(width: 80)
                 Text(Constants.elPxAsHeight)
             }
-        }
+        }*/
+        .frame(maxWidth: .infinity)
         .onAppear(perform: initValues)
         .padding()
     }
@@ -78,7 +157,7 @@ struct GenerateView: ImageGeneratorView {
         self.count = appState.userData.count
         self.selectedFormat = appState.userData.format
         
-        appState.userData.mode = .generate
+        appState.userData.mode = .generateImages
     }
 }
 

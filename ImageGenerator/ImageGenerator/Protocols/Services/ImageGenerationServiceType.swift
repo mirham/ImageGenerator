@@ -6,9 +6,9 @@
 //
 
 import Foundation
-import SwiftUICore
+import SwiftUI
 
 protocol ImageGenerationServiceType {
-    func generateImageAsync(imageData: ImageData) async -> CGImage? 
-    func duplicateImageAsync(imageData: ImageData) async -> CGImage? 
+    func generateAsync(imageData: ImageData) async -> CIImage?
+    func duplicateAsync(imageData: ImageData) async -> CIImage?
 }

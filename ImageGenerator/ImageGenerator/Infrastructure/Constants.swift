@@ -10,28 +10,40 @@ import Foundation
 struct Constants {
     // MARK: Default values
     static let appName = "MirHam Image Generator"
+    static let defaultNumberSizePercentage = 0.5
     static let defaultWidth: Int = 500
     static let minWidth: Int = 5
-    static let maxWidth: Int = 16350
+    static let maxWidth: Int = 16384
     static let defaultHeight: Int = 500
     static let minHeight: Int = 5
-    static let maxHeight: Int = 16350
+    static let maxHeight: Int = 16384
     static let defaultCount: Int = 100
     static let minCount: Int = 1
     static let maxCount: Int = 100000
     static let step: Int = 1
-    static let threadChunkGenerate = 50
-    static let threadChunkDuplicate = 200
     static let minPercentage: Double = 0
     static let maxPercentage: Double = 100
     static let defaultScaleFactor: CGFloat = 1.0
     static let maxConcurrencyLimit: Int = 16
+    static let defaultBlendMode = "CIDifferenceBlendMode"
+    static let defaultJpegQualityThreshold: Double = 4000.0
+    static let defaultJpegQuality: Double = 0.85
+    static let lowerJpegQuality: Double = 0.75
+    static let sizedContextKey = "CGContext_%1$@x%2$@"
+    static let contextKey = "CIContext"
+    static let cpuTypeAppleSilicon: UInt32 = 12
+    static let defaultAppleSiliconLimitMultiplier = 3
+    static let bypesPerPixel = 4
+    static let bitsPerComponent = 8
+    static let alignmentTo64 = 64
     
     // MARK: Settings key names
     static let settingsKeyMode = "mode"
     static let settingsKeyWidth = "width"
     static let settingsKeyHeight = "height"
+    static let settingsKeyColorSpace = "colorspace"
     static let settingsKeyFormat = "format"
+    static let settingsKeySize = "size"
     static let settingsKeyCount = "count"
     static let settingsKeyOutputFolder = "folder"
     static let settingsKeyInputImage = "image"
@@ -48,6 +60,11 @@ struct Constants {
     // MARK: Tab tags
     static let tabIdGenerate = 0
     static let tabIdDuplicate = 1
+    
+    // MARK: sysctlbyname
+    static let sysctlbynamePerfCores = "hw.perflevel0.physicalcpu"
+    static let sysctlbynamePhysicalCores = "hw.physicalcpu"
+    static let sysctlbynameCpuType = "hw.cputype"
     
     // MARK: Hints
     static let hintWidth = "\(minWidth)..\(maxWidth)"
@@ -78,8 +95,9 @@ struct Constants {
     static let elWithPostfix = "and postfix"
     
     // MARK: Tab names
-    static let tabGenerate = "Generate"
-    static let tabDuplicate = "Duplicate"
+    static let tabGeneratePhotos = "Generate images"
+    static let tabDuplicatePhotos = "Duplicate images"
+    static let tabGenerateVideos = "Generate videos"
     
     // MARK: Dialogs
     static let dialogHeaderWrongInputFile = "Input image file is not found or wrong one"
