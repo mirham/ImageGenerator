@@ -50,6 +50,12 @@
 		35CDEEEB2FC59AE400BEB092 /* CIColorExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CDEEEA2FC59ADC00BEB092 /* CIColorExtensions.swift */; };
 		35CDEEED2FC5A6FF00BEB092 /* ComputerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CDEEEC2FC5A6F700BEB092 /* ComputerService.swift */; };
 		35CDEEEF2FC5A78200BEB092 /* ComputerServiceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CDEEEE2FC5A77C00BEB092 /* ComputerServiceType.swift */; };
+		35CDEEF22FC5AD9D00BEB092 /* ChunkingStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CDEEF12FC5AD9900BEB092 /* ChunkingStrategy.swift */; };
+		35CDEEF42FC5ADDD00BEB092 /* MediaType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CDEEF32FC5ADD600BEB092 /* MediaType.swift */; };
+		35CDEEF62FC5AE4E00BEB092 /* ImageChunkingStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CDEEF52FC5AE4900BEB092 /* ImageChunkingStrategy.swift */; };
+		35CDEEF82FC5B20F00BEB092 /* VideoChunkingStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CDEEF72FC5B20B00BEB092 /* VideoChunkingStrategy.swift */; };
+		35CDEEFA2FC5B48000BEB092 /* ChunkingStrategyFactoryType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CDEEF92FC5B48000BEB092 /* ChunkingStrategyFactoryType.swift */; };
+		35CDEEFC2FC5B4EB00BEB092 /* ChunkingStrategyFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CDEEFB2FC5B4EB00BEB092 /* ChunkingStrategyFactory.swift */; };
 		35EFF9102C7B1D32002BCA04 /* NoInsetHostingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35EFF90F2C7B1D32002BCA04 /* NoInsetHostingView.swift */; };
 /* End PBXBuildFile section */
 
@@ -98,6 +104,12 @@
 		35CDEEEA2FC59ADC00BEB092 /* CIColorExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CIColorExtensions.swift; sourceTree = "<group>"; };
 		35CDEEEC2FC5A6F700BEB092 /* ComputerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComputerService.swift; sourceTree = "<group>"; };
 		35CDEEEE2FC5A77C00BEB092 /* ComputerServiceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComputerServiceType.swift; sourceTree = "<group>"; };
+		35CDEEF12FC5AD9900BEB092 /* ChunkingStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChunkingStrategy.swift; sourceTree = "<group>"; };
+		35CDEEF32FC5ADD600BEB092 /* MediaType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaType.swift; sourceTree = "<group>"; };
+		35CDEEF52FC5AE4900BEB092 /* ImageChunkingStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageChunkingStrategy.swift; sourceTree = "<group>"; };
+		35CDEEF72FC5B20B00BEB092 /* VideoChunkingStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoChunkingStrategy.swift; sourceTree = "<group>"; };
+		35CDEEF92FC5B48000BEB092 /* ChunkingStrategyFactoryType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChunkingStrategyFactoryType.swift; sourceTree = "<group>"; };
+		35CDEEFB2FC5B4EB00BEB092 /* ChunkingStrategyFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChunkingStrategyFactory.swift; sourceTree = "<group>"; };
 		35EFF90F2C7B1D32002BCA04 /* NoInsetHostingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoInsetHostingView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -208,6 +220,7 @@
 			isa = PBXGroup;
 			children = (
 				355359912C64C8A8004C172A /* Settable.swift */,
+				35CDEEF02FC5AC7F00BEB092 /* Strategies */,
 				35B8A13B2DD657F7000CFA1B /* Services */,
 			);
 			path = Protocols;
@@ -216,6 +229,7 @@
 		355359952C64D970004C172A /* Enums */ = {
 			isa = PBXGroup;
 			children = (
+				35CDEEF32FC5ADD600BEB092 /* MediaType.swift */,
 				356760E22D141AAC00625233 /* GenerationMode.swift */,
 				355359962C64D9A3004C172A /* OutputFormatType.swift */,
 				3562D95E2FBDFEF300A1301B /* ColorSpaceType.swift */,
@@ -277,8 +291,6 @@
 		35B8A13B2DD657F7000CFA1B /* Services */ = {
 			isa = PBXGroup;
 			children = (
-				35B8A1462DD66427000CFA1B /* ImageGenerationStrategyFactoryType.swift */,
-				35B8A1442DD66367000CFA1B /* ImageGenerationStrategy.swift */,
 				35B8A13C2DD65802000CFA1B /* ImageServiceType.swift */,
 				3562D9672FBF197E00A1301B /* ImageCreationServiceType.swift */,
 				35B8A14A2DD665CE000CFA1B /* ImageGenerationServiceType.swift */,
@@ -302,6 +314,20 @@
 				35B8A1422DD662E7000CFA1B /* ImageGenerationStrategyFactory.swift */,
 				35B8A14C2DD667A7000CFA1B /* GenerateImageStrategy.swift */,
 				35B8A14E2DD668FD000CFA1B /* DuplicateImageStrategy.swift */,
+				35CDEEFB2FC5B4EB00BEB092 /* ChunkingStrategyFactory.swift */,
+				35CDEEF52FC5AE4900BEB092 /* ImageChunkingStrategy.swift */,
+				35CDEEF72FC5B20B00BEB092 /* VideoChunkingStrategy.swift */,
+			);
+			path = Strategies;
+			sourceTree = "<group>";
+		};
+		35CDEEF02FC5AC7F00BEB092 /* Strategies */ = {
+			isa = PBXGroup;
+			children = (
+				35B8A1462DD66427000CFA1B /* ImageGenerationStrategyFactoryType.swift */,
+				35B8A1442DD66367000CFA1B /* ImageGenerationStrategy.swift */,
+				35CDEEF92FC5B48000BEB092 /* ChunkingStrategyFactoryType.swift */,
+				35CDEEF12FC5AD9900BEB092 /* ChunkingStrategy.swift */,
 			);
 			path = Strategies;
 			sourceTree = "<group>";
@@ -394,18 +420,23 @@
 				3562D95D2FBDFA7700A1301B /* OutputSizeType.swift in Sources */,
 				3514C5032C66210F004523CC /* AppDelegate.swift in Sources */,
 				35B8A13A2DD657BD000CFA1B /* ContainerExtensions.swift in Sources */,
+				35CDEEFA2FC5B48000BEB092 /* ChunkingStrategyFactoryType.swift in Sources */,
 				356760E32D141AAC00625233 /* GenerationMode.swift in Sources */,
+				35CDEEF42FC5ADDD00BEB092 /* MediaType.swift in Sources */,
+				35CDEEF62FC5AE4E00BEB092 /* ImageChunkingStrategy.swift in Sources */,
 				35CDEEEB2FC59AE400BEB092 /* CIColorExtensions.swift in Sources */,
 				35B8A1432DD662F2000CFA1B /* ImageGenerationStrategyFactory.swift in Sources */,
 				35CDEEED2FC5A6FF00BEB092 /* ComputerService.swift in Sources */,
 				35B8A1492DD66598000CFA1B /* ImageGenerationService.swift in Sources */,
 				355359942C64C91E004C172A /* Constants.swift in Sources */,
+				35CDEEF22FC5AD9D00BEB092 /* ChunkingStrategy.swift in Sources */,
 				3562D9622FBE080C00A1301B /* ImageGenerationStateUpdateBuilder.swift in Sources */,
 				3562D9682FBF198200A1301B /* ImageCreationServiceType.swift in Sources */,
 				35CDEEEF2FC5A78200BEB092 /* ComputerServiceType.swift in Sources */,
 				3562D95F2FBDFEF400A1301B /* ColorSpaceType.swift in Sources */,
 				35EFF9102C7B1D32002BCA04 /* NoInsetHostingView.swift in Sources */,
 				3553599F2C655710004C172A /* IsHiddenModifier.swift in Sources */,
+				35CDEEF82FC5B20F00BEB092 /* VideoChunkingStrategy.swift in Sources */,
 				355359972C64D9A3004C172A /* OutputFormatType.swift in Sources */,
 				3562D9642FBE082400A1301B /* ImageGenerationStateUpdate.swift in Sources */,
 				3562D9662FBF18E800A1301B /* ImageCreationService.swift in Sources */,
@@ -415,6 +446,7 @@
 				35B8A14F2DD668FD000CFA1B /* DuplicateImageStrategy.swift in Sources */,
 				355359922C64C8A8004C172A /* Settable.swift in Sources */,
 				35B8A1472DD6642C000CFA1B /* ImageGenerationStrategyFactoryType.swift in Sources */,
+				35CDEEFC2FC5B4EB00BEB092 /* ChunkingStrategyFactory.swift in Sources */,
 				3553597E2C64C747004C172A /* MainView.swift in Sources */,
 				35B8A1452DD66369000CFA1B /* ImageGenerationStrategy.swift in Sources */,
 				3557DC1B2DCE010B00BE779E /* NSImageExtensions.swift in Sources */,

@@ -11,6 +11,7 @@ import Factory
 class JobService: JobServiceType {
     @Injected(\.appState) private var appState
     @Injected(\.imageGenerationStrategyFactory) private var imageGenerationStrategyFactory
+    @Injected(\.chunkingStrategyFactory) private var chunkingStrategyFactory
     @Injected(\.imageCreationService) private var imageCreationService
     @Injected(\.computerService) private var computerService
     
@@ -36,11 +37,14 @@ class JobService: JobServiceType {
         
         if snapshot.mode == .duplicateImages && loadedImage == nil { return }
         
+        guard let chunkingStrategy = chunkingStrategyFactory.getStrategy(for: .image)
+        else { return }
+        
         let cpuWorkers = computerService.getOptimalWorkerCount()
         let concurrencyLimit = computerService.isAppleSilicon()
             ? cpuWorkers * Constants.defaultAppleSiliconLimitMultiplier
             : cpuWorkers
-        let chunkSize = calculateChunkSize(snapshot: snapshot)
+        let chunkSize = chunkingStrategy.calculateChunkSize(count: snapshot.count)
         let writer = ImageWriterQueue()
         
         for chunkStart in stride(
@@ -48,7 +52,6 @@ class JobService: JobServiceType {
             through: snapshot.count,
             by: chunkSize) {
             if Task.isCancelled { break }
-            
             if await appState.generation.isCancelRequested { break }
             
             let chunkEnd = min(chunkStart + chunkSize - Constants.step, snapshot.count)
@@ -107,15 +110,6 @@ class JobService: JobServiceType {
         } else {
             await writer.finishAsync()
         }
-    }
-    
-    private func calculateChunkSize(snapshot: StateSnapshot) -> Int {
-        let cpuWorkers = computerService.getOptimalWorkerCount()
-        let baseChunk = cpuWorkers * 10
-        let countFactor = max(1.0, log10(Double(snapshot.count)))
-        let scaled = Int(Double(baseChunk) * countFactor)
-
-        return max(10, min(1000, scaled))
     }
     
     private func loadInputImageAsync(snapshot: StateSnapshot) async -> LoadedImage? {

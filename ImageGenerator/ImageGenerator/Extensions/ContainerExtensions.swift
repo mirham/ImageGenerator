@@ -60,6 +60,23 @@ extension Container {
             ImageGenerationStrategyFactory()
         }.singleton
     }
+    
+    // MARK: Chunking strategies registration
+    
+    static var chunkingStrategies: [KeyPath<Container, Factory<ChunkingStrategy>>] = [
+         \.imageChunkingStrategy,
+         \.videoChunkingStrategy
+    ]
+    
+    func chunkingStrategies() -> [ChunkingStrategy] {
+        Container.chunkingStrategies.map { self[keyPath: $0]() }
+    }
+    
+    var chunkingStrategyFactory: Factory<ChunkingStrategyFactoryType> {
+        Factory(self) {
+            ChunkingStrategyFactory()
+        }.singleton
+    }
 }
 
 
@@ -75,6 +92,20 @@ extension SharedContainer {
     var duplicateImageStrategy: Factory<ImageGenerationStrategy> {
         Factory(self) {
             DuplicateImageStrategy()
+        }.singleton
+    }
+    
+    // MARK: Chunking strategies registration
+    
+    var imageChunkingStrategy: Factory<ChunkingStrategy> {
+        Factory(self) {
+            ImageChunkingStrategy()
+        }.singleton
+    }
+    
+    var videoChunkingStrategy: Factory<ChunkingStrategy> {
+        Factory(self) {
+            VideoChunkingStrategy()
         }.singleton
     }
 }
