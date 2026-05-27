@@ -16,6 +16,7 @@ final class BmpWritingStrategy: ImageWritingStrategyType {
                to url: URL,
                colorSpace: CGColorSpace,
                quality: CGFloat,
+               ppi: CGFloat,
                context: CIContext) throws {
         
         let format: CIFormat = colorSpace.model == .monochrome ? .L8 : .RGBA8
@@ -34,7 +35,12 @@ final class BmpWritingStrategy: ImageWritingStrategyType {
             nil)
         else { return }
         
-        CGImageDestinationAddImage(destination, cgImage, nil)
+        let properties: [CFString: Any] = [
+            kCGImagePropertyDPIWidth: ppi,
+            kCGImagePropertyDPIHeight: ppi
+        ]
+        
+        CGImageDestinationAddImage(destination, cgImage, properties as CFDictionary)
         CGImageDestinationFinalize(destination)
     }
 }

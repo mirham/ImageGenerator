@@ -6,6 +6,7 @@
 //
 
 import CoreImage
+import UniformTypeIdentifiers
 
 final class JpegWritingStrategy: ImageWritingStrategyType {
     let colorSpace: ImageColorSpace = .any
@@ -15,6 +16,7 @@ final class JpegWritingStrategy: ImageWritingStrategyType {
                to url: URL,
                colorSpace: CGColorSpace,
                quality: CGFloat,
+               ppi: CGFloat,
                context: CIContext) throws {
         
         let options: [CIImageRepresentationOption: Any] = [
@@ -27,10 +29,31 @@ final class JpegWritingStrategy: ImageWritingStrategyType {
         guard let data = context.jpegRepresentation(
             of: image,
             colorSpace: colorSpace,
-            options: options
-        )
+            options: options)
         else { return }
         
-        try data.write(to: url, options: .atomic)
+        if ppi == Constants.defaultPpi {
+            try data.write(to: url, options: .atomic)
+            return
+        }
+        
+        guard let source = CGImageSourceCreateWithData(data as CFData, nil),
+              let cgImage = CGImageSourceCreateImageAtIndex(source, 0, nil)
+        else { return }
+        
+        guard let destination = CGImageDestinationCreateWithURL(
+            url as CFURL,
+            UTType.jpeg.identifier as CFString,
+            1, nil)
+        else { return }
+        
+        let properties: [CFString: Any] = [
+            kCGImageDestinationLossyCompressionQuality: quality,
+            kCGImagePropertyDPIWidth: ppi,
+            kCGImagePropertyDPIHeight: ppi
+        ]
+        
+        CGImageDestinationAddImage(destination, cgImage, properties as CFDictionary)
+        CGImageDestinationFinalize(destination)
     }
 }

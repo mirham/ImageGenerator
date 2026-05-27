@@ -35,4 +35,38 @@ enum ImageOutputSize : Int, CaseIterable, Identifiable, Codable, Equatable, Desc
             case .sizea4: return "A4 (300PPI): 2480 x 3508 px"
         }
     }
+    
+    var predefinedSize: CGSize? {
+        switch self {
+            case .custom:
+                return nil
+            case .fullhd:
+                return CGSize(width: 1920, height: 1080)
+            case .hd:
+                return CGSize(width: 1280, height: 720)
+            case .square:
+                return CGSize(width: 1080, height: 1080)
+            case .vertical:
+                return CGSize(width: 1080, height: 1920)
+            case .uhd:
+                return CGSize(width: 3840, height: 2160)
+            case .size4x6in:
+                return CGSize(width: 1200, height: 1800)
+            case .size5x7in:
+                return CGSize(width: 1500, height: 2100)
+            case .size8x10in:
+                return CGSize(width: 2400, height: 3000)
+            case .sizea4:
+                return CGSize(width: 2480, height: 3508)
+        }
+    }
+    
+    var ppi: CGFloat {
+        switch self {
+            case .size4x6in, .size5x7in, .size8x10in, .sizea4:
+                return 300
+            default:
+                return Constants.defaultPpi
+        }
+    }
 }

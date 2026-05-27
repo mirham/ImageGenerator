@@ -15,16 +15,16 @@ final class ImageCreationService: ImageCreationServiceType {
     
     func generate(
         number: Int,
-        width: Int,
-        height: Int) -> CIImage? {
+        size: CGSize,
+        ppi: CGFloat = Constants.defaultPpi) -> CIImage? {
         let color = CIColor.random()
         let background = CIImage(color: color)
-            .cropped(to: CGRect(x: 0, y: 0, width: width, height: height))
+            .cropped(to: CGRect(x: 0, y: 0, width: size.width, height: size.height))
         
         let numberImage = renderNumberOverlay(
             number: number,
-            width: width,
-            height: height)
+            size: size,
+            ppi: ppi)
         
         return numberImage.composited(over: background)
     }
@@ -34,8 +34,7 @@ final class ImageCreationService: ImageCreationServiceType {
         let size = CGSize(width: source.width, height: source.height)
         let number = renderNumberOverlay(
             number: number,
-            width: Int(size.width),
-            height: Int(size.height))
+            size: size)
         
         return number.applyingFilter(
             Constants.defaultBlendMode,
@@ -46,12 +45,17 @@ final class ImageCreationService: ImageCreationServiceType {
     
     private func renderNumberOverlay(
         number: Int,
-        width: Int,
-        height: Int) -> CIImage {
+        size: CGSize,
+        ppi: CGFloat = Constants.defaultPpi) -> CIImage {
+        let scale = ppi / Constants.defaultPpi
+        let scaledSize = CGSize(
+            width: size.width * scale,
+            height: size.height * scale)
+        
         let padding: CGFloat = Constants.defaultNumberSizePadding
-        let maxTextWidth = CGFloat(width) * padding
-        let maxTextHeight = CGFloat(height) * padding
-        var fontSize = min(CGFloat(width), CGFloat(height)) * Constants.defaultNumberSizePercentage
+        let maxTextWidth = scaledSize.width * padding
+        let maxTextHeight = scaledSize.height * padding
+        var fontSize = min(scaledSize.width, scaledSize.height) * Constants.defaultNumberSizePercentage
         var line: CTLine
         var ascent: CGFloat = 0
         var descent: CGFloat = 0
@@ -72,22 +76,21 @@ final class ImageCreationService: ImageCreationServiceType {
             textHeight = ascent + descent
             
             if textWidth <= maxTextWidth && textHeight <= maxTextHeight { break }
-            
             fontSize *= 0.9
         } while fontSize > 1
         
         guard let context = CGContext(
             data: nil,
-            width: width,
-            height: height,
+            width: Int(scaledSize.width),
+            height: Int(scaledSize.height),
             bitsPerComponent: Int(Constants.bitsPerComponent),
             bytesPerRow: 0,
             space: colorSpace,
             bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
         ) else { return CIImage.empty() }
         
-        let x = (CGFloat(width) - textWidth) / 2
-        let y = (CGFloat(height) - textHeight) / 2
+        let x = (scaledSize.width - textWidth) / 2
+        let y = (scaledSize.height - textHeight) / 2
         
         context.textPosition = CGPoint(x: x, y: y + descent)
         CTLineDraw(line, context)
@@ -95,7 +98,9 @@ final class ImageCreationService: ImageCreationServiceType {
         guard let cgImage = context.makeImage()
         else { return CIImage.empty() }
         
-        return CIImage(cgImage: cgImage)
+        // Scale back down to original size so compositing works correctly
+        let scaleDown = CGAffineTransform(scaleX: 1/scale, y: 1/scale)
+        return CIImage(cgImage: cgImage).transformed(by: scaleDown)
     }
     
     private func font(size: CGFloat) -> CTFont {

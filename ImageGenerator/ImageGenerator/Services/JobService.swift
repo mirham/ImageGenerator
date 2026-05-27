@@ -134,7 +134,8 @@ class JobService: JobServiceType {
                 image,
                 to: url,
                 format: snapshot.outputFormat,
-                colorSpace: snapshot.colorSpace
+                colorSpace: snapshot.colorSpace,
+                ppi: snapshot.ppi
             )
             
             await updateStatusAsync {
@@ -197,15 +198,14 @@ class JobService: JobServiceType {
         let postfix: String
         let width: Int
         let height: Int
+        let ppi: CGFloat
         
         @MainActor
         init(_ appState: AppState) {
             self.count = appState.userData.count
             self.mode = appState.userData.mode
-            let colorSpaceRawFormat = appState.userData.colorSpace
-            self.colorSpace = ImageColorSpace(rawValue: colorSpaceRawFormat) ?? .rgb
-            let outputRawFormat = appState.userData.format
-            self.outputFormat = ImageOutputFormat(rawValue: outputRawFormat) ?? .jpeg
+            self.colorSpace = appState.userData.colorSpace
+            self.outputFormat = appState.userData.format
             self.inputImage = appState.userData.inputImage
             self.outputFolder = appState.userData.outputFolder
             self.prefix = appState.userData.prefix.replacingOccurrences(
@@ -216,6 +216,7 @@ class JobService: JobServiceType {
                 with: String())
             self.width = appState.userData.width
             self.height = appState.userData.height
+            self.ppi = appState.userData.size.ppi
         }
     }
     

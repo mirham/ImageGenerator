@@ -9,6 +9,6 @@ import CoreGraphics
 import CoreImage
 
 protocol ImageCreationServiceType {
-    func generate(number: Int, width: Int, height: Int) -> CIImage?
+    func generate(number: Int, size: CGSize, ppi: CGFloat) -> CIImage?
     func duplicate(number: Int, source: CGImage) -> CIImage
 }

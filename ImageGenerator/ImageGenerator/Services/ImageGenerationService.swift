@@ -23,8 +23,9 @@ class ImageGenerationService : ImageGenerationServiceType {
         
         return imageCreationService.generate(
             number: imageData.imageNumber,
-            width:  snapshot.width,
-            height: snapshot.height
+            size: snapshot.predefinedSize ?? CGSize(
+                width: snapshot.width, height: snapshot.height),
+            ppi: snapshot.ppi
         )
     }
     
@@ -43,11 +44,15 @@ class ImageGenerationService : ImageGenerationServiceType {
     private struct StateSnapshot {
         let width: Int
         let height: Int
+        let predefinedSize: CGSize?
+        let ppi: CGFloat
         
         @MainActor
         init(_ appState: AppState) {
             self.width = appState.userData.width
             self.height = appState.userData.height
+            self.predefinedSize = appState.userData.size.predefinedSize
+            self.ppi = appState.userData.size.ppi
         }
     }
 }

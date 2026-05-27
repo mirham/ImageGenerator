@@ -5,11 +5,11 @@
 //  Created by UglyGeorge on 27.05.2026.
 //
 
-// EnumPicker.swift
 import SwiftUI
 
-struct EnumPicker<T: RawRepresentable & CaseIterable & DescriptableEnum>: View where T.RawValue == Int {
-    @Binding var selection: T.RawValue
+// MARK: - Generic Enum Picker
+struct EnumPicker<T: RawRepresentable & CaseIterable & DescriptableEnum & Hashable>: View where T.RawValue == Int, T.AllCases: RandomAccessCollection {
+    @Binding var selection: T
     let enumType: T.Type
     let style: PickerStyleType
     let onSelect: (T) -> Void
@@ -17,7 +17,7 @@ struct EnumPicker<T: RawRepresentable & CaseIterable & DescriptableEnum>: View w
     let showZeroValueContent: Bool
     
     init(
-        selection: Binding<T.RawValue>,
+        selection: Binding<T>,
         enumType: T.Type,
         style: PickerStyleType,
         onSelect: @escaping (T) -> Void,
@@ -40,10 +40,10 @@ struct EnumPicker<T: RawRepresentable & CaseIterable & DescriptableEnum>: View w
     @ViewBuilder
     private var pickerView: some View {
         let picker = Picker(String(), selection: $selection) {
-            ForEach(Array(enumType.allCases.filter({ $0.rawValue > -1 })), id: \.rawValue) { item in
+            ForEach(Array(enumType.allCases.filter({ $0.rawValue > -1 })), id: \.self) { item in
                 HStack {
                     Text(item.description)
-                        .tag(item.rawValue)
+                        .tag(item)
                         .padding(item.rawValue == 0 ? 4 : 0)
                     
                     if item.rawValue == 0, let customContent = zeroValueContent, showZeroValueContent {
@@ -53,9 +53,7 @@ struct EnumPicker<T: RawRepresentable & CaseIterable & DescriptableEnum>: View w
             }
         }
             .onChange(of: selection) { _, newValue in
-                if let enumValue = T(rawValue: newValue) {
-                    onSelect(enumValue)
-                }
+                onSelect(newValue)
             }
         
         Group {
@@ -82,7 +80,7 @@ enum PickerStyleType {
 extension EnumPicker {
     // Without custom content
     init(
-        selection: Binding<T.RawValue>,
+        selection: Binding<T>,
         enumType: T.Type,
         style: PickerStyleType,
         onSelect: @escaping (T) -> Void
@@ -99,7 +97,7 @@ extension EnumPicker {
     
     // With custom content that shows based on condition
     init(
-        selection: Binding<T.RawValue>,
+        selection: Binding<T>,
         enumType: T.Type,
         style: PickerStyleType,
         onSelect: @escaping (T) -> Void,

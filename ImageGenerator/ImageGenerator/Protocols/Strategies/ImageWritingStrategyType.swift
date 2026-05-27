@@ -15,5 +15,6 @@ protocol ImageWritingStrategyType {
                to url: URL,
                colorSpace: CGColorSpace,
                quality: CGFloat,
+               ppi: CGFloat,
                context: CIContext) throws
 }

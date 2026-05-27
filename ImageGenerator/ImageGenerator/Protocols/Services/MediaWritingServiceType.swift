@@ -12,5 +12,6 @@ protocol MediaWritingServiceType {
         _ ciImage: CIImage,
         to url: URL,
         format: ImageOutputFormat,
-        colorSpace: ImageColorSpace)
+        colorSpace: ImageColorSpace,
+        ppi: CGFloat)
 }

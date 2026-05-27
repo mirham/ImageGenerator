@@ -17,6 +17,7 @@ final class CmykWritingStrategy: ImageWritingStrategyType {
                to url: URL,
                colorSpace: CGColorSpace,
                quality: CGFloat,
+               ppi: CGFloat,
                context: CIContext) throws {
         
         guard let cgImage = context.createCGImage(image, from: image.extent)
@@ -88,7 +89,6 @@ final class CmykWritingStrategy: ImageWritingStrategyType {
             nil)
         else { return }
         
-        // Step 8: Write TIFF with CMYK CGImage
         guard let destination = CGImageDestinationCreateWithURL(
             url as CFURL,
             UTType.tiff.identifier as CFString,
@@ -97,7 +97,9 @@ final class CmykWritingStrategy: ImageWritingStrategyType {
         else { return }
         
         let properties: [CFString: Any] = [
-            kCGImageDestinationLossyCompressionQuality: quality
+            kCGImageDestinationLossyCompressionQuality: quality,
+            kCGImagePropertyDPIWidth: ppi,
+            kCGImagePropertyDPIHeight: ppi
         ]
         
         CGImageDestinationAddImage(

@@ -15,7 +15,8 @@ final class MediaWritingService : MediaWritingServiceType {
         _ ciImage: CIImage,
         to url: URL,
         format: ImageOutputFormat,
-        colorSpace: ImageColorSpace = .rgb) {
+        colorSpace: ImageColorSpace = .rgb,
+        ppi: CGFloat) {
         let quality = getJpegQuality(for: ciImage.extent.size)
         let targetColorSpace = colorSpace.cgColorSpace
         let strategy = imageWritingStrategyFactory.getStrategy(
@@ -26,6 +27,7 @@ final class MediaWritingService : MediaWritingServiceType {
             ciImage, to: url,
             colorSpace: targetColorSpace,
             quality: quality,
+            ppi: ppi,
             context: getCiContext())
     }
     

@@ -16,6 +16,7 @@ final class TiffWritingStrategy: ImageWritingStrategyType {
                to url: URL,
                colorSpace: CGColorSpace,
                quality: CGFloat,
+               ppi: CGFloat,
                context: CIContext) throws {
         
         let format: CIFormat = colorSpace.model == .monochrome ? .L8 : .RGBA8
@@ -35,7 +36,9 @@ final class TiffWritingStrategy: ImageWritingStrategyType {
         else { return }
         
         let properties: [CFString: Any] = [
-            kCGImageDestinationLossyCompressionQuality: quality
+            kCGImageDestinationLossyCompressionQuality: quality,
+            kCGImagePropertyDPIWidth: ppi,
+            kCGImagePropertyDPIHeight: ppi
         ]
         
         CGImageDestinationAddImage(

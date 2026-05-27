@@ -13,9 +13,9 @@ struct GenerateImagesOptionsView: ImageGeneratorView {
     @State private var width: Int = 0
     @State private var height: Int = 0
     @State private var count: Int = 0
-    @State private var selectedFormat: Int = ImageOutputFormat.jpeg.rawValue
-    @State private var selectedColorSpace: Int = ImageColorSpace.rgb.rawValue
-    @State private var selectedSize: Int = ImageOutputSize.custom.rawValue
+    @State private var selectedFormat: ImageOutputFormat = .jpeg
+    @State private var selectedColorSpace: ImageColorSpace = .rgb
+    @State private var selectedSize: ImageOutputSize = .custom
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -50,7 +50,7 @@ struct GenerateImagesOptionsView: ImageGeneratorView {
                 enumType: ImageOutputFormat.self,
                 style: .segmented
             ) { format in
-                appState.userData.format = format.rawValue
+                appState.userData.format = format
             }
         }
     }
@@ -63,7 +63,7 @@ struct GenerateImagesOptionsView: ImageGeneratorView {
                 enumType: ImageColorSpace.self,
                 style: .segmented
             ) { colorSpace in
-                appState.userData.colorSpace = colorSpace.rawValue
+                appState.userData.colorSpace = colorSpace
             }
         }
     }
@@ -76,7 +76,7 @@ struct GenerateImagesOptionsView: ImageGeneratorView {
                 enumType: ImageOutputSize.self,
                 style: .radioGroup,
                 onSelect: { size in
-                    appState.userData.size = size.rawValue
+                    appState.userData.size = size
                 },
                 zeroValueContent: {
                     AnyView (
@@ -99,7 +99,7 @@ struct GenerateImagesOptionsView: ImageGeneratorView {
                         }
                     )
                 },
-                showZeroValueContent: selectedSize == ImageOutputSize.custom.rawValue
+                showZeroValueContent: selectedSize == ImageOutputSize.custom
             )
         }
     }
@@ -112,6 +112,7 @@ struct GenerateImagesOptionsView: ImageGeneratorView {
         self.count = appState.userData.count
         self.selectedFormat = appState.userData.format
         self.selectedColorSpace = appState.userData.colorSpace
+        self.selectedSize = appState.userData.size
         
         appState.userData.mode = .generateImages
     }

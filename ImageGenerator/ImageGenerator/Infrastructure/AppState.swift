@@ -67,13 +67,13 @@ extension AppState {
         var count: Int = Constants.defaultCount {
             didSet { writeSetting(newValue: count, key: Constants.settingsKeyCount) }
         }
-        var format: Int = ImageOutputFormat.jpeg.rawValue {
+        var format: ImageOutputFormat = .jpeg {
             didSet { writeSetting(newValue: format, key: Constants.settingsKeyFormat) }
         }
-        var colorSpace: Int = ImageColorSpace.rgb.rawValue {
+        var colorSpace: ImageColorSpace = .rgb {
             didSet { writeSetting(newValue: colorSpace, key: Constants.settingsKeyColorSpace) }
         }
-        var size: Int = ImageOutputSize.custom.rawValue {
+        var size: ImageOutputSize = .custom {
             didSet { writeSetting(newValue: size, key: Constants.settingsKeySize) }
         }
         var outputFolder: String = String() {
@@ -110,9 +110,9 @@ extension AppState {
             width = readSetting(key: Constants.settingsKeyWidth) ?? Constants.defaultWidth
             height = readSetting(key: Constants.settingsKeyHeight) ?? Constants.defaultHeight
             count = readSetting(key: Constants.settingsKeyCount) ?? Constants.defaultCount
-            format = readSetting(key: Constants.settingsKeyFormat) ?? ImageOutputFormat.jpeg.rawValue
-            colorSpace = readSetting(key: Constants.settingsKeyColorSpace) ?? ImageColorSpace.rgb.rawValue
-            size = readSetting(key: Constants.settingsKeySize) ?? ImageOutputSize.custom.rawValue
+            format = readSetting(key: Constants.settingsKeyFormat) ?? .jpeg
+            colorSpace = readSetting(key: Constants.settingsKeyColorSpace) ?? .rgb
+            size = readSetting(key: Constants.settingsKeySize) ?? .custom
             outputFolder = readSetting(key: Constants.settingsKeyOutputFolder) ?? String()
             prefix = readSetting(key: Constants.settingsPrefix) ?? String()
             postfix = readSetting(key: Constants.settingsPostfix) ?? String()
