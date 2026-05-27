@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum ImageOutputSize : Int, CaseIterable, Identifiable, Codable, Equatable {
+enum ImageOutputSize : Int, CaseIterable, Identifiable, Codable, Equatable, DescriptableEnum {
     var id: Int { return self.rawValue }
     
     case custom = 0

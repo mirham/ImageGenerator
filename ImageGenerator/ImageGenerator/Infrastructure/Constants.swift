@@ -27,7 +27,7 @@ struct Constants {
     static let maxHeight: Int = 16384
     static let defaultCount: Int = 100
     static let minCount: Int = 1
-    static let maxCount: Int = 100000
+    static let maxCount: Int = 1000000
     static let step: Int = 1
     static let minPercentage: Double = 0
     static let maxPercentage: Double = 100
@@ -68,6 +68,7 @@ struct Constants {
     // MARK: Tab tags
     static let tabIdGenerate = 0
     static let tabIdDuplicate = 1
+    static let tabIdGenerateVideos = 2
     
     // MARK: sysctlbyname
     static let sysctlbynamePerfCores = "hw.perflevel0.physicalcpu"
@@ -84,34 +85,32 @@ struct Constants {
     static let hintPostfix = "Add a postfix..."
     
     // MARK: Element names
-    static let elLetsGenerate = "Let's generate"
-    static let elImage = "image"
-    static let elImages = "images"
-    static let elCopies = "copies of image"
-    static let elInAmount = "in the amount of"
-    static let elWith = "with"
-    static let elPxAsWidth = "pixels as width"
-    static let elAnd = "and"
-    static let elOk = "OK"
-    static let elPxAsHeight = "pixels as height"
-    static let elIntoFolder = "into the folder"
-    static let elChoose = "Choose..."
-    static let elGenerate = "Go"
-    static let elProgressbarText = "Generating %1$@"
-    static let elInfo = "Info"
-    static let elWithPrefix = "with prefix"
-    static let elWithPostfix = "and postfix"
+    static let itemsCount = "Items count:"
+    static let format = "Format:"
+    static let duplicatingImage = "Duplicating image:"
+    static let size = "Size:"
+    static let colorSpace = "Color space:"
+    static let ok = "OK"
+    static let outputFolder = "Output folder:"
+    static let choose = "Choose..."
+    static let generate = "Go"
+    static let progressbarText = "Generating %1$@"
+    static let info = "Info"
+    static let prefix = "Prefix:"
+    static let postfix = "Postfix:"
+    static let xmark = "×"
     
     // MARK: Tab names
-    static let tabGeneratePhotos = "Generate images"
-    static let tabDuplicatePhotos = "Duplicate images"
+    static let tabGenerateImages = "Generate images"
+    static let tabDuplicateImages = "Duplicate image"
     static let tabGenerateVideos = "Generate videos"
     
     // MARK: Dialogs
-    static let dialogHeaderWrongInputFile = "Input image file is not found or wrong one"
-    static let dialogBodyWrongInputFile = "Select a valid input image file."
-    static let dialogHeaderNonexistentOutputFolder = "Output folder not found"
-    static let dialogBodyNonexistentOutputFolder = "Select a valid output folder."
+    static let dialogHeaderError = "Error"
+    static let dialogHeaderMissingInputFile = "Input image file is not found or wrong one"
+    static let dialogBodyMissingInputFile = "Select a valid input image file."
+    static let dialogHeaderMissingOutputFolder = "Output folder not found"
+    static let dialogBodyMissingOutputFolder = "Select a valid output folder."
     
     // MARK: Basic
     static let slash = "/"

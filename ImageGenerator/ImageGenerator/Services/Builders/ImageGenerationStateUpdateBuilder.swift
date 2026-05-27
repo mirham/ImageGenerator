@@ -15,12 +15,6 @@ final class ImageGenerationStateUpdateBuilder {
     }
     
     @discardableResult
-    func withWrongInputFile(_ wrongInputFile: Bool) -> Self {
-        update.wrongInputFile = wrongInputFile
-        return self
-    }
-    
-    @discardableResult
     func withIsCancelRequested(_ isCancelRequested: Bool) -> Self {
         update.isCancelRequested = isCancelRequested
         return self

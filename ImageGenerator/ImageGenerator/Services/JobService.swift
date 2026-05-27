@@ -149,13 +149,7 @@ class JobService: JobServiceType {
         let nsImage = NSImage(byReferencingFile: snapshot.inputImage)
         
         guard let nsImage
-        else {
-            await updateStatusAsync {
-                $0.withWrongInputFile(true)
-            }
-            
-            return nil
-        }
+        else { return nil }
         
         guard let cgImage = nsImage.cgImage(
             forProposedRect: nil,

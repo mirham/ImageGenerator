@@ -8,6 +8,5 @@
 
 struct ImageGenerationStateUpdate {
     var generatedCount: Int?
-    var wrongInputFile: Bool?
     var isCancelRequested: Bool?
 }

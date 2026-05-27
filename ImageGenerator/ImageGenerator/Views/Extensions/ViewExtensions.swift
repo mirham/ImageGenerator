@@ -25,4 +25,14 @@ extension View {
         }
     }
     
+    @ViewBuilder
+    func safeToolbarGlassEffect() -> some View {
+        if #available(macOS 26.0, *) {
+            self
+                .toolbarBackground(.ultraThinMaterial, for: .windowToolbar)
+                .toolbarBackgroundVisibility(.visible, for: .windowToolbar)
+        } else {
+            self
+        }
+    }
 }

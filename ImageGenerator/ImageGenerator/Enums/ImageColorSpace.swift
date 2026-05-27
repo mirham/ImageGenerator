@@ -8,7 +8,7 @@
 import Foundation
 import CoreGraphics
 
-enum ImageColorSpace : Int, CaseIterable, Identifiable, Codable, Equatable {
+enum ImageColorSpace : Int, CaseIterable, Identifiable, Codable, Equatable, DescriptableEnum {
     var id: Int { return self.rawValue }
     
     case any = -1

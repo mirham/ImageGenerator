@@ -24,9 +24,7 @@ class AppState : ObservableObject {
         if let generatedCount = update.generatedCount {
             updatedGeneration.generatedCount += generatedCount
         }
-        if let wrongInputFile = update.wrongInputFile {
-            updatedGeneration.wrongInputFile = wrongInputFile
-        }
+        
         if let isCancelRequested = update.isCancelRequested {
             updatedGeneration.isCancelRequested = isCancelRequested
         }
@@ -49,7 +47,6 @@ extension AppState {
                 inProgress = false
             }
         } }
-        var wrongInputFile: Bool = false
         var progress: Double = 0.0
         var totalCount: Int = 0
     }

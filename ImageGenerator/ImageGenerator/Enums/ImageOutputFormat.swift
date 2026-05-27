@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum ImageOutputFormat : Int, CaseIterable, Identifiable, Codable, Equatable {
+enum ImageOutputFormat : Int, CaseIterable, Identifiable, Codable, Equatable, DescriptableEnum {
     var id: Int { return self.rawValue }
     
     case notSupported = -1

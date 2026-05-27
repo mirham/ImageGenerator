@@ -15,12 +15,21 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             let styleMask: NSWindow.StyleMask = [.closable, .miniaturizable, .titled]
             let window = NSWindow()
             window.styleMask = styleMask
-            window.title = Constants.elInfo
+            window.title = Constants.info
             window.contentView = NSHostingView(rootView: InfoView())
             window.center()
             infoBoxWindowController = NSWindowController(window: window)
         }
         
         infoBoxWindowController?.showWindow(infoBoxWindowController?.window)
+    }
+    
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        guard let window = NSApplication.shared.keyWindow
+        else { return }
+        
+        window.styleMask.remove(.resizable)
+        window.standardWindowButton(.zoomButton)?.isHidden = true
+        window.collectionBehavior = [.managed]
     }
 }

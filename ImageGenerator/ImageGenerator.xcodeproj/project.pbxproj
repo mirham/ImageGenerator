@@ -9,9 +9,6 @@
 /* Begin PBXBuildFile section */
 		3500FA872DD52EFA00B7A0A7 /* ImageGeneratorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3500FA852DD52EFA00B7A0A7 /* ImageGeneratorView.swift */; };
 		3500FA892DD5309200B7A0A7 /* CGImageExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3500FA882DD5308900B7A0A7 /* CGImageExtensions.swift */; };
-		3500FA8C2DD532F900B7A0A7 /* ColorfulNumberView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3500FA8B2DD532F600B7A0A7 /* ColorfulNumberView.swift */; };
-		3500FA8E2DD5335E00B7A0A7 /* GeneratedImageRawView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3500FA8D2DD5335C00B7A0A7 /* GeneratedImageRawView.swift */; };
-		3500FA902DD5339E00B7A0A7 /* DuplicatedImageRawView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3500FA8F2DD5339C00B7A0A7 /* DuplicatedImageRawView.swift */; };
 		3514C5012C661B3E004523CC /* InfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3514C5002C661B3E004523CC /* InfoView.swift */; };
 		3514C5032C66210F004523CC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3514C5022C66210F004523CC /* AppDelegate.swift */; };
 		3553597C2C64C747004C172A /* ImageGeneratorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3553597B2C64C747004C172A /* ImageGeneratorApp.swift */; };
@@ -32,8 +29,8 @@
 		3562D9642FBE082400A1301B /* ImageGenerationStateUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3562D9632FBE082100A1301B /* ImageGenerationStateUpdate.swift */; };
 		3562D9662FBF18E800A1301B /* ImageCreationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3562D9652FBF18D800A1301B /* ImageCreationService.swift */; };
 		3562D9682FBF198200A1301B /* ImageCreationServiceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3562D9672FBF197E00A1301B /* ImageCreationServiceType.swift */; };
-		356760DB2D1404E500625233 /* GenerateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 356760DA2D1404E500625233 /* GenerateView.swift */; };
-		356760DD2D1406F500625233 /* DuplicateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 356760DC2D1406F500625233 /* DuplicateView.swift */; };
+		356760DB2D1404E500625233 /* GenerateImagesOptionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 356760DA2D1404E500625233 /* GenerateImagesOptionsView.swift */; };
+		356760DD2D1406F500625233 /* DuplicateImageOptionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 356760DC2D1406F500625233 /* DuplicateImageOptionsView.swift */; };
 		356760E32D141AAC00625233 /* GenerationMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 356760E22D141AAC00625233 /* GenerationMode.swift */; };
 		3575CC9C2DD73AD900102D4E /* Factory in Frameworks */ = {isa = PBXBuildFile; productRef = 3575CC9B2DD73AD900102D4E /* Factory */; };
 		35B8A13A2DD657BD000CFA1B /* ContainerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B8A1392DD657B5000CFA1B /* ContainerExtensions.swift */; };
@@ -65,15 +62,18 @@
 		35CDEF0E2FC5DF6400BEB092 /* MediaWritingServiceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CDEF0D2FC5DF5D00BEB092 /* MediaWritingServiceType.swift */; };
 		35CDEF112FC5EFA900BEB092 /* CmykWritingStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CDEF102FC5EFA100BEB092 /* CmykWritingStrategy.swift */; };
 		35CDEF132FC5F7A100BEB092 /* TiffWritingStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CDEF122FC5F79D00BEB092 /* TiffWritingStrategy.swift */; };
-		35EFF9102C7B1D32002BCA04 /* NoInsetHostingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35EFF90F2C7B1D32002BCA04 /* NoInsetHostingView.swift */; };
+		35DD84122FC622B7009E6D1F /* DescriptableEnum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35DD84112FC622B3009E6D1F /* DescriptableEnum.swift */; };
+		35DD84162FC71E26009E6D1F /* NamingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35DD84152FC71E1A009E6D1F /* NamingView.swift */; };
+		35DD84182FC71E3B009E6D1F /* ActionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35DD84172FC71E31009E6D1F /* ActionsView.swift */; };
+		35DD841A2FC721FD009E6D1F /* OutputFolderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35DD84192FC721F4009E6D1F /* OutputFolderView.swift */; };
+		35DD841D2FC72D63009E6D1F /* LabeledRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35DD841C2FC72D5B009E6D1F /* LabeledRow.swift */; };
+		35DD841F2FC72FB2009E6D1F /* EnumPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35DD841E2FC72FAE009E6D1F /* EnumPicker.swift */; };
+		35DD84212FC7334D009E6D1F /* NumericTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35DD84202FC73349009E6D1F /* NumericTextField.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		3500FA852DD52EFA00B7A0A7 /* ImageGeneratorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageGeneratorView.swift; sourceTree = "<group>"; };
 		3500FA882DD5308900B7A0A7 /* CGImageExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGImageExtensions.swift; sourceTree = "<group>"; };
-		3500FA8B2DD532F600B7A0A7 /* ColorfulNumberView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorfulNumberView.swift; sourceTree = "<group>"; };
-		3500FA8D2DD5335C00B7A0A7 /* GeneratedImageRawView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneratedImageRawView.swift; sourceTree = "<group>"; };
-		3500FA8F2DD5339C00B7A0A7 /* DuplicatedImageRawView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DuplicatedImageRawView.swift; sourceTree = "<group>"; };
 		3514C5002C661B3E004523CC /* InfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoView.swift; sourceTree = "<group>"; };
 		3514C5022C66210F004523CC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		355359782C64C747004C172A /* ImageGenerator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ImageGenerator.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -96,8 +96,8 @@
 		3562D9632FBE082100A1301B /* ImageGenerationStateUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageGenerationStateUpdate.swift; sourceTree = "<group>"; };
 		3562D9652FBF18D800A1301B /* ImageCreationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCreationService.swift; sourceTree = "<group>"; };
 		3562D9672FBF197E00A1301B /* ImageCreationServiceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCreationServiceType.swift; sourceTree = "<group>"; };
-		356760DA2D1404E500625233 /* GenerateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerateView.swift; sourceTree = "<group>"; };
-		356760DC2D1406F500625233 /* DuplicateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DuplicateView.swift; sourceTree = "<group>"; };
+		356760DA2D1404E500625233 /* GenerateImagesOptionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerateImagesOptionsView.swift; sourceTree = "<group>"; };
+		356760DC2D1406F500625233 /* DuplicateImageOptionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DuplicateImageOptionsView.swift; sourceTree = "<group>"; };
 		356760E22D141AAC00625233 /* GenerationMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerationMode.swift; sourceTree = "<group>"; };
 		35B8A1392DD657B5000CFA1B /* ContainerExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContainerExtensions.swift; sourceTree = "<group>"; };
 		35B8A13C2DD65802000CFA1B /* ImageServiceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageServiceType.swift; sourceTree = "<group>"; };
@@ -128,7 +128,13 @@
 		35CDEF0D2FC5DF5D00BEB092 /* MediaWritingServiceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaWritingServiceType.swift; sourceTree = "<group>"; };
 		35CDEF102FC5EFA100BEB092 /* CmykWritingStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CmykWritingStrategy.swift; sourceTree = "<group>"; };
 		35CDEF122FC5F79D00BEB092 /* TiffWritingStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TiffWritingStrategy.swift; sourceTree = "<group>"; };
-		35EFF90F2C7B1D32002BCA04 /* NoInsetHostingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoInsetHostingView.swift; sourceTree = "<group>"; };
+		35DD84112FC622B3009E6D1F /* DescriptableEnum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DescriptableEnum.swift; sourceTree = "<group>"; };
+		35DD84152FC71E1A009E6D1F /* NamingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NamingView.swift; sourceTree = "<group>"; };
+		35DD84172FC71E31009E6D1F /* ActionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionsView.swift; sourceTree = "<group>"; };
+		35DD84192FC721F4009E6D1F /* OutputFolderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutputFolderView.swift; sourceTree = "<group>"; };
+		35DD841C2FC72D5B009E6D1F /* LabeledRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LabeledRow.swift; sourceTree = "<group>"; };
+		35DD841E2FC72FAE009E6D1F /* EnumPicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnumPicker.swift; sourceTree = "<group>"; };
+		35DD84202FC73349009E6D1F /* NumericTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumericTextField.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -146,7 +152,6 @@
 		3500FA862DD52EFA00B7A0A7 /* Protocols */ = {
 			isa = PBXGroup;
 			children = (
-				3500FA8B2DD532F600B7A0A7 /* ColorfulNumberView.swift */,
 				3500FA852DD52EFA00B7A0A7 /* ImageGeneratorView.swift */,
 			);
 			path = Protocols;
@@ -223,12 +228,15 @@
 			isa = PBXGroup;
 			children = (
 				3500FA862DD52EFA00B7A0A7 /* Protocols */,
-				35EFF90E2C7B1D19002BCA04 /* Controls */,
 				3553599D2C6556FB004C172A /* Modifiers */,
 				3553599A2C6556B6004C172A /* Extensions */,
+				35DD841B2FC72D3C009E6D1F /* Controls */,
 				3553597D2C64C747004C172A /* MainView.swift */,
-				356760DA2D1404E500625233 /* GenerateView.swift */,
-				356760DC2D1406F500625233 /* DuplicateView.swift */,
+				356760DA2D1404E500625233 /* GenerateImagesOptionsView.swift */,
+				356760DC2D1406F500625233 /* DuplicateImageOptionsView.swift */,
+				35DD84152FC71E1A009E6D1F /* NamingView.swift */,
+				35DD84192FC721F4009E6D1F /* OutputFolderView.swift */,
+				35DD84172FC71E31009E6D1F /* ActionsView.swift */,
 				3514C5002C661B3E004523CC /* InfoView.swift */,
 			);
 			path = Views;
@@ -238,6 +246,7 @@
 			isa = PBXGroup;
 			children = (
 				355359912C64C8A8004C172A /* Settable.swift */,
+				35DD84112FC622B3009E6D1F /* DescriptableEnum.swift */,
 				35CDEEF02FC5AC7F00BEB092 /* Strategies */,
 				35B8A13B2DD657F7000CFA1B /* Services */,
 			);
@@ -351,12 +360,12 @@
 			path = Strategies;
 			sourceTree = "<group>";
 		};
-		35EFF90E2C7B1D19002BCA04 /* Controls */ = {
+		35DD841B2FC72D3C009E6D1F /* Controls */ = {
 			isa = PBXGroup;
 			children = (
-				35EFF90F2C7B1D32002BCA04 /* NoInsetHostingView.swift */,
-				3500FA8D2DD5335C00B7A0A7 /* GeneratedImageRawView.swift */,
-				3500FA8F2DD5339C00B7A0A7 /* DuplicatedImageRawView.swift */,
+				35DD84202FC73349009E6D1F /* NumericTextField.swift */,
+				35DD841C2FC72D5B009E6D1F /* LabeledRow.swift */,
+				35DD841E2FC72FAE009E6D1F /* EnumPicker.swift */,
 			);
 			path = Controls;
 			sourceTree = "<group>";
@@ -435,6 +444,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				35CDEF062FC5CD6000BEB092 /* ImageWritingStrategyFactoryType.swift in Sources */,
+				35DD841A2FC721FD009E6D1F /* OutputFolderView.swift in Sources */,
 				35B8A13D2DD65807000CFA1B /* ImageServiceType.swift in Sources */,
 				3562D95D2FBDFA7700A1301B /* ImageOutputSize.swift in Sources */,
 				35CDEF132FC5F7A100BEB092 /* TiffWritingStrategy.swift in Sources */,
@@ -443,7 +453,10 @@
 				35CDEEFA2FC5B48000BEB092 /* ChunkingStrategyFactoryType.swift in Sources */,
 				356760E32D141AAC00625233 /* GenerationMode.swift in Sources */,
 				35CDEEF42FC5ADDD00BEB092 /* MediaType.swift in Sources */,
+				35DD841D2FC72D63009E6D1F /* LabeledRow.swift in Sources */,
 				35CDEEF62FC5AE4E00BEB092 /* ImageChunkingStrategy.swift in Sources */,
+				35DD841F2FC72FB2009E6D1F /* EnumPicker.swift in Sources */,
+				35DD84182FC71E3B009E6D1F /* ActionsView.swift in Sources */,
 				35CDEEEB2FC59AE400BEB092 /* CIColorExtensions.swift in Sources */,
 				35B8A1432DD662F2000CFA1B /* ImageGenerationStrategyFactory.swift in Sources */,
 				35CDEEED2FC5A6FF00BEB092 /* ComputerService.swift in Sources */,
@@ -455,15 +468,16 @@
 				3562D9682FBF198200A1301B /* ImageCreationServiceType.swift in Sources */,
 				35CDEEEF2FC5A78200BEB092 /* ComputerServiceType.swift in Sources */,
 				3562D95F2FBDFEF400A1301B /* ImageColorSpace.swift in Sources */,
-				35EFF9102C7B1D32002BCA04 /* NoInsetHostingView.swift in Sources */,
+				35DD84122FC622B7009E6D1F /* DescriptableEnum.swift in Sources */,
 				3553599F2C655710004C172A /* IsHiddenModifier.swift in Sources */,
 				35CDEEF82FC5B20F00BEB092 /* VideoChunkingStrategy.swift in Sources */,
 				355359972C64D9A3004C172A /* ImageOutputFormat.swift in Sources */,
 				3562D9642FBE082400A1301B /* ImageGenerationStateUpdate.swift in Sources */,
 				3562D9662FBF18E800A1301B /* ImageCreationService.swift in Sources */,
 				3553599C2C6556C6004C172A /* ViewExtensions.swift in Sources */,
-				3500FA8C2DD532F900B7A0A7 /* ColorfulNumberView.swift in Sources */,
+				35DD84162FC71E26009E6D1F /* NamingView.swift in Sources */,
 				3553598F2C64C855004C172A /* AppState.swift in Sources */,
+				35DD84212FC7334D009E6D1F /* NumericTextField.swift in Sources */,
 				35B8A14F2DD668FD000CFA1B /* DuplicateImageStrategy.swift in Sources */,
 				35CDEF112FC5EFA900BEB092 /* CmykWritingStrategy.swift in Sources */,
 				355359922C64C8A8004C172A /* Settable.swift in Sources */,
@@ -475,16 +489,14 @@
 				35B8A1452DD66369000CFA1B /* ImageGenerationStrategyType.swift in Sources */,
 				3557DC1B2DCE010B00BE779E /* NSImageExtensions.swift in Sources */,
 				35CDEF0A2FC5D55E00BEB092 /* MediaWritingService.swift in Sources */,
-				356760DB2D1404E500625233 /* GenerateView.swift in Sources */,
-				3500FA8E2DD5335E00B7A0A7 /* GeneratedImageRawView.swift in Sources */,
+				356760DB2D1404E500625233 /* GenerateImagesOptionsView.swift in Sources */,
 				3553597C2C64C747004C172A /* ImageGeneratorApp.swift in Sources */,
 				3500FA892DD5309200B7A0A7 /* CGImageExtensions.swift in Sources */,
 				35CDEF042FC5CB9E00BEB092 /* BmpWritingStrategy.swift in Sources */,
 				35B8A14B2DD665CE000CFA1B /* ImageGenerationServiceType.swift in Sources */,
 				3514C5012C661B3E004523CC /* InfoView.swift in Sources */,
 				355359992C64F4BA004C172A /* JobService.swift in Sources */,
-				356760DD2D1406F500625233 /* DuplicateView.swift in Sources */,
-				3500FA902DD5339E00B7A0A7 /* DuplicatedImageRawView.swift in Sources */,
+				356760DD2D1406F500625233 /* DuplicateImageOptionsView.swift in Sources */,
 				35CDEF002FC5CA8E00BEB092 /* JpegWritingStrategy.swift in Sources */,
 				35B8A14D2DD667B9000CFA1B /* GenerateImageStrategy.swift in Sources */,
 				3500FA872DD52EFA00B7A0A7 /* ImageGeneratorView.swift in Sources */,
