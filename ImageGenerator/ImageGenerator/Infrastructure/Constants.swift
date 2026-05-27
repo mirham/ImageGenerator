@@ -11,6 +11,7 @@ struct Constants {
     // MARK: Default values
     static let appName = "MirHam Image Generator"
     static let defaultNumberSizePercentage = 0.5
+    static let defaultNumberSizePadding = 0.9
     static let targetChunksPerWorker = 10
     static let maxChunkSize = 100
     static let minChunkSize = 1
