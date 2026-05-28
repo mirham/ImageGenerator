@@ -41,29 +41,29 @@ struct MainView: ImageGeneratorView {
     
     @ViewBuilder
     private var generateImagesTab: some View {
-        GenerateImagesOptionsView()
+        ImagesGenerationOptionsView()
             .tabItem {
                 Text(Constants.tabGenerateImages)
             }
-            .tag(Constants.tabIdGenerate)
+            .tag(Constants.tabIdGenerateImages)
     }
     
     @ViewBuilder
     private var duplicateImagesTab: some View {
-        DuplicateImageOptionsView()
+        ImageDuplicationOptionsView()
             .tabItem {
                 Text(Constants.tabDuplicateImages)
             }
-            .tag(Constants.tabIdDuplicate)
+            .tag(Constants.tabIdDuplicateImage)
     }
     
     @ViewBuilder
     private var generateVideosTab: some View {
-        GenerateImagesOptionsView()
+        VideosGenerationOptionsView()
             .tabItem {
                 Text(Constants.tabGenerateVideos)
             }
-            .tag(Constants.tabIdGenerate)
+            .tag(Constants.tabIdGenerateVideos)
     }
     
     @ViewBuilder
@@ -80,8 +80,8 @@ struct MainView: ImageGeneratorView {
     
     private func initValues() {
         self.selectedTab = appState.userData.mode == .generateImages
-            ? Constants.tabIdGenerate
-            : Constants.tabIdDuplicate
+            ? Constants.tabIdGenerateImages
+            : Constants.tabIdDuplicateImage
     }
     
     private func setupWindow(for tab: Int) {
@@ -109,12 +109,12 @@ struct MainView: ImageGeneratorView {
     
     private func getWindowSize(for tab: Int) -> CGSize {
         switch tab {
-            case Constants.tabIdGenerate:
+            case Constants.tabIdGenerateImages:
                 return CGSize(width: 550, height: 570)
-            case Constants.tabIdDuplicate:
+            case Constants.tabIdDuplicateImage:
                 return CGSize(width: 550, height: 300)
             case Constants.tabIdGenerateVideos:
-                return CGSize(width: 550, height: 500)
+                return CGSize(width: 550, height: 630)
             default:
                 return CGSize(width: 550, height: 550)
         }

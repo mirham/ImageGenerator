@@ -1,5 +1,5 @@
 //
-//  DuplicateView.swift
+//  ImageDuplicationOptionsView.swift
 //  ImageGenerator
 //
 //  Created by UglyGeorge on 19.12.2024.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct DuplicateImageOptionsView: ImageGeneratorView {
+struct ImageDuplicationOptionsView: ImageGeneratorView {
     @EnvironmentObject var appState: AppState
     
     @State private var inputImage: String = .init()
@@ -110,5 +110,5 @@ struct DuplicateImageOptionsView: ImageGeneratorView {
 }
 
 #Preview {
-    DuplicateImageOptionsView().environmentObject(AppState())
+    ImageDuplicationOptionsView().environmentObject(AppState())
 }

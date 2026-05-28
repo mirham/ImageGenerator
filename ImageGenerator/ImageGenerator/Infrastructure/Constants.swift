@@ -20,7 +20,6 @@ struct Constants {
     static let gopSize = 30
     static let gopsPerWorkerDivisor = 2
     static let maxChunkFrames = 300
-    static let defaultFramerate = 30
     static let defaultWidth: Int = 500
     static let minWidth: Int = 5
     static let maxWidth: Int = 16384
@@ -46,14 +45,34 @@ struct Constants {
     static let bypesPerPixel = 4
     static let bitsPerComponent: UInt32 = 8
     static let alignmentTo64 = 64
+    static let defaultFrameRate = 30
+    static let defaultVideoDuration: TimeInterval = 30
+    static let secondsPerMinute = 60
+    static let secondsPerHour = 3600
+    static let minutesPerHour = 60
+    static let minDurationSeconds: TimeInterval = 1
+    static let maxDurationSeconds: TimeInterval = 36000 // 10 hours
+    static let maxDurationHours = 10
+    static let kibi: Double = 1024
+    static let minFileSizeBytes: Double = 1024 // 1 KB
+    static let defaultFileSizeBytes: Double = 100 * 1024 * 1024 // 100 MB
+    static let maxFileSizeBytes: Double = maxFileSizeGb * 1024 * 1024 * 1024 // 200 GB
+    static let minFileSizeKb = 1.0
+    static let maxFileSizeGb = 200.0
+    static let fileSizeStepRoundingFactor: Double = 100
+    static let fileSizeStepSize: Double = 1.0
+    static let fileSizeDecimalPlaces = 2
     
     // MARK: Settings key names
     static let settingsKeyMode = "mode"
     static let settingsKeyWidth = "width"
     static let settingsKeyHeight = "height"
     static let settingsKeyColorSpace = "colorspace"
-    static let settingsKeyFormat = "format"
-    static let settingsKeySize = "size"
+    static let settingsKeyImageOutputFormat = "image-format"
+    static let settingsKeyImageResolution = "image-resolution"
+    static let settingsKeyVideoOutputFormat = "video-format"
+    static let settingsKeyVideoMode = "video-mode"
+    static let settingsKeyVideoResolution = "video-resolution"
     static let settingsKeyCount = "count"
     static let settingsKeyOutputFolder = "folder"
     static let settingsKeyInputImage = "image"
@@ -68,8 +87,8 @@ struct Constants {
     static let windowIdInfo = "info-view"
     
     // MARK: Tab tags
-    static let tabIdGenerate = 0
-    static let tabIdDuplicate = 1
+    static let tabIdGenerateImages = 0
+    static let tabIdDuplicateImage = 1
     static let tabIdGenerateVideos = 2
     
     // MARK: sysctlbyname
@@ -90,7 +109,7 @@ struct Constants {
     static let itemsCount = "Items count:"
     static let format = "Format:"
     static let duplicatingImage = "Duplicating image:"
-    static let size = "Size:"
+    static let resolution = "Resolution:"
     static let colorSpace = "Color space:"
     static let ok = "OK"
     static let outputFolder = "Output folder:"
@@ -100,7 +119,7 @@ struct Constants {
     static let info = "Info"
     static let prefix = "Prefix:"
     static let postfix = "Postfix:"
-    static let xmark = "×"
+    static let mode = "Mode:"
     
     // MARK: Tab names
     static let tabGenerateImages = "Generate images"
@@ -114,8 +133,13 @@ struct Constants {
     static let dialogHeaderMissingOutputFolder = "Output folder not found"
     static let dialogBodyMissingOutputFolder = "Select a valid output folder."
     
-    // MARK: Basic
+    // MARK: Symbols
     static let slash = "/"
+    static let xmark = "×"
+    
+    // MARK: Formatting
+    static let durationFormatTemplate = "%01d:%02d:%02d"
+    static let sizeFormatTemplate = "%.2f %@"
     
     // MARK: About
     static let aboutSupportMail = "bWlyaGFtQGFidi5iZw=="

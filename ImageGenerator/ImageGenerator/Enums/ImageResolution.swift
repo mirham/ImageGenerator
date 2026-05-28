@@ -1,5 +1,5 @@
 //
-//  ImageOutputSize.swift
+//  ImageResolution.swift
 //  ImageGenerator
 //
 //  Created by UglyGeorge on 20.05.2026.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum ImageOutputSize : Int, CaseIterable, Identifiable, Codable, Equatable, DescriptableEnum {
+enum ImageResolution : Int, CaseIterable, Identifiable, Codable, Equatable, DescriptableEnum {
     var id: Int { return self.rawValue }
     
     case custom = 0

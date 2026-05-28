@@ -1,5 +1,5 @@
 //
-//  GenerateImageOptionsView.swift
+//  ImagesGenerationOptionsView.swift
 //  ImageGenerator
 //
 //  Created by UglyGeorge on 19.12.2024.
@@ -7,22 +7,22 @@
 
 import SwiftUI
 
-struct GenerateImagesOptionsView: ImageGeneratorView {
+struct VideosGenerationOptionsView: ImageGeneratorView {
     @EnvironmentObject var appState: AppState
     
     @State private var width: Int = 0
     @State private var height: Int = 0
     @State private var count: Int = 0
-    @State private var selectedFormat: ImageOutputFormat = .jpeg
-    @State private var selectedColorSpace: ImageColorSpace = .rgb
-    @State private var selectedSize: ImageOutputSize = .custom
+    @State private var selectedVideoMode: VideoGenerationMode = .fileSize(Int(Constants.defaultFileSizeBytes))
+    @State private var selectedFormat: VideoOutputFormat = .mp4
+    @State private var selectedResolution: VideoResolution = .custom
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             countField
             formatPicker
-            colorSpacePicker
-            sizePicker
+            videoMode
+            resolutionPicker
         }
         .onAppear(perform: initValues)
     }
@@ -47,36 +47,29 @@ struct GenerateImagesOptionsView: ImageGeneratorView {
         LabeledRow(title: Constants.format) {
             EnumPicker(
                 selection: $selectedFormat,
-                enumType: ImageOutputFormat.self,
+                enumType: VideoOutputFormat.self,
                 style: .segmented
             ) { format in
-                appState.userData.format = format
+                appState.userData.videoOutputFormat = format
             }
         }
     }
     
-    @ViewBuilder
-    private var colorSpacePicker: some View {
-        LabeledRow(title: Constants.colorSpace) {
-            EnumPicker(
-                selection: $selectedColorSpace,
-                enumType: ImageColorSpace.self,
-                style: .segmented
-            ) { colorSpace in
-                appState.userData.colorSpace = colorSpace
-            }
+    @ViewBuilder var videoMode: some View {
+        LabeledRow(title: Constants.mode) {
+            VideoModeControl(mode: $selectedVideoMode)
         }
     }
     
     @ViewBuilder
-    private var sizePicker: some View {
-        LabeledRow(title: Constants.size) {
+    private var resolutionPicker: some View {
+        LabeledRow(title: Constants.resolution) {
             EnumPicker(
-                selection: $selectedSize,
-                enumType: ImageOutputSize.self,
+                selection: $selectedResolution,
+                enumType: VideoResolution.self,
                 style: .radioGroup,
                 onSelect: { size in
-                    appState.userData.size = size
+                    appState.userData.videoResolution = size
                 },
                 zeroValueContent: {
                     AnyView (
@@ -99,7 +92,7 @@ struct GenerateImagesOptionsView: ImageGeneratorView {
                         }
                     )
                 },
-                showZeroValueContent: selectedSize == ImageOutputSize.custom
+                showZeroValueContent: selectedResolution == VideoResolution.custom
             )
         }
     }
@@ -110,14 +103,14 @@ struct GenerateImagesOptionsView: ImageGeneratorView {
         self.width = appState.userData.width
         self.height = appState.userData.height
         self.count = appState.userData.count
-        self.selectedFormat = appState.userData.format
-        self.selectedColorSpace = appState.userData.colorSpace
-        self.selectedSize = appState.userData.size
+        self.selectedFormat = appState.userData.videoOutputFormat
+        self.selectedResolution = appState.userData.videoResolution
+        self.selectedVideoMode = appState.userData.videoMode
         
-        appState.userData.mode = .generateImages
+        appState.userData.mode = .generateVideos
     }
 }
 
 #Preview {
-    GenerateImagesOptionsView().environmentObject(AppState())
+    ImagesGenerationOptionsView().environmentObject(AppState())
 }

@@ -55,39 +55,115 @@ extension AppState {
 extension AppState {
     struct UserData : Settable, Equatable {
         var mode: GenerationMode = GenerationMode.duplicateImages {
-            didSet { writeSetting(newValue: mode, key: Constants.settingsKeyMode) }
+            didSet {
+                writeSetting(
+                    newValue: mode,
+                    key: Constants.settingsKeyMode)
+            }
         }
         
         var width: Int = Constants.defaultWidth {
-            didSet { writeSetting(newValue: width, key: Constants.settingsKeyWidth) }
+            didSet {
+                writeSetting(
+                    newValue: width,
+                    key: Constants.settingsKeyWidth)
+            }
         }
+        
         var height: Int = Constants.defaultHeight {
-            didSet { writeSetting(newValue: height, key: Constants.settingsKeyHeight) }
+            didSet {
+                writeSetting(
+                    newValue: height,
+                    key: Constants.settingsKeyHeight)
+            }
         }
+        
         var count: Int = Constants.defaultCount {
-            didSet { writeSetting(newValue: count, key: Constants.settingsKeyCount) }
+            didSet {
+                writeSetting(
+                    newValue: count,
+                    key: Constants.settingsKeyCount)
+            }
         }
-        var format: ImageOutputFormat = .jpeg {
-            didSet { writeSetting(newValue: format, key: Constants.settingsKeyFormat) }
+        
+        var imageOutputFormat: ImageOutputFormat = .jpeg {
+            didSet {
+                writeSetting(
+                    newValue: imageOutputFormat,
+                    key: Constants.settingsKeyImageOutputFormat)
+            }
         }
-        var colorSpace: ImageColorSpace = .rgb {
-            didSet { writeSetting(newValue: colorSpace, key: Constants.settingsKeyColorSpace) }
+        
+        var imageColorSpace: ImageColorSpace = .rgb {
+            didSet {
+                writeSetting(
+                    newValue: imageColorSpace,
+                    key: Constants.settingsKeyColorSpace)
+            }
         }
-        var size: ImageOutputSize = .custom {
-            didSet { writeSetting(newValue: size, key: Constants.settingsKeySize) }
+        
+        var imageResolution: ImageResolution = .custom {
+            didSet {
+                writeSetting(
+                    newValue: imageResolution,
+                    key: Constants.settingsKeyImageResolution)
+            }
         }
+        
+        var videoOutputFormat: VideoOutputFormat = .avi {
+            didSet {
+                writeSetting(
+                    newValue: videoOutputFormat,
+                    key: Constants.settingsKeyVideoOutputFormat)
+            }
+        }
+        
+        var videoMode: VideoGenerationMode = .duration(60) {
+            didSet {
+                writeSetting(
+                    newValue: videoMode,
+                    key: Constants.settingsKeyVideoMode)
+            }
+        }
+        
+        var videoResolution: VideoResolution = .custom {
+            didSet {
+                writeSetting(
+                    newValue: videoResolution,
+                    key: Constants.settingsKeyVideoResolution)
+            }
+        }
+        
         var outputFolder: String = String() {
-            didSet { writeSetting(newValue: outputFolder, key: Constants.settingsKeyOutputFolder) }
+            didSet {
+                writeSetting(
+                    newValue: outputFolder,
+                    key: Constants.settingsKeyOutputFolder)
+            }
         }
+        
         var prefix: String = String() {
-            didSet { writeSetting(newValue: prefix, key: Constants.settingsPrefix) }
+            didSet {
+                writeSetting(
+                    newValue: prefix,
+                    key: Constants.settingsPrefix)
+            }
         }
+        
         var postfix: String = String() {
-            didSet { writeSetting(newValue: postfix, key: Constants.settingsPostfix) }
+            didSet {
+                writeSetting(
+                    newValue: postfix,
+                    key: Constants.settingsPostfix)
+            }
         }
         
         var inputImage: String = String() {
-            didSet { writeSetting(newValue: inputImage, key: Constants.settingsKeyInputImage) }
+            didSet {
+                writeSetting(
+                    newValue: inputImage,
+                    key: Constants.settingsKeyInputImage)
+            }
         }
         
         static func == (lhs: UserData, rhs: UserData) -> Bool {
@@ -95,28 +171,48 @@ extension AppState {
             && lhs.width == rhs.width
             && lhs.height == rhs.height
             && lhs.count == rhs.count
-            && lhs.format == rhs.format
-            && lhs.size == rhs.size
+            && lhs.imageOutputFormat == rhs.imageOutputFormat
+            && lhs.imageResolution == rhs.imageResolution
             && lhs.outputFolder == rhs.outputFolder
             && lhs.prefix == rhs.prefix
             && lhs.postfix == rhs.postfix
             && lhs.inputImage == rhs.inputImage
+            && lhs.videoOutputFormat == rhs.videoOutputFormat
+            && lhs.videoResolution == rhs.videoResolution
+            && lhs.videoMode == rhs.videoMode
             
             return result
         }
         
         init() {
-            mode = readSetting(key: Constants.settingsKeyMode) ?? GenerationMode.duplicateImages
-            width = readSetting(key: Constants.settingsKeyWidth) ?? Constants.defaultWidth
-            height = readSetting(key: Constants.settingsKeyHeight) ?? Constants.defaultHeight
-            count = readSetting(key: Constants.settingsKeyCount) ?? Constants.defaultCount
-            format = readSetting(key: Constants.settingsKeyFormat) ?? .jpeg
-            colorSpace = readSetting(key: Constants.settingsKeyColorSpace) ?? .rgb
-            size = readSetting(key: Constants.settingsKeySize) ?? .custom
-            outputFolder = readSetting(key: Constants.settingsKeyOutputFolder) ?? String()
-            prefix = readSetting(key: Constants.settingsPrefix) ?? String()
-            postfix = readSetting(key: Constants.settingsPostfix) ?? String()
-            inputImage = readSetting(key: Constants.settingsKeyInputImage) ?? String()
+            mode = readSetting(key: Constants.settingsKeyMode)
+                ?? GenerationMode.duplicateImages
+            width = readSetting(key: Constants.settingsKeyWidth)
+                ?? Constants.defaultWidth
+            height = readSetting(key: Constants.settingsKeyHeight)
+                ?? Constants.defaultHeight
+            count = readSetting(key: Constants.settingsKeyCount)
+                ?? Constants.defaultCount
+            imageOutputFormat = readSetting(key: Constants.settingsKeyImageOutputFormat)
+                ?? .jpeg
+            imageColorSpace = readSetting(key: Constants.settingsKeyColorSpace)
+                ?? .rgb
+            imageResolution = readSetting(key: Constants.settingsKeyImageResolution)
+                ?? .custom
+            videoOutputFormat = readSetting(key: Constants.settingsKeyVideoOutputFormat)
+                ?? .avi
+            videoMode = readSetting(key: Constants.settingsKeyVideoMode)
+                ?? .duration(60)
+            videoResolution = readSetting(key: Constants.settingsKeyVideoResolution)
+                ?? .custom
+            outputFolder = readSetting(key: Constants.settingsKeyOutputFolder)
+                ?? String()
+            prefix = readSetting(key: Constants.settingsPrefix)
+                ?? String()
+            postfix = readSetting(key: Constants.settingsPostfix)
+                ?? String()
+            inputImage = readSetting(key: Constants.settingsKeyInputImage)
+                ?? String()
         }
     }
 }

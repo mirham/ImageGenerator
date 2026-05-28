@@ -51,8 +51,8 @@ class ImageGenerationService : ImageGenerationServiceType {
         init(_ appState: AppState) {
             self.width = appState.userData.width
             self.height = appState.userData.height
-            self.predefinedSize = appState.userData.size.predefinedSize
-            self.ppi = appState.userData.size.ppi
+            self.predefinedSize = appState.userData.imageResolution.predefinedSize
+            self.ppi = appState.userData.imageResolution.ppi
         }
     }
 }

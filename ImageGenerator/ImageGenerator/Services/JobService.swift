@@ -13,7 +13,7 @@ class JobService: JobServiceType {
     @Injected(\.imageGenerationStrategyFactory) private var imageGenerationStrategyFactory
     @Injected(\.chunkingStrategyFactory) private var chunkingStrategyFactory
     @Injected(\.imageCreationService) private var imageCreationService
-    @Injected(\.mediaWritingService) private var mediaWritingService
+    @Injected(\.imageWritingService) private var imageWritingService
     @Injected(\.computerService) private var computerService
     
     var generationTask: Task<Void, Never>?
@@ -108,40 +108,40 @@ class JobService: JobServiceType {
         element: Int,
         snapshot: StateSnapshot,
         loadedImage: LoadedImage?) async {
-            guard !Task.isCancelled
-            else { return }
+        guard !Task.isCancelled
+        else { return }
+        
+        let imageData = ImageData(
+            imageNumber: element,
+            mode: snapshot.mode,
+            image: loadedImage?.image,
+            size: loadedImage?.size)
             
-            let imageData = ImageData(
-                imageNumber: element,
-                mode: snapshot.mode,
-                image: loadedImage?.image,
-                size: loadedImage?.size)
+        guard let strategy = imageGenerationStrategyFactory
+            .getStrategy(mode: imageData.mode)
+        else { return }
+        
+        guard let image = await strategy
+            .generateImageAsync(imageData: imageData)
+        else { return }
+        
+        guard !Task.isCancelled
+        else { return }
+        
+        let url = makeImageUrl(imageData: imageData, snapshot: snapshot)
+        
+        imageWritingService.writeImage(
+            image,
+            to: url,
+            format: snapshot.outputFormat,
+            colorSpace: snapshot.colorSpace,
+            ppi: snapshot.ppi
+        )
             
-            guard let strategy = imageGenerationStrategyFactory
-                .getStrategy(mode: imageData.mode)
-            else { return }
-            
-            guard let image = await strategy
-                .generateImageAsync(imageData: imageData)
-            else { return }
-            
-            guard !Task.isCancelled
-            else { return }
-            
-            let url = makeImageUrl(imageData: imageData, snapshot: snapshot)
-            
-            mediaWritingService.writeImage(
-                image,
-                to: url,
-                format: snapshot.outputFormat,
-                colorSpace: snapshot.colorSpace,
-                ppi: snapshot.ppi
-            )
-            
-            await updateStatusAsync {
-                $0.withGeneratedCount(Constants.step)
-            }
+        await updateStatusAsync {
+            $0.withGeneratedCount(Constants.step)
         }
+    }
     
     private func loadInputImageAsync(snapshot: StateSnapshot) async -> LoadedImage? {
         guard snapshot.mode == .duplicateImages
@@ -204,8 +204,8 @@ class JobService: JobServiceType {
         init(_ appState: AppState) {
             self.count = appState.userData.count
             self.mode = appState.userData.mode
-            self.colorSpace = appState.userData.colorSpace
-            self.outputFormat = appState.userData.format
+            self.colorSpace = appState.userData.imageColorSpace
+            self.outputFormat = appState.userData.imageOutputFormat
             self.inputImage = appState.userData.inputImage
             self.outputFolder = appState.userData.outputFolder
             self.prefix = appState.userData.prefix.replacingOccurrences(
@@ -216,7 +216,7 @@ class JobService: JobServiceType {
                 with: String())
             self.width = appState.userData.width
             self.height = appState.userData.height
-            self.ppi = appState.userData.size.ppi
+            self.ppi = appState.userData.imageResolution.ppi
         }
     }
     

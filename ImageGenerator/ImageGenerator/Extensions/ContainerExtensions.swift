@@ -28,8 +28,11 @@ extension Container {
         .singleton
     }
     
-    var imageGenerationService: Factory<ImageGenerationService> {
-        Factory(self) { ImageGenerationService() }
+    var imageGenerationService: Factory<ImageGenerationServiceType> {
+        Factory(self) {
+            ImageGenerationService()
+        }
+        .singleton
     }
     
     var imageCreationService: Factory<ImageCreationServiceType> {
@@ -38,10 +41,17 @@ extension Container {
         }.singleton
     }
     
-    var mediaWritingService: Factory<MediaWritingServiceType> {
+    var imageWritingService: Factory<ImageWritingServiceType> {
         Factory(self) {
-            MediaWritingService()
+            ImageWritingService()
         }.singleton
+    }
+    
+    var videoGenerationService: Factory<VideoGenerationServiceType> {
+        Factory(self) {
+            VideoGenerationService()
+        }
+        .singleton
     }
     
     var computerService: Factory<ComputerServiceType> {
@@ -103,6 +113,27 @@ extension Container {
             ImageWritingStrategyFactory()
         }.singleton
     }
+    
+    // MARK: Video generation strategies registration
+    
+    static var videoGenerationStrategies: [KeyPath<Container, Factory<VideoGenerationStrategyType>>] = [
+        \.mp4VideoStrategy,
+         \.movVideoStrategy,
+         \.mkvVideoStrategy,
+         \.aviVideoStrategy,
+         \.webmVideoStrategy,
+         \.wmvVideoStrategy
+    ]
+    
+    func videoGenerationStrategies() -> [VideoGenerationStrategyType] {
+        Container.videoGenerationStrategies.map { self[keyPath: $0]() }
+    }
+    
+    var videoGenerationStrategyFactory: Factory<VideoGenerationStrategyFactoryType> {
+        Factory(self) {
+            VideoGenerationStrategyFactory()
+        }.singleton
+    }
 }
 
 
@@ -112,13 +143,13 @@ extension SharedContainer {
     var generateImageStrategy: Factory<ImageGenerationStrategyType> {
         Factory(self) {
             GenerateImageStrategy()
-        }.singleton
+        }
     }
     
     var duplicateImageStrategy: Factory<ImageGenerationStrategyType> {
         Factory(self) {
             DuplicateImageStrategy()
-        }.singleton
+        }
     }
     
     // MARK: Chunking strategies registration
@@ -140,30 +171,68 @@ extension SharedContainer {
     var cmykWritingStrategy: Factory<ImageWritingStrategyType> {
         Factory(self) {
             CmykWritingStrategy()
-        }.singleton
+        }
     }
     
     var jpegWritingStrategy: Factory<ImageWritingStrategyType> {
         Factory(self) {
             JpegWritingStrategy()
-        }.singleton
+        }
     }
     
     var pngWritingStrategy: Factory<ImageWritingStrategyType> {
         Factory(self) {
             PngWritingStrategy()
-        }.singleton
+        }
     }
     
     var bmpWritingStrategy: Factory<ImageWritingStrategyType> {
         Factory(self) {
             BmpWritingStrategy()
-        }.singleton
+        }
     }
     
     var tiffWritingStrategy: Factory<ImageWritingStrategyType> {
         Factory(self) {
             TiffWritingStrategy()
-        }.singleton
+        }
+    }
+    
+    // MARK: Video generation strategies registration
+    
+    var mp4VideoStrategy:  Factory<VideoGenerationStrategyType> {
+        Factory(self) {
+            Mp4VideoGenerationStrategy()
+        }
+    }
+    
+    var movVideoStrategy:  Factory<VideoGenerationStrategyType> {
+        Factory(self) {
+            MovVideoGenerationStrategy()
+        }
+    }
+    
+    var mkvVideoStrategy:  Factory<VideoGenerationStrategyType> {
+        Factory(self) {
+            MkvVideoGenerationStrategy()
+        }
+    }
+    
+    var aviVideoStrategy:  Factory<VideoGenerationStrategyType> {
+        Factory(self) {
+            AviVideoGenerationStrategy()
+        }
+    }
+    
+    var webmVideoStrategy: Factory<VideoGenerationStrategyType> {
+        Factory(self) {
+            WebmVideoGenerationStrategy()
+        }
+    }
+    
+    var wmvVideoStrategy: Factory<VideoGenerationStrategyType> {
+        Factory(self) {
+            WebmVideoGenerationStrategy()
+        }
     }
 }

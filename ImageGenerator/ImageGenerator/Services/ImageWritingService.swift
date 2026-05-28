@@ -1,5 +1,5 @@
 //
-//  MediaWritingService.swift
+//  ImageWritingService.swift
 //  ImageGenerator
 //
 //  Created by UglyGeorge on 26.05.2026.
@@ -8,7 +8,7 @@
 import CoreImage
 import Factory
 
-final class MediaWritingService : MediaWritingServiceType {
+final class ImageWritingService : ImageWritingServiceType {
     @Injected(\.imageWritingStrategyFactory) private var imageWritingStrategyFactory
     
     func writeImage(

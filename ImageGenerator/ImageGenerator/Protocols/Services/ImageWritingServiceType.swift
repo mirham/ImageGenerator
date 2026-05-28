@@ -1,5 +1,5 @@
 //
-//  MediaWritingServiceType.swift
+//  ImageWritingServiceType.swift
 //  ImageGenerator
 //
 //  Created by UglyGeorge on 26.05.2026.
@@ -7,7 +7,7 @@
 
 import CoreImage
 
-protocol MediaWritingServiceType {
+protocol ImageWritingServiceType {
     func writeImage(
         _ ciImage: CIImage,
         to url: URL,
