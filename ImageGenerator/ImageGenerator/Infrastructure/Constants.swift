@@ -52,11 +52,12 @@ struct Constants {
     static let minutesPerHour = 60
     static let minDurationSeconds: TimeInterval = 1
     static let maxDurationSeconds: TimeInterval = 36000 // 10 hours
+    static let defaultDurationSeconds: TimeInterval = 60
     static let maxDurationHours = 10
     static let kibi: Double = 1024
     static let minFileSizeBytes: Double = 1024 // 1 KB
-    static let defaultFileSizeBytes: Double = 100 * 1024 * 1024 // 100 MB
-    static let maxFileSizeBytes: Double = maxFileSizeGb * 1024 * 1024 * 1024 // 200 GB
+    static let defaultFileSizeBytes: Double = 100 * kibi * kibi // 100 MB
+    static let maxFileSizeBytes: Double = maxFileSizeGb * kibi * kibi * kibi // 200 GB
     static let minFileSizeKb = 1.0
     static let maxFileSizeGb = 200.0
     static let fileSizeStepRoundingFactor: Double = 100
@@ -72,6 +73,9 @@ struct Constants {
     static let settingsKeyImageResolution = "image-resolution"
     static let settingsKeyVideoOutputFormat = "video-format"
     static let settingsKeyVideoMode = "video-mode"
+    static let settingsKeyVideoDuration = "video-duration"
+    static let settingsKeyVideoFileSize = "video-filesize"
+    static let settingsKeyVideoFileSizeUnit = "video-filesize-unit"
     static let settingsKeyVideoResolution = "video-resolution"
     static let settingsKeyCount = "count"
     static let settingsKeyOutputFolder = "folder"

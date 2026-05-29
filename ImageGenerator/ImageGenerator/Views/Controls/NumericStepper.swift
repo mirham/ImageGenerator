@@ -73,7 +73,7 @@ struct NumericStepper<Value: Strideable & LosslessStringConvertible>: View {
             .focused($isFocused)
             .onAppear { syncTextFromValue() }
             .onChange(of: value) {
-                if !isFocused { syncTextFromValue() }
+                syncTextFromValue()
             }
             .onChange(of: isFocused) {
                 if !isFocused { commitText() }

@@ -118,11 +118,35 @@ extension AppState {
             }
         }
         
-        var videoMode: VideoGenerationMode = .duration(60) {
+        var videoMode: VideoGenerationMode = .duration(Constants.defaultDurationSeconds) {
             didSet {
                 writeSetting(
                     newValue: videoMode,
                     key: Constants.settingsKeyVideoMode)
+            }
+        }
+        
+        var videoDurationSeconds: TimeInterval = Constants.defaultDurationSeconds {
+            didSet {
+                writeSetting(
+                    newValue: videoDurationSeconds,
+                    key: Constants.settingsKeyVideoDuration)
+            }
+        }
+        
+        var videoFileSizeBytes: Int = Int(Constants.defaultFileSizeBytes) {
+            didSet {
+                writeSetting(
+                    newValue: videoFileSizeBytes,
+                    key: Constants.settingsKeyVideoFileSize)
+            }
+        }
+        
+        var videoFileSizeUnit: FileSizeUnit = .mb {
+            didSet {
+                writeSetting(
+                    newValue: videoFileSizeUnit,
+                    key: Constants.settingsKeyVideoFileSizeUnit)
             }
         }
         
@@ -180,6 +204,9 @@ extension AppState {
             && lhs.videoOutputFormat == rhs.videoOutputFormat
             && lhs.videoResolution == rhs.videoResolution
             && lhs.videoMode == rhs.videoMode
+            && lhs.videoDurationSeconds == rhs.videoDurationSeconds
+            && lhs.videoFileSizeBytes == rhs.videoFileSizeBytes
+            && lhs.videoFileSizeUnit == rhs.videoFileSizeUnit
             
             return result
         }
@@ -202,7 +229,13 @@ extension AppState {
             videoOutputFormat = readSetting(key: Constants.settingsKeyVideoOutputFormat)
                 ?? .avi
             videoMode = readSetting(key: Constants.settingsKeyVideoMode)
-                ?? .duration(60)
+                ?? .duration(Constants.defaultDurationSeconds)
+            videoDurationSeconds = readSetting(key: Constants.settingsKeyVideoDuration)
+                ?? Constants.defaultVideoDuration
+            videoFileSizeBytes = readSetting(key: Constants.settingsKeyVideoFileSize)
+                ?? Int(Constants.defaultFileSizeBytes)
+            videoFileSizeUnit = readSetting(key: Constants.settingsKeyVideoFileSizeUnit)
+                ?? .mb
             videoResolution = readSetting(key: Constants.settingsKeyVideoResolution)
                 ?? .custom
             outputFolder = readSetting(key: Constants.settingsKeyOutputFolder)

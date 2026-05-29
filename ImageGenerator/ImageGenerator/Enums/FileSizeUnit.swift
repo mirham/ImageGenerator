@@ -5,7 +5,7 @@
 //  Created by UglyGeorge on 28.05.2026.
 //
 
-enum FileSizeUnit: String, CaseIterable, Identifiable {
+enum FileSizeUnit: String, CaseIterable, Identifiable, Codable {
     var id: String { rawValue }
     case kb = "KB"
     case mb = "MB"

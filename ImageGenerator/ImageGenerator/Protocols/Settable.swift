@@ -21,6 +21,7 @@ extension Settable {
         }
         
         let result = try? JSONDecoder().decode(T.self, from: data)
+        
         return result
     }
     
@@ -44,6 +45,7 @@ extension Settable {
     
     func writeSettingsArray<T: Codable>(newValues: [T], key: String) {
         let encoder = JSONEncoder()
+        
         if let encoded = try? encoder.encode(newValues){
             UserDefaults.standard.set(encoded, forKey: key)
         }

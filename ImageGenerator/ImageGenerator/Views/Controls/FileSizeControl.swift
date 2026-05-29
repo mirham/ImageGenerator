@@ -9,9 +9,10 @@ import SwiftUI
 
 struct FileSizeControl: View {
     @Binding var bytes: Double
+    @Binding var savedUnit: FileSizeUnit
     
+    @State private var displayValue: Double = Constants.defaultFileSizeBytes
     @State private var unit: FileSizeUnit = .mb
-    @State private var displayValue: Double = 100.0
     
     private var minDisplayValue: Double {
         switch unit {
@@ -29,13 +30,33 @@ struct FileSizeControl: View {
         }
     }
     
+    private var sliderStep: Double {
+        switch unit {
+            case .kb: return log10(Constants.minFileSizeBytes + Constants.kibi)
+                - log10(Constants.minFileSizeBytes)
+            case .mb: return log10(Constants.minFileSizeBytes + Constants.kibi * Constants.kibi)
+                - log10(Constants.minFileSizeBytes)
+            case .gb: return log10(Constants.minFileSizeBytes + Constants.kibi * Constants.kibi * Constants.kibi)
+                - log10(Constants.minFileSizeBytes)
+        }
+    }
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             inputRow
             sliderRow
         }
-        .onAppear { syncDisplayFromBytes() }
+        .onAppear {
+            unit = savedUnit
+            syncDisplayFromBytes()
+        }
         .onChange(of: bytes) { syncDisplayFromBytes() }
+        .onChange(of: unit) {
+            Task { @MainActor in
+                savedUnit = unit
+                convertDisplayToNewUnit()
+            }
+        }
     }
     
     // MARK: View sections
@@ -64,7 +85,7 @@ struct FileSizeControl: View {
             Text(FileSizeUnit.gb.rawValue).tag(FileSizeUnit.gb)
         }
         .pickerStyle(.segmented)
-        .onChange(of: unit) {
+        .onChange(of: savedUnit) {
             convertDisplayToNewUnit()
         }
     }
@@ -75,12 +96,13 @@ struct FileSizeControl: View {
             Text(String(format: Constants.sizeFormatTemplate, Constants.minFileSizeKb, FileSizeUnit.kb.rawValue))
                 .font(.caption)
                 .foregroundStyle(.secondary)
-            
             TinySlider(
                 value: Binding(
                     get: { convertToLogarithmicScale(bytes) },
                     set: { applyLogarithmicValue($0) }),
-                in: convertToLogarithmicScale(Constants.minFileSizeBytes)...convertToLogarithmicScale(Constants.maxFileSizeBytes))
+                in: convertToLogarithmicScale(Constants.minFileSizeBytes)...convertToLogarithmicScale(Constants.maxFileSizeBytes),
+                step: 0.001
+            )
             
             Text(String(format: Constants.sizeFormatTemplate, Constants.maxFileSizeGb, FileSizeUnit.gb.rawValue))
                 .font(.caption)
@@ -91,11 +113,11 @@ struct FileSizeControl: View {
     // MARK: Private functions
     
     private func convertToLogarithmicScale(_ bytes: Double) -> Double {
-        log10(max(bytes, 1))
+        log10(max(bytes, Constants.minFileSizeBytes))
     }
     
     private func convertFromLogarithmicScale(_ logValue: Double) -> Double {
-        pow(10, logValue)
+        pow(10, logValue).clamped(to: Constants.minFileSizeBytes...Constants.maxFileSizeBytes)
     }
     
     private func syncDisplayFromBytes() {
@@ -109,8 +131,8 @@ struct FileSizeControl: View {
     }
     
     private func applyLogarithmicValue(_ logValue: Double) {
-        let raw = convertFromLogarithmicScale(logValue)
-        bytes = raw.clamped(to: Constants.minFileSizeBytes...Constants.maxFileSizeBytes)
+        let raw = pow(10, logValue).clamped(to: Constants.minFileSizeBytes...Constants.maxFileSizeBytes)
+        bytes = raw
         syncDisplayFromBytes()
     }
     

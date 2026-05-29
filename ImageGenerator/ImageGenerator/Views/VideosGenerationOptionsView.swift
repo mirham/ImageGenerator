@@ -57,7 +57,16 @@ struct VideosGenerationOptionsView: ImageGeneratorView {
     
     @ViewBuilder var videoMode: some View {
         LabeledRow(title: Constants.mode) {
-            VideoModeControl(mode: $selectedVideoMode)
+            VideoModeControl(
+                mode: $selectedVideoMode,
+                savedDurationSeconds: $appState.userData.videoDurationSeconds,
+                savedFileSizeBytes: Binding(
+                    get: { Double(appState.userData.videoFileSizeBytes) },
+                    set: { appState.userData.videoFileSizeBytes = Int($0) }),
+                savedFileSizeUnit: $appState.userData.videoFileSizeUnit)
+                .onChange(of: selectedVideoMode) {
+                    appState.userData.videoMode = selectedVideoMode
+                }
         }
     }
     
@@ -106,6 +115,7 @@ struct VideosGenerationOptionsView: ImageGeneratorView {
         self.selectedFormat = appState.userData.videoOutputFormat
         self.selectedResolution = appState.userData.videoResolution
         self.selectedVideoMode = appState.userData.videoMode
+
         
         appState.userData.mode = .generateVideos
     }

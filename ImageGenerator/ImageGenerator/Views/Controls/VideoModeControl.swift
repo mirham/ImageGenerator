@@ -9,10 +9,14 @@ import SwiftUI
 
 struct VideoModeControl: View {
     @Binding var mode: VideoGenerationMode
+    @Binding var savedDurationSeconds: TimeInterval
+    @Binding var savedFileSizeBytes: Double
+    @Binding var savedFileSizeUnit: FileSizeUnit
     
     @State private var selectedMode: VideoGenerationModeType = .fileSize
     @State private var durationSeconds: TimeInterval = Constants.defaultVideoDuration
     @State private var fileSizeBytes: Double = Constants.defaultFileSizeBytes
+    @State private var isReady: Bool = false
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -21,17 +25,30 @@ struct VideoModeControl: View {
                 case .duration:
                     DurationControl(totalSeconds: $durationSeconds)
                         .onChange(of: durationSeconds) {
+                            guard isReady else { return }
                             mode = .duration(durationSeconds)
+                            savedDurationSeconds = durationSeconds
                         }
                 case .fileSize:
-                    FileSizeControl(bytes: $fileSizeBytes)
+                    FileSizeControl(bytes: $fileSizeBytes,
+                                    savedUnit: $savedFileSizeUnit)
                         .onChange(of: fileSizeBytes) {
+                            guard isReady else { return }
                             mode = .fileSize(Int(fileSizeBytes))
+                            savedFileSizeBytes = fileSizeBytes
                         }
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .onAppear { syncFromSelectedMode() }
+        .onAppear {
+            syncFromSelectedMode()
+            DispatchQueue.main.async {
+                isReady = true
+            }
+        }
+        .onChange(of: mode) {
+            syncFromSelectedMode()
+        }
     }
     
     // MARK: View sections
@@ -57,6 +74,11 @@ struct VideoModeControl: View {
             case .fileSize(let bytes):
                 selectedMode = .fileSize
                 fileSizeBytes = Double(bytes)
+        }
+        
+        switch selectedMode {
+            case .duration: fileSizeBytes = savedFileSizeBytes
+            case .fileSize: durationSeconds = savedDurationSeconds
         }
     }
     
