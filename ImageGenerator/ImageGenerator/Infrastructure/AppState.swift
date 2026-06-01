@@ -54,7 +54,7 @@ extension AppState {
 
 extension AppState {
     struct UserData : Settable, Equatable {
-        var mode: GenerationMode = GenerationMode.duplicateImages {
+        var mode: GenerationMode = GenerationMode.generateImages {
             didSet {
                 writeSetting(
                     newValue: mode,

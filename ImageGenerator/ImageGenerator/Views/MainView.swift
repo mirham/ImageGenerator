@@ -41,7 +41,7 @@ struct MainView: ImageGeneratorView {
     
     @ViewBuilder
     private var generateImagesTab: some View {
-        ImagesGenerationOptionsView()
+        ImageGenerationOptionsView()
             .tabItem {
                 Text(Constants.tabGenerateImages)
             }
@@ -59,7 +59,7 @@ struct MainView: ImageGeneratorView {
     
     @ViewBuilder
     private var generateVideosTab: some View {
-        VideosGenerationOptionsView()
+        VideoGenerationOptionsView()
             .tabItem {
                 Text(Constants.tabGenerateVideos)
             }
@@ -79,9 +79,14 @@ struct MainView: ImageGeneratorView {
     // MARK: Private functions
     
     private func initValues() {
-        self.selectedTab = appState.userData.mode == .generateImages
-            ? Constants.tabIdGenerateImages
-            : Constants.tabIdDuplicateImage
+        switch appState.userData.mode {
+            case .generateImages:
+                self.selectedTab = Constants.tabIdGenerateImages
+            case .duplicateImages:
+                self.selectedTab = Constants.tabIdDuplicateImage
+            case .generateVideos:
+                self.selectedTab = Constants.tabIdGenerateVideos
+        }
     }
     
     private func setupWindow(for tab: Int) {

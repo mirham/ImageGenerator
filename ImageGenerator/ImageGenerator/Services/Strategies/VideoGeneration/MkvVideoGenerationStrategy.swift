@@ -12,12 +12,23 @@ final class MkvVideoGenerationStrategy: VideoGenerationStrategyType {
     
     let format: VideoOutputFormat = .mkv
     
+    func codecArguments(for videoData: VideoData) -> [String] {
+        switch videoData.mode {
+            case .duration:
+                return ["-c:v", "libx264", "-preset", "fast", "-crf", "23", "-pix_fmt", "yuv420p"]
+            case .fileSize:
+                return ["-c:v", "libx264", "-preset", "fast", "-pix_fmt", "yuv420p"]
+        }
+    }
+    
     func generateVideoAsync(videoData: VideoData) async -> Bool {
         var args = baseArguments(videoData: videoData)
-        args += ["-c:v", "libx264", "-preset", "fast", "-crf", "23", "-pix_fmt", "yuv420p"]
+        args += codecArguments(for: videoData)
         args += durationArguments(videoData: videoData)
         args += ["-y", videoData.outputUrl.path]
         
-        return await videoGenerationService.generateAsync(arguments: args, videoData: videoData)
+        return await videoGenerationService.generateAsync(
+            arguments: args,
+            videoData: videoData)
     }
 }

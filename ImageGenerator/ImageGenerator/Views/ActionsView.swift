@@ -11,7 +11,8 @@ import Factory
 struct ActionsView: ImageGeneratorView {
     @EnvironmentObject var appState: AppState
     
-    @Injected(\.jobService) private var jobService
+    @Injected(\.imageJobService) private var imageJobService
+    @Injected(\.videoJobService) private var videoJobService
     
     @State private var activeAlert: ActiveAlert?
     @State private var overCancelButton = false
@@ -137,10 +138,10 @@ struct ActionsView: ImageGeneratorView {
     }
     
     private func generate() {
-        Task { await generateImagesAsync() }
+        Task { await runGenerationAsync() }
     }
     
-    private func generateImagesAsync() async {
+    private func runGenerationAsync() async {
         resetProgress()
         
         guard isFilesystemReady
@@ -150,13 +151,19 @@ struct ActionsView: ImageGeneratorView {
             return
         }
         
-        await jobService.runImageGenerationJobAsync()
+        switch appState.userData.mode {
+            case .generateImages, .duplicateImages:
+                await imageJobService.runImageGenerationJobAsync()
+            case .generateVideos:
+                await videoJobService.runVideoGenerationJobAsync()
+        }
     }
     
     private func cancelGeneration() {
         appState.generation.inProgress = false
         appState.generation.isCancelRequested = true
-        jobService.generationTask?.cancel()
+        imageJobService.generationTask?.cancel()
+        videoJobService.generationTask?.cancel()
     }
     
     private func resetProgress() {

@@ -14,9 +14,9 @@ final class WmvVideoGenerationStrategy: VideoGenerationStrategyType {
     
     func generateVideoAsync(videoData: VideoData) async -> Bool {
         var args = baseArguments(videoData: videoData)
-        args += ["-c:v", "wmv2", "-q:v", "6"]
+        args += ["-c:v", "wmv2", "-q:v", "6", "-an"]
         args += durationArguments(videoData: videoData)
-        args += ["-y", videoData.outputUrl.path]
+        args += ["-f", "asf", "-y", videoData.outputUrl.path]
         
         return await videoGenerationService.generateAsync(
             arguments: args,

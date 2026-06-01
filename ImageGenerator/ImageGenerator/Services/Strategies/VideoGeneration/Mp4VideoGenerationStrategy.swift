@@ -12,9 +12,18 @@ final class Mp4VideoGenerationStrategy: VideoGenerationStrategyType {
     
     let format: VideoOutputFormat = .mp4
     
+    func codecArguments(for videoData: VideoData) -> [String] {
+        switch videoData.mode {
+            case .duration:
+                return ["-c:v", "libx264", "-preset", "fast", "-crf", "23", "-pix_fmt", "yuv420p"]
+            case .fileSize:
+                return ["-c:v", "libx264", "-preset", "fast", "-pix_fmt", "yuv420p", "-movflags", "+faststart"]
+        }
+    }
+    
     func generateVideoAsync(videoData: VideoData) async -> Bool {
         var args = baseArguments(videoData: videoData)
-        args += ["-c:v", "libx264", "-preset", "fast", "-crf", "23", "-pix_fmt", "yuv420p"]
+        args += codecArguments(for: videoData)
         args += durationArguments(videoData: videoData)
         args += ["-y", videoData.outputUrl.path]
         

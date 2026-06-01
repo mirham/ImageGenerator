@@ -21,4 +21,12 @@ final class ImageChunkingStrategy: ChunkingStrategyType {
         
         return max(Constants.minChunkSize, min(Constants.maxChunkSize, scaled))
     }
+    
+    func calculateChunkSize(
+        count: Int,
+        size: CGSize,
+        duration: TimeInterval,
+        format: VideoOutputFormat) -> Int {
+            return calculateChunkSize(count: count)
+        }
 }

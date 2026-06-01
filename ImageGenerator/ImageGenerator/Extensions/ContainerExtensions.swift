@@ -21,13 +21,6 @@ extension Container {
     
     // MARK: Services registrations
     
-    var jobService: Factory<JobServiceType> {
-        Factory(self) {
-            JobService()
-        }
-        .singleton
-    }
-    
     var imageGenerationService: Factory<ImageGenerationServiceType> {
         Factory(self) {
             ImageGenerationService()
@@ -47,9 +40,23 @@ extension Container {
         }.singleton
     }
     
+    var imageJobService: Factory<ImageJobServiceType> {
+        Factory(self) {
+            ImageJobService()
+        }
+        .singleton
+    }
+    
     var videoGenerationService: Factory<VideoGenerationServiceType> {
         Factory(self) {
             VideoGenerationService()
+        }
+        .singleton
+    }
+    
+    var videoJobService: Factory<VideoJobServiceType> {
+        Factory(self) {
+            VideoJobService()
         }
         .singleton
     }
@@ -232,7 +239,7 @@ extension SharedContainer {
     
     var wmvVideoStrategy: Factory<VideoGenerationStrategyType> {
         Factory(self) {
-            WebmVideoGenerationStrategy()
+            WmvVideoGenerationStrategy()
         }
     }
 }

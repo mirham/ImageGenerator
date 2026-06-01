@@ -58,6 +58,7 @@ struct Constants {
     static let minFileSizeBytes: Double = 1024 // 1 KB
     static let defaultFileSizeBytes: Double = 100 * kibi * kibi // 100 MB
     static let maxFileSizeBytes: Double = maxFileSizeGb * kibi * kibi * kibi // 200 GB
+    static let fileSizeSafetyMargin: Double = 0.9
     static let minFileSizeKb = 1.0
     static let maxFileSizeGb = 200.0
     static let fileSizeStepRoundingFactor: Double = 100

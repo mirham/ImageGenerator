@@ -12,9 +12,14 @@ final class AviVideoGenerationStrategy: VideoGenerationStrategyType {
     
     let format: VideoOutputFormat = .avi
     
+    func codecArguments(for videoData: VideoData) -> [String] {
+        // AVI doesn't need mode-specific arguments
+        return ["-c:v", "mpeg4", "-vtag", "xvid", "-q:v", "6"]
+    }
+    
     func generateVideoAsync(videoData: VideoData) async -> Bool {
         var args = baseArguments(videoData: videoData)
-        args += ["-c:v", "mpeg4", "-vtag", "xvid", "-q:v", "6"]
+        args += codecArguments(for: videoData)
         args += durationArguments(videoData: videoData)
         args += ["-y", videoData.outputUrl.path]
         
