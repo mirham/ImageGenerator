@@ -54,6 +54,34 @@ extension Container {
         .singleton
     }
     
+    var singleVideoGenerationService: Factory<SingleVideoGenerationServiceType> {
+        Factory(self) {
+            SingleVideoGenerationService()
+        }
+        .singleton
+    }
+    
+    var videoFileSizeService: Factory<VideoFileSizeServiceType> {
+        Factory(self) {
+            VideoFileSizeService()
+        }
+        .singleton
+    }
+    
+    var videoTempFileService: Factory<VideoTempFileServiceType> {
+        Factory(self) {
+            VideoTempFileService()
+        }
+        .singleton
+    }
+    
+    var ffmpegService: Factory<FfmpegServiceType> {
+        Factory(self) {
+            FfmpegService()
+        }
+        .singleton
+    }
+    
     var videoJobService: Factory<VideoJobServiceType> {
         Factory(self) {
             VideoJobService()

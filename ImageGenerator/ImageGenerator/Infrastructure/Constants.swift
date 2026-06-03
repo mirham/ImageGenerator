@@ -55,6 +55,8 @@ struct Constants {
     static let defaultDurationSeconds: TimeInterval = 60
     static let maxDurationHours = 10
     static let kibi: Double = 1024
+    static let smallFileDuration = 3.0
+    static let baseClipDuration: Double = 3.0
     static let minFileSizeBytes: Double = 1024 // 1 KB
     static let defaultFileSizeBytes: Double = 100 * kibi * kibi // 100 MB
     static let maxFileSizeBytes: Double = maxFileSizeGb * kibi * kibi * kibi // 200 GB
@@ -64,6 +66,13 @@ struct Constants {
     static let fileSizeStepRoundingFactor: Double = 100
     static let fileSizeStepSize: Double = 1.0
     static let fileSizeDecimalPlaces = 2
+    static let defaultOvershootMultiplier = 1.2
+    
+    static let streamLoopMinDuration: TimeInterval = 30
+    static let doublingMinBytes: Int = 50 * 1024 * 1024
+    static let undershootFactor: Double = 0.95
+    static let largeFileThreshold: Int = 10 * 1024 * 1024 * 1024
+    static let minBitrate: Int = 100_000
     
     // MARK: Settings key names
     static let settingsKeyMode = "mode"
@@ -100,6 +109,22 @@ struct Constants {
     static let sysctlbynamePerfCores = "hw.perflevel0.physicalcpu"
     static let sysctlbynamePhysicalCores = "hw.physicalcpu"
     static let sysctlbynameCpuType = "hw.cputype"
+    
+    // MARK: ffmpeg
+    static let ffmpegAppleSilicon = "ffmpeg-arm64"
+    static let ffmpegIntel = "ffmpeg-x86_64"
+    
+    // MARK: Video files
+    static let vfDataFree = "free"
+    static let vfVoidId: UInt8 = 0xEC
+    static let vfSuffixBase = "base"
+    static let vfSuffixFinal = "final"
+    static let vfSuffixConcatFinal = "cfinal"
+    static let vfSuffixTopup = "topup"
+    static let vfConcatFileExtension = "txt"
+    static let vfConcatFileContent = "file '%1$@'\nfile '%2$@'"
+    static let vfConcatMergeFileContent = "file '%1$@'"
+    static let vfTempVideoUrl = "temp_%1$@_%2$lld.%3$@"
     
     // MARK: Hints
     static let hintWidth = "\(minWidth)..\(maxWidth)"
@@ -141,6 +166,7 @@ struct Constants {
     // MARK: Symbols
     static let slash = "/"
     static let xmark = "×"
+    static let newLine = "\n"
     
     // MARK: Formatting
     static let durationFormatTemplate = "%01d:%02d:%02d"

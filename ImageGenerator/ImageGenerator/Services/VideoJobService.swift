@@ -11,6 +11,7 @@ import Factory
 class VideoJobService: BaseJobService, VideoJobServiceType {
     @Injected(\.videoGenerationStrategyFactory) private var videoGenerationStrategyFactory
     @Injected(\.chunkingStrategyFactory) private var chunkingStrategyFactory
+    @Injected(\.videoGenerationService) private var videoGenerationService
     
     var generationTask: Task<Void, Never>?
     
@@ -109,7 +110,9 @@ class VideoJobService: BaseJobService, VideoJobServiceType {
             guard !Task.isCancelled
             else { return }
             
-            guard await strategy.generateVideoAsync(videoData: videoData)
+            guard await videoGenerationService.generateAsync(
+                videoData: videoData,
+                strategy: strategy)
             else { return }
             
             await updateStatusAsync {

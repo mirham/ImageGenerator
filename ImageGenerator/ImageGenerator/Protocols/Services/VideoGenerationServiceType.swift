@@ -8,5 +8,7 @@
 import Foundation
 
 protocol VideoGenerationServiceType {
-    func generateAsync(arguments: [String], videoData: VideoData) async -> Bool
+    func generateAsync(
+        videoData: VideoData,
+        strategy: VideoGenerationStrategyType) async -> Bool
 }
