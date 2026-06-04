@@ -6,25 +6,53 @@
 //
 
 import Foundation
-import CoreGraphics
+import CoreImage
+import Factory
 
 class ImageGenerationService : ImageGenerationServiceType {
-    let appState = AppState.shared
+    @Injected(\.appState) private var appState
+    @Injected(\.imageCreationService) private var imageCreationService
     
-    func generateImageAsync(imageData: ImageData) async -> CGImage? {
-        let view = await GeneratedImageRawView(imageNumber: imageData.imageNumber, width: appState.userData.width, height: appState.userData.height)
-        let result = await view.fastRenderAsImageAsync()
+    func generateAsync(imageData: ImageData) async -> CIImage? {
+        guard !Task.isCancelled
+        else { return nil }
         
-        return result
+        let snapshot = await MainActor.run {
+            StateSnapshot(appState)
+        }
+        
+        return imageCreationService.generate(
+            number: imageData.imageNumber,
+            size: snapshot.predefinedSize ?? CGSize(
+                width: snapshot.width, height: snapshot.height),
+            ppi: snapshot.ppi
+        )
     }
     
-    func duplicateImageAsync(imageData: ImageData) async -> CGImage? {
-        let view =  await DuplicatedImageRawView(
-            imageNumber: imageData.imageNumber,
-            image: imageData.image!,
-            size: imageData.size!)
-        let result = await view.renderAsImage(size: imageData.size!)
+    func duplicateAsync(imageData: ImageData) async -> CIImage? {
+        guard let source = imageData.image
+        else { return nil }
         
-        return result
+        return imageCreationService.duplicate(
+            number: imageData.imageNumber,
+            source: source
+        )
+    }
+    
+    // MARK: Inner types
+    
+    private struct StateSnapshot {
+        let width: Int
+        let height: Int
+        let predefinedSize: CGSize?
+        let ppi: CGFloat
+        
+        @MainActor
+        init(_ appState: AppState) {
+            self.width = appState.userData.width
+            self.height = appState.userData.height
+            self.predefinedSize = appState.userData.imageResolution.predefinedSize
+            self.ppi = appState.userData.imageResolution.ppi
+        }
     }
 }

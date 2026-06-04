@@ -5,17 +5,17 @@
 //  Created by UglyGeorge on 15.05.2025.
 //
 
-import SwiftUICore
+import SwiftUI
 
 class ImageData {
     let imageNumber: Int
     let mode: GenerationMode
-    let image: Image?
+    let image: CGImage?
     let size: NSSize?
     
     init(imageNumber:Int,
          mode: GenerationMode,
-         image: Image? = nil,
+         image: CGImage? = nil,
          size: NSSize? = nil) {
         self.imageNumber = imageNumber
         self.mode = mode

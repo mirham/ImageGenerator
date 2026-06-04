@@ -10,28 +10,83 @@ import Foundation
 struct Constants {
     // MARK: Default values
     static let appName = "MirHam Image Generator"
+    static let defaultNumberSizePercentage = 0.5
+    static let defaultNumberSizePadding = 0.9
+    static let defaultPpi: CGFloat = 72
+    static let targetChunksPerWorker = 10
+    static let maxChunkSize = 100
+    static let minChunkSize = 1
+    static let minCountFactor: Double = 1.0
+    static let gopSize = 30
+    static let gopsPerWorkerDivisor = 2
+    static let maxChunkFrames = 300
     static let defaultWidth: Int = 500
     static let minWidth: Int = 5
-    static let maxWidth: Int = 16350
+    static let maxWidth: Int = 16384
     static let defaultHeight: Int = 500
     static let minHeight: Int = 5
-    static let maxHeight: Int = 16350
+    static let maxHeight: Int = 16384
     static let defaultCount: Int = 100
     static let minCount: Int = 1
-    static let maxCount: Int = 100000
+    static let maxCount: Int = 1000000
     static let step: Int = 1
-    static let threadChunkGenerate = 50
-    static let threadChunkDuplicate = 200
     static let minPercentage: Double = 0
     static let maxPercentage: Double = 100
     static let defaultScaleFactor: CGFloat = 1.0
     static let maxConcurrencyLimit: Int = 16
+    static let defaultBlendMode = "CIDifferenceBlendMode"
+    static let defaultJpegQualityThreshold: Double = 4000.0
+    static let defaultJpegQuality: Double = 0.85
+    static let lowerJpegQuality: Double = 0.75
+    static let sizedContextKey = "CGContext_%1$@x%2$@"
+    static let contextKey = "CIContext"
+    static let cpuTypeAppleSilicon: UInt32 = 12
+    static let defaultAppleSiliconLimitMultiplier = 3
+    static let bypesPerPixel = 4
+    static let bitsPerComponent: UInt32 = 8
+    static let alignmentTo64 = 64
+    static let defaultFrameRate = 30
+    static let defaultVideoDuration: TimeInterval = 30
+    static let secondsPerMinute = 60
+    static let secondsPerHour = 3600
+    static let minutesPerHour = 60
+    static let minDurationSeconds: TimeInterval = 1
+    static let maxDurationSeconds: TimeInterval = 36000 // 10 hours
+    static let defaultDurationSeconds: TimeInterval = 60
+    static let maxDurationHours = 10
+    static let kibi: Double = 1024
+    static let smallFileDuration = 3.0
+    static let baseClipDuration: Double = 3.0
+    static let minFileSizeBytes: Double = 1024 // 1 KB
+    static let defaultFileSizeBytes: Double = 100 * kibi * kibi // 100 MB
+    static let maxFileSizeBytes: Double = maxFileSizeGb * kibi * kibi * kibi // 200 GB
+    static let fileSizeSafetyMargin: Double = 0.9
+    static let minFileSizeKb = 1.0
+    static let maxFileSizeGb = 200.0
+    static let fileSizeStepRoundingFactor: Double = 100
+    static let fileSizeStepSize: Double = 1.0
+    static let fileSizeDecimalPlaces = 2
+    static let defaultOvershootMultiplier = 1.2
+    
+    static let streamLoopMinDuration: TimeInterval = 30
+    static let doublingMinBytes: Int = 50 * 1024 * 1024
+    static let undershootFactor: Double = 0.95
+    static let largeFileThreshold: Int = 10 * 1024 * 1024 * 1024
+    static let minBitrate: Int = 100_000
     
     // MARK: Settings key names
     static let settingsKeyMode = "mode"
     static let settingsKeyWidth = "width"
     static let settingsKeyHeight = "height"
-    static let settingsKeyFormat = "format"
+    static let settingsKeyColorSpace = "colorspace"
+    static let settingsKeyImageOutputFormat = "image-format"
+    static let settingsKeyImageResolution = "image-resolution"
+    static let settingsKeyVideoOutputFormat = "video-format"
+    static let settingsKeyVideoMode = "video-mode"
+    static let settingsKeyVideoDuration = "video-duration"
+    static let settingsKeyVideoFileSize = "video-filesize"
+    static let settingsKeyVideoFileSizeUnit = "video-filesize-unit"
+    static let settingsKeyVideoResolution = "video-resolution"
     static let settingsKeyCount = "count"
     static let settingsKeyOutputFolder = "folder"
     static let settingsKeyInputImage = "image"
@@ -46,8 +101,30 @@ struct Constants {
     static let windowIdInfo = "info-view"
     
     // MARK: Tab tags
-    static let tabIdGenerate = 0
-    static let tabIdDuplicate = 1
+    static let tabIdGenerateImages = 0
+    static let tabIdDuplicateImage = 1
+    static let tabIdGenerateVideos = 2
+    
+    // MARK: sysctlbyname
+    static let sysctlbynamePerfCores = "hw.perflevel0.physicalcpu"
+    static let sysctlbynamePhysicalCores = "hw.physicalcpu"
+    static let sysctlbynameCpuType = "hw.cputype"
+    
+    // MARK: ffmpeg
+    static let ffmpegAppleSilicon = "ffmpeg-arm64"
+    static let ffmpegIntel = "ffmpeg-x86_64"
+    
+    // MARK: Video files
+    static let vfDataFree = "free"
+    static let vfVoidId: UInt8 = 0xEC
+    static let vfSuffixBase = "base"
+    static let vfSuffixFinal = "final"
+    static let vfSuffixConcatFinal = "cfinal"
+    static let vfSuffixTopup = "topup"
+    static let vfConcatFileExtension = "txt"
+    static let vfConcatFileContent = "file '%1$@'\nfile '%2$@'"
+    static let vfConcatMergeFileContent = "file '%1$@'"
+    static let vfTempVideoUrl = "temp_%1$@_%2$lld.%3$@"
     
     // MARK: Hints
     static let hintWidth = "\(minWidth)..\(maxWidth)"
@@ -59,36 +136,41 @@ struct Constants {
     static let hintPostfix = "Add a postfix..."
     
     // MARK: Element names
-    static let elLetsGenerate = "Let's generate"
-    static let elImage = "image"
-    static let elImages = "images"
-    static let elCopies = "copies of image"
-    static let elInAmount = "in the amount of"
-    static let elWith = "with"
-    static let elPxAsWidth = "pixels as width"
-    static let elAnd = "and"
-    static let elOk = "OK"
-    static let elPxAsHeight = "pixels as height"
-    static let elIntoFolder = "into the folder"
-    static let elChoose = "Choose..."
-    static let elGenerate = "Go"
-    static let elProgressbarText = "Generating %1$@"
-    static let elInfo = "Info"
-    static let elWithPrefix = "with prefix"
-    static let elWithPostfix = "and postfix"
+    static let itemsCount = "Items count:"
+    static let format = "Format:"
+    static let duplicatingImage = "Duplicating image:"
+    static let resolution = "Resolution:"
+    static let colorSpace = "Color space:"
+    static let ok = "OK"
+    static let outputFolder = "Output folder:"
+    static let choose = "Choose..."
+    static let generate = "Go"
+    static let progressbarText = "Generating %1$@"
+    static let info = "Info"
+    static let prefix = "Prefix:"
+    static let postfix = "Postfix:"
+    static let mode = "Mode:"
     
     // MARK: Tab names
-    static let tabGenerate = "Generate"
-    static let tabDuplicate = "Duplicate"
+    static let tabGenerateImages = "Generate images"
+    static let tabDuplicateImages = "Duplicate image"
+    static let tabGenerateVideos = "Generate videos"
     
     // MARK: Dialogs
-    static let dialogHeaderWrongInputFile = "Input image file is not found or wrong one"
-    static let dialogBodyWrongInputFile = "Select a valid input image file."
-    static let dialogHeaderNonexistentOutputFolder = "Output folder not found"
-    static let dialogBodyNonexistentOutputFolder = "Select a valid output folder."
+    static let dialogHeaderError = "Error"
+    static let dialogHeaderMissingInputFile = "Input image file is not found or wrong one"
+    static let dialogBodyMissingInputFile = "Select a valid input image file."
+    static let dialogHeaderMissingOutputFolder = "Output folder not found"
+    static let dialogBodyMissingOutputFolder = "Select a valid output folder."
     
-    // MARK: Basic
+    // MARK: Symbols
     static let slash = "/"
+    static let xmark = "×"
+    static let newLine = "\n"
+    
+    // MARK: Formatting
+    static let durationFormatTemplate = "%01d:%02d:%02d"
+    static let sizeFormatTemplate = "%.2f %@"
     
     // MARK: About
     static let aboutSupportMail = "bWlyaGFtQGFidi5iZw=="
