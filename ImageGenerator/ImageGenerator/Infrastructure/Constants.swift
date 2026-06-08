@@ -57,7 +57,8 @@ struct Constants {
     static let kibi: Double = 1024
     static let smallFileDuration = 3.0
     static let baseClipDuration: Double = 3.0
-    static let minFileSizeBytes: Double = 1024 // 1 KB
+    static let minFileSizeBytesBase2: Double = 1024 // 1 KiB
+    static let minFileSizeBytesBase10: Double = 1000 // 1 KB
     static let defaultFileSizeBytes: Double = 100 * kibi * kibi // 100 MB
     static let maxFileSizeBytes: Double = maxFileSizeGb * kibi * kibi * kibi // 200 GB
     static let fileSizeSafetyMargin: Double = 0.9
@@ -86,6 +87,7 @@ struct Constants {
     static let settingsKeyVideoDuration = "video-duration"
     static let settingsKeyVideoFileSize = "video-filesize"
     static let settingsKeyVideoFileSizeUnit = "video-filesize-unit"
+    static let settingsKeyVideoFileSizeBase = "video-filesize-base"
     static let settingsKeyVideoResolution = "video-resolution"
     static let settingsKeyCount = "count"
     static let settingsKeyOutputFolder = "folder"
@@ -96,6 +98,8 @@ struct Constants {
     // MARK: Icons
     static let iconImages = "photo.stack"
     static let iconStop = "stop.circle"
+    static let iconPlus = "plus"
+    static let iconMinus = "minus"
     
     // MARK: Window IDs
     static let windowIdInfo = "info-view"
@@ -134,6 +138,8 @@ struct Constants {
     static let hintInputImage = "Select an image..."
     static let hintPrefix = "Add a prefix..."
     static let hintPostfix = "Add a postfix..."
+    static let hintIncrease = "Increase"
+    static let hintDecrease = "Decrease"
     
     // MARK: Element names
     static let itemsCount = "Items count:"
@@ -150,6 +156,8 @@ struct Constants {
     static let prefix = "Prefix:"
     static let postfix = "Postfix:"
     static let mode = "Mode:"
+    static let fileSize = "File size"
+    static let duration = "Duration"
     
     // MARK: Tab names
     static let tabGenerateImages = "Generate images"
@@ -171,6 +179,7 @@ struct Constants {
     // MARK: Formatting
     static let durationFormatTemplate = "%01d:%02d:%02d"
     static let sizeFormatTemplate = "%.2f %@"
+    static let intSuffix = ".0"
     
     // MARK: About
     static let aboutSupportMail = "bWlyaGFtQGFidi5iZw=="

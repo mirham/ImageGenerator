@@ -11,11 +11,13 @@ enum FileSizeUnit: String, CaseIterable, Identifiable, Codable {
     case mb = "MB"
     case gb = "GB"
     
-    var multiplier: Double {
+    func multiplier(for base: FileSizeBase) -> Double {
+        let kilo = base.kilo
+        
         switch self {
-            case .kb: return Constants.kibi
-            case .mb: return Constants.kibi * Constants.kibi
-            case .gb: return Constants.kibi * Constants.kibi * Constants.kibi
+            case .kb: return kilo
+            case .mb: return kilo * kilo
+            case .gb: return kilo * kilo * kilo
         }
     }
 }

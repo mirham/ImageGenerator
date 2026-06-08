@@ -115,13 +115,13 @@ struct MainView: ImageGeneratorView {
     private func getWindowSize(for tab: Int) -> CGSize {
         switch tab {
             case Constants.tabIdGenerateImages:
-                return CGSize(width: 550, height: 570)
+                return CGSize(width: 570, height: 570)
             case Constants.tabIdDuplicateImage:
-                return CGSize(width: 550, height: 300)
+                return CGSize(width: 570, height: 300)
             case Constants.tabIdGenerateVideos:
-                return CGSize(width: 550, height: 630)
+                return CGSize(width: 570, height: 630)
             default:
-                return CGSize(width: 550, height: 550)
+                return CGSize(width: 570, height: 550)
         }
     }
 }

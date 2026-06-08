@@ -55,7 +55,8 @@ struct VideoGenerationOptionsView: ImageGeneratorView {
         }
     }
     
-    @ViewBuilder var videoMode: some View {
+    @ViewBuilder
+    var videoMode: some View {
         LabeledRow(title: Constants.mode) {
             VideoModeControl(
                 mode: $selectedVideoMode,
@@ -63,10 +64,11 @@ struct VideoGenerationOptionsView: ImageGeneratorView {
                 savedFileSizeBytes: Binding(
                     get: { Double(appState.userData.videoFileSizeBytes) },
                     set: { appState.userData.videoFileSizeBytes = Int($0) }),
-                savedFileSizeUnit: $appState.userData.videoFileSizeUnit)
-                .onChange(of: selectedVideoMode) {
-                    appState.userData.videoMode = selectedVideoMode
-                }
+                savedFileSizeUnit: $appState.userData.videoFileSizeUnit,
+                savedFileSizeBase: $appState.userData.videoFileSizeBase)
+            .onChange(of: selectedVideoMode) {
+                appState.userData.videoMode = selectedVideoMode
+            }
         }
     }
     
@@ -81,7 +83,7 @@ struct VideoGenerationOptionsView: ImageGeneratorView {
                     appState.userData.videoResolution = size
                 },
                 zeroValueContent: {
-                    AnyView (
+                    AnyView(
                         HStack {
                             NumericTextField(
                                 title: Constants.hintWidth,

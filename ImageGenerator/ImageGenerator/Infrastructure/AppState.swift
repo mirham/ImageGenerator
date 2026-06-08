@@ -14,10 +14,6 @@ class AppState : ObservableObject {
     
     static let shared = AppState()
     
-    private func setGenerationTotalCount() {
-        generation.totalCount = userData.count
-    }
-    
     func applyImageGenerationStateUpdate(_ update: ImageGenerationStateUpdate) {
         var updatedGeneration = generation
         
@@ -30,6 +26,12 @@ class AppState : ObservableObject {
         }
         
         generation = updatedGeneration
+    }
+    
+    // MARK: Private functions
+    
+    private func setGenerationTotalCount() {
+        generation.totalCount = userData.count
     }
 }
 
@@ -150,6 +152,14 @@ extension AppState {
             }
         }
         
+        var videoFileSizeBase: FileSizeBase = .base2 {
+            didSet {
+                writeSetting(
+                    newValue: videoFileSizeBase,
+                    key: Constants.settingsKeyVideoFileSizeBase)
+            }
+        }
+        
         var videoResolution: VideoResolution = .custom {
             didSet {
                 writeSetting(
@@ -207,6 +217,7 @@ extension AppState {
             && lhs.videoDurationSeconds == rhs.videoDurationSeconds
             && lhs.videoFileSizeBytes == rhs.videoFileSizeBytes
             && lhs.videoFileSizeUnit == rhs.videoFileSizeUnit
+            && lhs.videoFileSizeBase == rhs.videoFileSizeBase
             
             return result
         }
@@ -236,6 +247,8 @@ extension AppState {
                 ?? Int(Constants.defaultFileSizeBytes)
             videoFileSizeUnit = readSetting(key: Constants.settingsKeyVideoFileSizeUnit)
                 ?? .mb
+            videoFileSizeBase = readSetting(key: Constants.settingsKeyVideoFileSizeBase)
+                ?? .base2
             videoResolution = readSetting(key: Constants.settingsKeyVideoResolution)
                 ?? .custom
             outputFolder = readSetting(key: Constants.settingsKeyOutputFolder)

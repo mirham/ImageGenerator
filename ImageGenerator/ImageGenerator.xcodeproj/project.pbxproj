@@ -21,6 +21,8 @@
 		3518B3512FD0783D000D6341 /* VideoTempFileServiceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3518B3502FD07835000D6341 /* VideoTempFileServiceType.swift */; };
 		3518B3532FD07879000D6341 /* FfmpegServiceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3518B3522FD07873000D6341 /* FfmpegServiceType.swift */; };
 		3518B3552FD078A5000D6341 /* FfmpegService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3518B3542FD078A2000D6341 /* FfmpegService.swift */; };
+		3549AB132FD6ACAD0014EC73 /* FileSizeBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3549AB122FD6ACA80014EC73 /* FileSizeBase.swift */; };
+		3549AB152FD6D2AF0014EC73 /* StringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3549AB142FD6D2A80014EC73 /* StringExtensions.swift */; };
 		3553597C2C64C747004C172A /* ImageGeneratorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3553597B2C64C747004C172A /* ImageGeneratorApp.swift */; };
 		3553597E2C64C747004C172A /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3553597D2C64C747004C172A /* MainView.swift */; };
 		355359802C64C74A004C172A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3553597F2C64C74A004C172A /* Assets.xcassets */; };
@@ -124,6 +126,8 @@
 		3518B3502FD07835000D6341 /* VideoTempFileServiceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoTempFileServiceType.swift; sourceTree = "<group>"; };
 		3518B3522FD07873000D6341 /* FfmpegServiceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FfmpegServiceType.swift; sourceTree = "<group>"; };
 		3518B3542FD078A2000D6341 /* FfmpegService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FfmpegService.swift; sourceTree = "<group>"; };
+		3549AB122FD6ACA80014EC73 /* FileSizeBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileSizeBase.swift; sourceTree = "<group>"; };
+		3549AB142FD6D2A80014EC73 /* StringExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtensions.swift; sourceTree = "<group>"; };
 		355359782C64C747004C172A /* ImageGenerator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ImageGenerator.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3553597B2C64C747004C172A /* ImageGeneratorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageGeneratorApp.swift; sourceTree = "<group>"; };
 		3553597D2C64C747004C172A /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
@@ -351,6 +355,7 @@
 				35DD84242FC84284009E6D1F /* VideoResolution.swift */,
 				35DD84282FC84BA6009E6D1F /* VideoGenerationMode.swift */,
 				35DD84542FC8BFED009E6D1F /* FileSizeUnit.swift */,
+				3549AB122FD6ACA80014EC73 /* FileSizeBase.swift */,
 			);
 			path = Enums;
 			sourceTree = "<group>";
@@ -379,6 +384,7 @@
 				3557DC1A2DCE010100BE779E /* NSImageExtensions.swift */,
 				35CDEEEA2FC59ADC00BEB092 /* CIColorExtensions.swift */,
 				35DD84522FC8AC0F009E6D1F /* ComparableExtensions.swift */,
+				3549AB142FD6D2A80014EC73 /* StringExtensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -618,6 +624,7 @@
 				35CDEF062FC5CD6000BEB092 /* ImageWritingStrategyFactoryType.swift in Sources */,
 				35DD84532FC8AC15009E6D1F /* ComparableExtensions.swift in Sources */,
 				35DD84252FC84289009E6D1F /* VideoResolution.swift in Sources */,
+				3549AB132FD6ACAD0014EC73 /* FileSizeBase.swift in Sources */,
 				35DD841A2FC721FD009E6D1F /* OutputFolderView.swift in Sources */,
 				35B8A13D2DD65807000CFA1B /* ImageJobServiceType.swift in Sources */,
 				3518B34F2FD077F0000D6341 /* VideoTempFileService.swift in Sources */,
@@ -627,6 +634,7 @@
 				35B8A13A2DD657BD000CFA1B /* ContainerExtensions.swift in Sources */,
 				35CDEEFA2FC5B48000BEB092 /* ChunkingStrategyFactoryType.swift in Sources */,
 				356760E32D141AAC00625233 /* GenerationMode.swift in Sources */,
+				3549AB152FD6D2AF0014EC73 /* StringExtensions.swift in Sources */,
 				35DD844B2FC85C82009E6D1F /* VideoGenerationOptionsView.swift in Sources */,
 				35CDEEF42FC5ADDD00BEB092 /* MediaType.swift in Sources */,
 				35DD842B2FC84DBA009E6D1F /* VideoGenerationService.swift in Sources */,

@@ -14,6 +14,8 @@ struct NumericTextField: View {
     let onValidChange: (Int) -> Void
     let width: CGFloat
     
+    @State private var text: String = String()
+    
     init(
         title: String,
         value: Binding<Int>,
@@ -29,11 +31,30 @@ struct NumericTextField: View {
     }
     
     var body: some View {
-        TextField(title, value: $value, formatter: NumberFormatter())
+        TextField(title, text: $text)
             .foregroundColor(isValid(value) ? .primary : .red)
+            .onChange(of: text) { _, newText in
+                let filtered = newText.filteringNumericInput(allowDecimal: false)
+                
+                if filtered != newText {
+                    text = filtered
+                
+                    return
+                }
+                
+                if let parsed = Int(filtered), isValid(parsed) {
+                    value = parsed
+                    onValidChange(parsed)
+                }
+            }
+            .onAppear {
+                text = value == 0 ? String() : "\(value)"
+            }
             .onChange(of: value) { _, newValue in
-                if isValid(newValue) {
-                    onValidChange(newValue)
+                let asString = "\(newValue)"
+                
+                if text != asString {
+                    text = asString
                 }
             }
             .textFieldStyle(.roundedBorder)

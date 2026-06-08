@@ -12,10 +12,9 @@ struct VideoModeControl: View {
     @Binding var savedDurationSeconds: TimeInterval
     @Binding var savedFileSizeBytes: Double
     @Binding var savedFileSizeUnit: FileSizeUnit
+    @Binding var savedFileSizeBase: FileSizeBase
     
     @State private var selectedMode: VideoGenerationModeType = .fileSize
-    @State private var durationSeconds: TimeInterval = Constants.defaultVideoDuration
-    @State private var fileSizeBytes: Double = Constants.defaultFileSizeBytes
     @State private var isReady: Bool = false
     
     var body: some View {
@@ -23,31 +22,33 @@ struct VideoModeControl: View {
             modePicker
             switch selectedMode {
                 case .duration:
-                    DurationControl(totalSeconds: $durationSeconds)
-                        .onChange(of: durationSeconds) {
-                            guard isReady else { return }
-                            mode = .duration(durationSeconds)
-                            savedDurationSeconds = durationSeconds
+                    DurationControl(totalSeconds: $savedDurationSeconds)
+                        .onChange(of: savedDurationSeconds) {
+                            guard isReady
+                            else { return }
+                            
+                            mode = .duration(savedDurationSeconds)
                         }
                 case .fileSize:
-                    FileSizeControl(bytes: $fileSizeBytes,
-                                    savedUnit: $savedFileSizeUnit)
-                        .onChange(of: fileSizeBytes) {
-                            guard isReady else { return }
-                            mode = .fileSize(Int(fileSizeBytes))
-                            savedFileSizeBytes = fileSizeBytes
-                        }
+                    FileSizeControl(
+                        bytes: $savedFileSizeBytes,
+                        savedUnit: $savedFileSizeUnit,
+                        savedBase: $savedFileSizeBase)
+                    .onChange(of: savedFileSizeBytes) {
+                        guard isReady
+                        else { return }
+                        
+                        mode = .fileSize(Int(savedFileSizeBytes))
+                    }
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .onAppear {
-            syncFromSelectedMode()
-            DispatchQueue.main.async {
-                isReady = true
-            }
+            syncFromMode()
+            DispatchQueue.main.async { isReady = true }
         }
         .onChange(of: mode) {
-            syncFromSelectedMode()
+            syncFromMode()
         }
     }
     
@@ -56,8 +57,8 @@ struct VideoModeControl: View {
     @ViewBuilder
     private var modePicker: some View {
         Picker(String(), selection: $selectedMode) {
-            Text("File size").tag(VideoGenerationModeType.fileSize)
-            Text("Duration").tag(VideoGenerationModeType.duration)
+            Text(Constants.fileSize).tag(VideoGenerationModeType.fileSize)
+            Text(Constants.duration).tag(VideoGenerationModeType.duration)
         }
         .pickerStyle(.segmented)
         .offset(x: -10)
@@ -66,26 +67,21 @@ struct VideoModeControl: View {
     
     // MARK: Private functions
     
-    private func syncFromSelectedMode() {
+    private func syncFromMode() {
         switch mode {
             case .duration(let seconds):
                 selectedMode = .duration
-                durationSeconds = seconds
+                savedDurationSeconds = seconds
             case .fileSize(let bytes):
                 selectedMode = .fileSize
-                fileSizeBytes = Double(bytes)
-        }
-        
-        switch selectedMode {
-            case .duration: fileSizeBytes = savedFileSizeBytes
-            case .fileSize: durationSeconds = savedDurationSeconds
+                savedFileSizeBytes = Double(bytes)
         }
     }
     
     private func applySelectedMode() {
         switch selectedMode {
-            case .duration: mode = .duration(durationSeconds)
-            case .fileSize: mode = .fileSize(Int(fileSizeBytes))
+            case .duration: mode = .duration(savedDurationSeconds)
+            case .fileSize: mode = .fileSize(Int(savedFileSizeBytes))
         }
     }
     
