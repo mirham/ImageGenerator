@@ -55,7 +55,8 @@ final class ImageCreationService: ImageCreationServiceType {
         let padding: CGFloat = Constants.defaultNumberSizePadding
         let maxTextWidth = scaledSize.width * padding
         let maxTextHeight = scaledSize.height * padding
-        var fontSize = min(scaledSize.width, scaledSize.height) * Constants.defaultNumberSizePercentage
+        var fontSize = min(scaledSize.width, scaledSize.height)
+            * Constants.defaultNumberSizePercentage
         var line: CTLine
         var ascent: CGFloat = 0
         var descent: CGFloat = 0
@@ -76,6 +77,7 @@ final class ImageCreationService: ImageCreationServiceType {
             textHeight = ascent + descent
             
             if textWidth <= maxTextWidth && textHeight <= maxTextHeight { break }
+            
             fontSize *= 0.9
         } while fontSize > 1
         
@@ -98,7 +100,6 @@ final class ImageCreationService: ImageCreationServiceType {
         guard let cgImage = context.makeImage()
         else { return CIImage.empty() }
         
-        // Scale back down to original size so compositing works correctly
         let scaleDown = CGAffineTransform(scaleX: 1/scale, y: 1/scale)
         return CIImage(cgImage: cgImage).transformed(by: scaleDown)
     }

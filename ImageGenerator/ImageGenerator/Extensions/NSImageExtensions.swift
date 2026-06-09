@@ -9,8 +9,11 @@ import SwiftUI
 
 extension NSImage{
     var pixelSize: NSSize? {
-        if let rep = self.representations.first{
-            let size = NSSize(width: rep.pixelsWide, height: rep.pixelsHigh)
+        if let representation = self.representations.first{
+            let size = NSSize(
+                width: representation.pixelsWide,
+                height: representation.pixelsHigh)
+            
             return size
         }
         

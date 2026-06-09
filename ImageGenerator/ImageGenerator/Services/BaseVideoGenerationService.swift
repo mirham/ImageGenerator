@@ -21,8 +21,10 @@ class BaseVideoGenerationService {
             return [
                 "-f", "lavfi", "-i", colorSource,
                 "-f", "lavfi", "-i", "nullsrc=size=\(Int(videoData.size.width))x\(Int(videoData.size.height)):rate=\(Constants.defaultFrameRate),geq=random(1)*255:128:128",
-                "-filter_complex", "[0:v][1:v]blend=all_mode=overlay:all_opacity=0.5,\(drawNumberOverlay(videoData: videoData))",
-                "-an", "-sn"
+                "-filter_complex",
+                "[0:v][1:v]blend=all_mode=overlay:all_opacity=0.5,\(drawNumberOverlay(videoData: videoData))",
+                "-an", 
+                "-sn"
             ]
         } else {
             return [
@@ -82,6 +84,7 @@ class BaseVideoGenerationService {
         let r = Int.random(in: 0...255)
         let g = Int.random(in: 0...255)
         let b = Int.random(in: 0...255)
+        
         return String(format: "%02X%02X%02X", r, g, b)
     }
 }

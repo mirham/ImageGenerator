@@ -6,13 +6,13 @@
 //
 
 import SwiftUI
+import Factory
 
 struct MainView: ImageGeneratorView {
     @EnvironmentObject var appState: AppState
     
     @State private var tabSize: CGSize = .zero
     @State private var selectedTab: Int = 0
-
     
     var body: some View {
         VStack {

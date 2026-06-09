@@ -57,22 +57,18 @@ struct Constants {
     static let kibi: Double = 1024
     static let smallFileDuration = 3.0
     static let baseClipDuration: Double = 3.0
-    static let minFileSizeBytesBase2: Double = 1024 // 1 KiB
+    static let minFileSizeBytesBase2: Double = kibi // 1 KiB
     static let minFileSizeBytesBase10: Double = 1000 // 1 KB
     static let defaultFileSizeBytes: Double = 100 * kibi * kibi // 100 MB
     static let maxFileSizeBytes: Double = maxFileSizeGb * kibi * kibi * kibi // 200 GB
-    static let fileSizeSafetyMargin: Double = 0.9
     static let minFileSizeKb = 1.0
     static let maxFileSizeGb = 200.0
     static let fileSizeStepRoundingFactor: Double = 100
-    static let fileSizeStepSize: Double = 1.0
-    static let fileSizeDecimalPlaces = 2
     static let defaultOvershootMultiplier = 1.2
-    
-    static let streamLoopMinDuration: TimeInterval = 30
-    static let doublingMinBytes: Int = 50 * 1024 * 1024
+    static let minStreamLoopDuration: TimeInterval = 30
+    static let minDoublingBytes: Int = Int(50 * kibi * kibi)
     static let undershootFactor: Double = 0.95
-    static let largeFileThreshold: Int = 10 * 1024 * 1024 * 1024
+    static let largeFileThreshold: Int = Int(10 * kibi * kibi * kibi)
     static let minBitrate: Int = 100_000
     
     // MARK: Settings key names
@@ -100,9 +96,6 @@ struct Constants {
     static let iconStop = "stop.circle"
     static let iconPlus = "plus"
     static let iconMinus = "minus"
-    
-    // MARK: Window IDs
-    static let windowIdInfo = "info-view"
     
     // MARK: Tab tags
     static let tabIdGenerateImages = 0
@@ -158,6 +151,7 @@ struct Constants {
     static let mode = "Mode:"
     static let fileSize = "File size"
     static let duration = "Duration"
+    static let about = "About \(appName)"
     
     // MARK: Tab names
     static let tabGenerateImages = "Generate images"
@@ -175,11 +169,16 @@ struct Constants {
     static let slash = "/"
     static let xmark = "×"
     static let newLine = "\n"
+    static let dot = "."
+    static let comma = ","  
+    static let dotChar: Character = "."
+    static let commaChar: Character = ","
     
     // MARK: Formatting
     static let durationFormatTemplate = "%01d:%02d:%02d"
     static let sizeFormatTemplate = "%.2f %@"
     static let intSuffix = ".0"
+    static let double2Signs = "%.2f"
     
     // MARK: About
     static let aboutSupportMail = "bWlyaGFtQGFidi5iZw=="

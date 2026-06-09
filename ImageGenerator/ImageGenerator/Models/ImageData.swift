@@ -5,7 +5,8 @@
 //  Created by UglyGeorge on 15.05.2025.
 //
 
-import SwiftUI
+import Foundation
+import CoreGraphics
 
 class ImageData {
     let imageNumber: Int

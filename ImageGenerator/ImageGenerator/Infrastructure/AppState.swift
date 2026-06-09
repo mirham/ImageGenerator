@@ -18,11 +18,51 @@ class AppState : ObservableObject {
         var updatedGeneration = generation
         
         if let generatedCount = update.generatedCount {
-            updatedGeneration.generatedCount += generatedCount
+            updatedGeneration.generatedCount += Double(generatedCount)
         }
         
         if let isCancelRequested = update.isCancelRequested {
             updatedGeneration.isCancelRequested = isCancelRequested
+        }
+        
+        updatedGeneration.progress = calculateProgress(updatedGeneration)
+        
+        if updatedGeneration.progress >= Constants.maxPercentage
+            || Int(updatedGeneration.generatedCount) >= updatedGeneration.totalCount {
+            updatedGeneration.inProgress = false
+        }
+        
+        generation = updatedGeneration
+    }
+    
+    func applyVideoGenerationStateUpdate(_ update: VideoGenerationStateUpdate) {
+        var updatedGeneration = generation
+        
+        if let operationIncrement = update.operationIncrement {
+            updatedGeneration.operationProgress += operationIncrement
+        }
+        
+        if update.videoCompleted {
+            updatedGeneration.completedFileCount += 1
+            updatedGeneration.operationProgress -= update.operationContribution ?? 0
+        }
+        
+        updatedGeneration.generatedCount = Double(updatedGeneration.completedFileCount)
+            + updatedGeneration.operationProgress
+        
+        if let inProgress = update.inProgress {
+            updatedGeneration.inProgress = inProgress
+        }
+        
+        if let isCancelRequested = update.isCancelRequested {
+            updatedGeneration.isCancelRequested = isCancelRequested
+        }
+        
+        updatedGeneration.progress = calculateProgress(updatedGeneration)
+        
+        if updatedGeneration.progress >= Constants.maxPercentage
+            || updatedGeneration.completedFileCount >= updatedGeneration.totalCount {
+            updatedGeneration.inProgress = false
         }
         
         generation = updatedGeneration
@@ -33,24 +73,28 @@ class AppState : ObservableObject {
     private func setGenerationTotalCount() {
         generation.totalCount = userData.count
     }
+    
+    private func calculateProgress(_ generation: Generation) -> Double {
+        guard generation.totalCount > 0
+        else { return 0 }
+        
+        return min(
+            (generation.generatedCount / Double(generation.totalCount))
+                * Constants.maxPercentage,
+            Constants.maxPercentage
+        )
+    }
 }
 
 extension AppState {
     struct Generation {
         var inProgress : Bool = false
         var isCancelRequested: Bool = false
-        var generatedCount: Int = 0 { didSet {
-            guard generatedCount != 0 || totalCount != 0
-            else { return }
-            
-            progress = (Double(generatedCount) / Double(totalCount)) * Constants.maxPercentage
-            if (progress == Constants.maxPercentage
-                || generatedCount == totalCount) {
-                inProgress = false
-            }
-        } }
+        var generatedCount: Double = 0.0
         var progress: Double = 0.0
         var totalCount: Int = 0
+        var completedFileCount: Int = 0
+        var operationProgress: Double = 0.0
     }
 }
 

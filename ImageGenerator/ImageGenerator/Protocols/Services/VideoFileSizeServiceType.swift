@@ -11,7 +11,9 @@ protocol VideoFileSizeServiceType {
     func trimToExactDurationAsync(
         sourceUrl: URL,
         duration: TimeInterval,
-        outputUrl: URL
+        outputUrl: URL,
+        onOperationComplete:
+            (@Sendable (_ increment: VideoProgress) async -> Void)?
     ) async -> Bool
     
     func trimToUndershootThenPadAsync(
@@ -19,18 +21,24 @@ protocol VideoFileSizeServiceType {
         videoData: VideoData,
         undershootTarget: Int,
         targetBytes: Int,
-        strategy: VideoGenerationStrategyType
+        strategy: VideoGenerationStrategyType,
+        onOperationComplete:
+            (@Sendable ( _ increment: VideoProgress) async -> Void)?
     ) async -> Bool
     
     func generateSmallFileExactAsync(
         videoData: VideoData,
         strategy: VideoGenerationStrategyType,
-        targetBytes: Int
+        targetBytes: Int,
+        onOperationComplete:
+            (@Sendable (_ increment: VideoProgress) async -> Void)?
     ) async -> Bool
     
-    func buildLargeFile(
+    func generateLargeFileExactAsync(
         videoData: VideoData,
         strategy: VideoGenerationStrategyType,
-        targetBytes: Int
+        targetBytes: Int,
+        onOperationComplete:
+            (@Sendable (_ increment: VideoProgress) async -> Void)?
     ) async -> Bool
 }

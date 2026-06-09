@@ -50,16 +50,24 @@ struct ActionsView: ImageGeneratorView {
     private var progressView: some View {
         ProgressView(
             value: appState.generation.progress,
-            total: 100,
-            label: {
-                Text("Generating \(appState.generation.generatedCount) of \(appState.userData.count) images (\(appState.generation.progress, specifier: "%.1f")%)")
-            }
+            total: Constants.maxPercentage,
+            label: {  Text(progressLabel) }
         )
         .padding(7)
         .overlay(
             RoundedRectangle(cornerRadius: 5)
                 .stroke(.blue, lineWidth: 2)
         )
+    }
+    
+    private var progressLabel: String {
+        let operation = appState.userData.mode.operationName.firstUppercased
+        let generated = String(format: Constants.double2Signs, appState.generation.generatedCount)
+        let total = appState.userData.count
+        let media = appState.userData.mode.mediaName
+        let progress = String(format: Constants.double2Signs, appState.generation.progress)
+        
+        return "\(operation) \(generated) of \(total) \(media) (\(progress)%)"
     }
     
     @ViewBuilder
@@ -169,6 +177,8 @@ struct ActionsView: ImageGeneratorView {
     private func resetProgress() {
         appState.generation.inProgress = true
         appState.generation.generatedCount = 0
+        appState.generation.operationProgress = 0
+        appState.generation.completedFileCount = 0
         appState.generation.isCancelRequested = false
     }
     

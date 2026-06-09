@@ -13,17 +13,34 @@ class BaseJobService {
     
     func getConcurrencyLimit() -> Int {
         let cpuWorkers = computerService.getOptimalWorkerCount()
+        
         return computerService.isAppleSilicon()
-        ? cpuWorkers * Constants.defaultAppleSiliconLimitMultiplier
-        : cpuWorkers
+            ? cpuWorkers * Constants.defaultAppleSiliconLimitMultiplier
+            : cpuWorkers
     }
     
     func updateStatusAsync(
         _ configure: (ImageGenerationStateUpdateBuilder) -> ImageGenerationStateUpdateBuilder) async {
-            guard !Task.isCancelled else { return }
-            let update = configure(ImageGenerationStateUpdateBuilder()).build()
-            await MainActor.run {
-                appState.applyImageGenerationStateUpdate(update)
-            }
+        guard !Task.isCancelled
+        else { return }
+        
+        let update = configure(ImageGenerationStateUpdateBuilder()).build()
+        
+        await MainActor.run {
+            appState.applyImageGenerationStateUpdate(update)
         }
+    }
+    
+    func updateStatusAsync(
+        _ configure: (VideoGenerationStateUpdateBuilder) -> VideoGenerationStateUpdateBuilder
+    ) async {
+        guard !Task.isCancelled
+        else { return }
+        
+        let update = configure(VideoGenerationStateUpdateBuilder()).build()
+        
+        await MainActor.run {
+            appState.applyVideoGenerationStateUpdate(update)
+        }
+    }
 }

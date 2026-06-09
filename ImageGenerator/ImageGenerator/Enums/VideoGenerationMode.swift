@@ -10,4 +10,18 @@ import Foundation
 enum VideoGenerationMode: Codable, Equatable {
     case duration(TimeInterval)
     case fileSize(Int)
+    
+    var isDuration: Bool {
+        switch self {
+            case .duration: return true
+            case .fileSize: return false
+        }
+    }
+    
+    var targetValue: Double {
+        switch self {
+            case .duration(let d): return d
+            case .fileSize(let fs): return Double(fs)
+        }
+    }
 }

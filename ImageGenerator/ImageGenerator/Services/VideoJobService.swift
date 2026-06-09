@@ -5,6 +5,7 @@
 //  Created by UglyGeorge on 29.05.2026.
 //
 
+import os
 import SwiftUI
 import Factory
 
@@ -92,33 +93,52 @@ class VideoJobService: BaseJobService, VideoJobServiceType {
     
     private func processVideoAsync(
         element: Int,
-        snapshot: StateSnapshot) async {
-            guard !Task.isCancelled
-            else { return }
+        snapshot: StateSnapshot
+    ) async {
+        guard !Task.isCancelled
+        else { return }
+        
+        let videoData = VideoData(
+            videoNumber: element,
+            size: snapshot.videoSize,
+            mode: snapshot.videoMode,
+            format: snapshot.videoOutputFormat,
+            outputUrl: makeVideoUrl(number: element, snapshot: snapshot))
+        
+        guard let strategy = videoGenerationStrategyFactory
+            .getStrategy(format: videoData.format)
+        else { return }
+        
+        guard !Task.isCancelled
+        else { return }
+        
+        await updateStatusAsync {
+            $0.withInProgress(true)
+        }
+        
+        let fileContribution = OSAllocatedUnfairLock(initialState: 0.0)
+        let onOpComplete = { @Sendable (increment: VideoProgress) in
+            print("\(increment), increment: \(increment.value)")
             
-            let videoData = VideoData(
-                videoNumber: element,
-                size: snapshot.videoSize,
-                mode: snapshot.videoMode,
-                format: snapshot.videoOutputFormat,
-                outputUrl: makeVideoUrl(number: element, snapshot: snapshot))
+            fileContribution.withLock { $0 += increment.value }
             
-            guard let strategy = videoGenerationStrategyFactory
-                .getStrategy(format: videoData.format)
-            else { return }
-            
-            guard !Task.isCancelled
-            else { return }
-            
-            guard await videoGenerationService.generateAsync(
-                videoData: videoData,
-                strategy: strategy)
-            else { return }
-            
-            await updateStatusAsync {
-                $0.withGeneratedCount(Constants.step)
+            await self.updateStatusAsync {
+                $0.withOperationIncrement(increment.value)
             }
         }
+        
+        guard await videoGenerationService.generateAsync(
+            videoData: videoData,
+            strategy: strategy,
+            onOperationComplete: onOpComplete
+        ) else { return }
+        
+        let contribution = fileContribution.withLock { $0 }
+        
+        await updateStatusAsync {
+            $0.withVideoCompleted(operationContribution: contribution)
+        }
+    }
     
     private func makeVideoUrl(number: Int, snapshot: StateSnapshot) -> URL {
         return URL(fileURLWithPath: "\(snapshot.outputFolder)\(snapshot.prefix)\(number)\(snapshot.postfix).\(snapshot.videoOutputFormat.description)")

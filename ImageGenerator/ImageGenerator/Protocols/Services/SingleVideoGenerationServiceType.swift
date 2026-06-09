@@ -17,13 +17,17 @@ protocol SingleVideoGenerationServiceType {
     func withStreamLoopAsync(
         videoData: VideoData,
         strategy: VideoGenerationStrategyType,
-        duration: TimeInterval
+        duration: TimeInterval,
+        onOperationComplete:
+            (@Sendable (_ increment: VideoProgress) async -> Void)?
     ) async -> Bool
     
     func withDoublingAsync(
         videoData: VideoData,
         strategy: VideoGenerationStrategyType,
         target: VideoGenerationMode,
-        useHighBitrate: Bool
+        useHighBitrate: Bool,
+        onOperationComplete:
+            (@Sendable (_ increment: VideoProgress) async -> Void)?
     ) async -> VideoGenerationResult?
 }
