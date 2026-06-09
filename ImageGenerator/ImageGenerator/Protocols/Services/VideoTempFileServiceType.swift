@@ -12,4 +12,5 @@ protocol VideoTempFileServiceType {
     func deleteFileAsync(at url: URL) async
     func getFileSizeAsync(at url: URL) async -> Int?
     func writeConcatList(content: String, to url: URL) async throws
+    func wipeTempFolder()
 }

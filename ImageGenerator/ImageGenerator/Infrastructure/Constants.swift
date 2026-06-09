@@ -70,6 +70,7 @@ struct Constants {
     static let undershootFactor: Double = 0.95
     static let largeFileThreshold: Int = Int(10 * kibi * kibi * kibi)
     static let minBitrate: Int = 100_000
+    static let tempFolder = "Image_Generator_Tmp_Video"
     
     // MARK: Settings key names
     static let settingsKeyMode = "mode"
