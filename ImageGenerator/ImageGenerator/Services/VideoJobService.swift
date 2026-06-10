@@ -41,10 +41,11 @@ class VideoJobService: BaseJobService, VideoJobServiceType {
             size: snapshot.videoSize,
             duration: snapshot.duration,
             format: snapshot.videoOutputFormat)
+        let endAt = snapshot.count + snapshot.startAt - Constants.step
         
         for chunkStart in stride(
-            from: Constants.step,
-            through: snapshot.count,
+            from: snapshot.startAt,
+            through: endAt,
             by: chunkSize) {
             
             if Task.isCancelled { break }
@@ -52,7 +53,7 @@ class VideoJobService: BaseJobService, VideoJobServiceType {
             
             let chunkEnd = min(
                 chunkStart + chunkSize - Constants.step,
-                snapshot.count)
+                endAt)
             
             await processVideoChunkAsync(
                 chunkStart: chunkStart,
@@ -148,6 +149,7 @@ class VideoJobService: BaseJobService, VideoJobServiceType {
     
     private struct StateSnapshot {
         let count: Int
+        let startAt: Int
         let videoOutputFormat: VideoOutputFormat
         let videoMode: VideoGenerationMode
         let videoSize: CGSize
@@ -159,6 +161,7 @@ class VideoJobService: BaseJobService, VideoJobServiceType {
         @MainActor
         init(_ appState: AppState) {
             self.count = appState.userData.count
+            self.startAt = appState.userData.startAt
             self.videoOutputFormat = appState.userData.videoOutputFormat
             self.videoMode = appState.userData.videoMode
             self.duration = appState.userData.videoDurationSeconds

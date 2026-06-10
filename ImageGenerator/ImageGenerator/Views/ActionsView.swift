@@ -8,7 +8,7 @@
 import SwiftUI
 import Factory
 
-struct ActionsView: ImageGeneratorView {
+struct ActionsView: MediaGeneratorView {
     @EnvironmentObject var appState: AppState
     
     @Injected(\.imageJobService) private var imageJobService

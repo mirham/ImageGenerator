@@ -132,6 +132,14 @@ extension AppState {
             }
         }
         
+        var startAt: Int = Constants.defaultStartAt {
+            didSet {
+                writeSetting(
+                    newValue: startAt,
+                    key: Constants.settingsKeyStartAt)
+            }
+        }
+        
         var imageOutputFormat: ImageOutputFormat = .jpeg {
             didSet {
                 writeSetting(
@@ -249,6 +257,7 @@ extension AppState {
             && lhs.width == rhs.width
             && lhs.height == rhs.height
             && lhs.count == rhs.count
+            && lhs.startAt == rhs.startAt
             && lhs.imageOutputFormat == rhs.imageOutputFormat
             && lhs.imageResolution == rhs.imageResolution
             && lhs.outputFolder == rhs.outputFolder
@@ -275,6 +284,8 @@ extension AppState {
                 ?? Constants.defaultHeight
             count = readSetting(key: Constants.settingsKeyCount)
                 ?? Constants.defaultCount
+            startAt = readSetting(key: Constants.settingsKeyStartAt)
+                ?? Constants.defaultStartAt
             imageOutputFormat = readSetting(key: Constants.settingsKeyImageOutputFormat)
                 ?? .jpeg
             imageColorSpace = readSetting(key: Constants.settingsKeyColorSpace)

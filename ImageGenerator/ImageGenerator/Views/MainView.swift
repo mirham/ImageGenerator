@@ -8,7 +8,7 @@
 import SwiftUI
 import Factory
 
-struct MainView: ImageGeneratorView {
+struct MainView: MediaGeneratorView {
     @EnvironmentObject var appState: AppState
     
     @State private var tabSize: CGSize = .zero
@@ -115,13 +115,13 @@ struct MainView: ImageGeneratorView {
     private func getWindowSize(for tab: Int) -> CGSize {
         switch tab {
             case Constants.tabIdGenerateImages:
-                return CGSize(width: 570, height: 570)
+                return CGSize(width: 570, height: 610)
             case Constants.tabIdDuplicateImage:
-                return CGSize(width: 570, height: 300)
+                return CGSize(width: 570, height: 340)
             case Constants.tabIdGenerateVideos:
-                return CGSize(width: 570, height: 630)
+                return CGSize(width: 570, height: 670)
             default:
-                return CGSize(width: 570, height: 550)
+                return CGSize(width: 570, height: 590)
         }
     }
 }

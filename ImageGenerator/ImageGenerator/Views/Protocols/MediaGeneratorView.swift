@@ -1,5 +1,5 @@
 //
-//  ImageGeneratorView.swift
+//  MediaGeneratorView.swift
 //  ImageGenerator
 //
 //  Created by UglyGeorge on 19.12.2024.

@@ -41,10 +41,11 @@ class ImageJobService: BaseJobService, ImageJobServiceType {
         
         let concurrencyLimit = getConcurrencyLimit()
         let chunkSize = chunkingStrategy.calculateChunkSize(count: snapshot.count)
+        let endAt = snapshot.count + snapshot.startAt - Constants.step
         
         for chunkStart in stride(
-            from: Constants.step,
-            through: snapshot.count,
+            from: snapshot.startAt,
+            through: endAt,
             by: chunkSize) {
             
             if Task.isCancelled { break }
@@ -52,7 +53,7 @@ class ImageJobService: BaseJobService, ImageJobServiceType {
             
             let chunkEnd = min(
                 chunkStart + chunkSize - Constants.step,
-                snapshot.count)
+                endAt)
             
             await processImageChunkAsync(
                 chunkStart: chunkStart,
@@ -167,6 +168,7 @@ class ImageJobService: BaseJobService, ImageJobServiceType {
     
     private struct StateSnapshot {
         let count: Int
+        let startAt: Int
         let mode: GenerationMode
         let colorSpace: ImageColorSpace
         let outputFormat: ImageOutputFormat
@@ -181,6 +183,7 @@ class ImageJobService: BaseJobService, ImageJobServiceType {
         @MainActor
         init(_ appState: AppState) {
             self.count = appState.userData.count
+            self.startAt = appState.userData.startAt
             self.mode = appState.userData.mode
             self.colorSpace = appState.userData.imageColorSpace
             self.outputFormat = appState.userData.imageOutputFormat

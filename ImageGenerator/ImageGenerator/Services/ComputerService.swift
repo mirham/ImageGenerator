@@ -42,15 +42,17 @@ final class ComputerService: ComputerServiceType {
     }
     
     func isAppleSilicon() -> Bool {
-        var type: UInt32 = 0
-        var size = MemoryLayout<UInt32>.size
+        var type: cpu_type_t = 0
+        var size = MemoryLayout<cpu_type_t>.size
         
         sysctlbyname(
             Constants.sysctlbynameCpuType,
-            &type, &size,
+            &type,
+            &size,
             nil,
-            0)
-        
-        return type == Constants.cpuTypeAppleSilicon
+            0
+        )
+
+        return type == CPU_TYPE_ARM64
     }
 }

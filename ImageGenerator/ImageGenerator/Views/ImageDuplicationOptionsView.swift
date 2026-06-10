@@ -7,37 +7,23 @@
 
 import SwiftUI
 
-struct ImageDuplicationOptionsView: ImageGeneratorView {
+struct ImageDuplicationOptionsView: MediaGeneratorView {
     @EnvironmentObject var appState: AppState
     
     @State private var inputImage: String = .init()
-    @State private var count: Int = 0
     @State private var showFileImporter = false
     @State private var showError = false
     @State private var errorMessage: String = .init()
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            countField
+            CountView()
             duplicatingImageControls
         }
         .onAppear(perform: initValues)
     }
     
     // MARK: View sections
-    
-    @ViewBuilder
-    private var countField: some View {
-        LabeledRow(title: Constants.itemsCount) {
-            NumericTextField(
-                title: Constants.hintCount,
-                value: $count,
-                width: 70,
-                isValid: isCountValid,
-                onValidChange: { appState.userData.count = $0 }
-            )
-        }
-    }
     
     @ViewBuilder
     private var duplicatingImageControls: some View {
@@ -89,7 +75,6 @@ struct ImageDuplicationOptionsView: ImageGeneratorView {
     
     private func initValues() {
         self.inputImage = appState.userData.inputImage
-        self.count = appState.userData.count
         
         appState.userData.mode = .duplicateImages
     }

@@ -7,19 +7,18 @@
 
 import SwiftUI
 
-struct VideoGenerationOptionsView: ImageGeneratorView {
+struct VideoGenerationOptionsView: MediaGeneratorView {
     @EnvironmentObject var appState: AppState
     
     @State private var width: Int = 0
     @State private var height: Int = 0
-    @State private var count: Int = 0
     @State private var selectedVideoMode: VideoGenerationMode = .fileSize(Int(Constants.defaultFileSizeBytes))
     @State private var selectedFormat: VideoOutputFormat = .mp4
     @State private var selectedResolution: VideoResolution = .custom
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            countField
+            CountView()
             formatPicker
             videoMode
             resolutionPicker
@@ -28,19 +27,6 @@ struct VideoGenerationOptionsView: ImageGeneratorView {
     }
     
     // MARK: View sections
-    
-    @ViewBuilder
-    private var countField: some View {
-        LabeledRow(title: Constants.itemsCount) {
-            NumericTextField(
-                title: Constants.hintCount,
-                value: $count,
-                width: 70,
-                isValid: isCountValid,
-                onValidChange: { appState.userData.count = $0 }
-            )
-        }
-    }
     
     @ViewBuilder
     private var formatPicker: some View {
@@ -113,7 +99,6 @@ struct VideoGenerationOptionsView: ImageGeneratorView {
     private func initValues() {
         self.width = appState.userData.width
         self.height = appState.userData.height
-        self.count = appState.userData.count
         self.selectedFormat = appState.userData.videoOutputFormat
         self.selectedResolution = appState.userData.videoResolution
         self.selectedVideoMode = appState.userData.videoMode

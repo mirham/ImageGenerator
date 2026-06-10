@@ -7,19 +7,18 @@
 
 import SwiftUI
 
-struct ImageGenerationOptionsView: ImageGeneratorView {
+struct ImageGenerationOptionsView: MediaGeneratorView {
     @EnvironmentObject var appState: AppState
     
     @State private var width: Int = 0
     @State private var height: Int = 0
-    @State private var count: Int = 0
     @State private var selectedFormat: ImageOutputFormat = .jpeg
     @State private var selectedColorSpace: ImageColorSpace = .rgb
     @State private var selectedResolution: ImageResolution = .custom
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            countField
+            CountView()
             formatPicker
             colorSpacePicker
             resolutionPicker
@@ -28,19 +27,6 @@ struct ImageGenerationOptionsView: ImageGeneratorView {
     }
     
     // MARK: View sections
-    
-    @ViewBuilder
-    private var countField: some View {
-        LabeledRow(title: Constants.itemsCount) {
-            NumericTextField(
-                title: Constants.hintCount,
-                value: $count,
-                width: 70,
-                isValid: isCountValid,
-                onValidChange: { appState.userData.count = $0 }
-            )
-        }
-    }
     
     @ViewBuilder
     private var formatPicker: some View {
@@ -109,7 +95,6 @@ struct ImageGenerationOptionsView: ImageGeneratorView {
     private func initValues() {
         self.width = appState.userData.width
         self.height = appState.userData.height
-        self.count = appState.userData.count
         self.selectedFormat = appState.userData.imageOutputFormat
         self.selectedColorSpace = appState.userData.imageColorSpace
         self.selectedResolution = appState.userData.imageResolution

@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3500FA872DD52EFA00B7A0A7 /* ImageGeneratorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3500FA852DD52EFA00B7A0A7 /* ImageGeneratorView.swift */; };
+		3500FA872DD52EFA00B7A0A7 /* MediaGeneratorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3500FA852DD52EFA00B7A0A7 /* MediaGeneratorView.swift */; };
 		3514C5012C661B3E004523CC /* InfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3514C5002C661B3E004523CC /* InfoView.swift */; };
 		3514C5032C66210F004523CC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3514C5022C66210F004523CC /* AppDelegate.swift */; };
 		3518B3432FD071B0000D6341 /* BaseVideoGenerationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3518B3422FD071AC000D6341 /* BaseVideoGenerationService.swift */; };
@@ -52,6 +52,7 @@
 		356760DB2D1404E500625233 /* ImageGenerationOptionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 356760DA2D1404E500625233 /* ImageGenerationOptionsView.swift */; };
 		356760DD2D1406F500625233 /* ImageDuplicationOptionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 356760DC2D1406F500625233 /* ImageDuplicationOptionsView.swift */; };
 		356760E32D141AAC00625233 /* GenerationMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 356760E22D141AAC00625233 /* GenerationMode.swift */; };
+		3570A79A2FD9864100EA8923 /* CountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3570A7992FD9863700EA8923 /* CountView.swift */; };
 		3575CC9C2DD73AD900102D4E /* Factory in Frameworks */ = {isa = PBXBuildFile; productRef = 3575CC9B2DD73AD900102D4E /* Factory */; };
 		3578CCB62FC9BC11000E82A4 /* BaseJobService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3578CCB52FC9BC0D000E82A4 /* BaseJobService.swift */; };
 		3578CCB82FC9BC86000E82A4 /* VideoJobServiceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3578CCB72FC9BC83000E82A4 /* VideoJobServiceType.swift */; };
@@ -120,7 +121,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		3500FA852DD52EFA00B7A0A7 /* ImageGeneratorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageGeneratorView.swift; sourceTree = "<group>"; };
+		3500FA852DD52EFA00B7A0A7 /* MediaGeneratorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaGeneratorView.swift; sourceTree = "<group>"; };
 		3514C5002C661B3E004523CC /* InfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfoView.swift; sourceTree = "<group>"; };
 		3514C5022C66210F004523CC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		3518B3422FD071AC000D6341 /* BaseVideoGenerationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseVideoGenerationService.swift; sourceTree = "<group>"; };
@@ -167,6 +168,7 @@
 		356760DA2D1404E500625233 /* ImageGenerationOptionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageGenerationOptionsView.swift; sourceTree = "<group>"; };
 		356760DC2D1406F500625233 /* ImageDuplicationOptionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDuplicationOptionsView.swift; sourceTree = "<group>"; };
 		356760E22D141AAC00625233 /* GenerationMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerationMode.swift; sourceTree = "<group>"; };
+		3570A7992FD9863700EA8923 /* CountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountView.swift; sourceTree = "<group>"; };
 		3578CCB52FC9BC0D000E82A4 /* BaseJobService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseJobService.swift; sourceTree = "<group>"; };
 		3578CCB72FC9BC83000E82A4 /* VideoJobServiceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoJobServiceType.swift; sourceTree = "<group>"; };
 		3578CCB92FC9BCA8000E82A4 /* VideoJobService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoJobService.swift; sourceTree = "<group>"; };
@@ -248,7 +250,7 @@
 		3500FA862DD52EFA00B7A0A7 /* Protocols */ = {
 			isa = PBXGroup;
 			children = (
-				3500FA852DD52EFA00B7A0A7 /* ImageGeneratorView.swift */,
+				3500FA852DD52EFA00B7A0A7 /* MediaGeneratorView.swift */,
 			);
 			path = Protocols;
 			sourceTree = "<group>";
@@ -354,6 +356,7 @@
 				356760DA2D1404E500625233 /* ImageGenerationOptionsView.swift */,
 				356760DC2D1406F500625233 /* ImageDuplicationOptionsView.swift */,
 				35DD844A2FC85C82009E6D1F /* VideoGenerationOptionsView.swift */,
+				3570A7992FD9863700EA8923 /* CountView.swift */,
 				35DD84152FC71E1A009E6D1F /* NamingView.swift */,
 				35DD84192FC721F4009E6D1F /* OutputFolderView.swift */,
 				35DD84172FC71E31009E6D1F /* ActionsView.swift */,
@@ -703,6 +706,7 @@
 				35DD84312FC854D4009E6D1F /* Mp4VideoGenerationStrategy.swift in Sources */,
 				35DD84162FC71E26009E6D1F /* NamingView.swift in Sources */,
 				35DD843B2FC856FD009E6D1F /* WmvVideoGenerationStrategy.swift in Sources */,
+				3570A79A2FD9864100EA8923 /* CountView.swift in Sources */,
 				3518B34B2FD075AD000D6341 /* SingleVideoGenerationServiceType.swift in Sources */,
 				3553598F2C64C855004C172A /* AppState.swift in Sources */,
 				35DD84212FC7334D009E6D1F /* NumericTextField.swift in Sources */,
@@ -750,7 +754,7 @@
 				356760DD2D1406F500625233 /* ImageDuplicationOptionsView.swift in Sources */,
 				35CDEF002FC5CA8E00BEB092 /* JpegWritingStrategy.swift in Sources */,
 				35B8A14D2DD667B9000CFA1B /* GenerateImageStrategy.swift in Sources */,
-				3500FA872DD52EFA00B7A0A7 /* ImageGeneratorView.swift in Sources */,
+				3500FA872DD52EFA00B7A0A7 /* MediaGeneratorView.swift in Sources */,
 				35DD84372FC85610009E6D1F /* AviVideoGenerationStrategy.swift in Sources */,
 				3518B3452FD07230000D6341 /* SingleVideoGenerationService.swift in Sources */,
 				35DD84572FC8D248009E6D1F /* DurationControl.swift in Sources */,

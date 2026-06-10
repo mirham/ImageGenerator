@@ -40,7 +40,6 @@ struct Constants {
     static let lowerJpegQuality: Double = 0.75
     static let sizedContextKey = "CGContext_%1$@x%2$@"
     static let contextKey = "CIContext"
-    static let cpuTypeAppleSilicon: UInt32 = 12
     static let defaultAppleSiliconLimitMultiplier = 3
     static let bypesPerPixel = 4
     static let bitsPerComponent: UInt32 = 8
@@ -70,6 +69,7 @@ struct Constants {
     static let undershootFactor: Double = 0.95
     static let largeFileThreshold: Int = Int(10 * kibi * kibi * kibi)
     static let minBitrate: Int = 100_000
+    static let defaultStartAt: Int = 1
     static let tempFolder = "Image_Generator_Tmp_Video"
     
     // MARK: Settings key names
@@ -87,6 +87,7 @@ struct Constants {
     static let settingsKeyVideoFileSizeBase = "video-filesize-base"
     static let settingsKeyVideoResolution = "video-resolution"
     static let settingsKeyCount = "count"
+    static let settingsKeyStartAt = "start-at"
     static let settingsKeyOutputFolder = "folder"
     static let settingsKeyInputImage = "image"
     static let settingsPrefix = "prefix"
@@ -137,6 +138,7 @@ struct Constants {
     
     // MARK: Element names
     static let itemsCount = "Items count:"
+    static let startAt = "Start at:"
     static let format = "Format:"
     static let duplicatingImage = "Duplicating image:"
     static let resolution = "Resolution:"
