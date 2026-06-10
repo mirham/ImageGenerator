@@ -32,8 +32,17 @@ struct ImageGeneratorApp: App {
         }
         .commands {
             CommandGroup(replacing: .appInfo) {
-                Button(Constants.about) {
+                Button {
                     Container.shared.windowManager().open(name: .info, onTop: false)
+                } label: {
+                    Label(Constants.about, systemImage: Constants.iconInfo)
+                }
+            }
+            CommandGroup(after: .windowArrangement) {
+                Button {
+                    Container.shared.windowManager().open(name: .log)
+                } label: {
+                    Label(Constants.log, systemImage: Constants.iconLog)
                 }
             }
             CommandGroup(replacing: .newItem) { }

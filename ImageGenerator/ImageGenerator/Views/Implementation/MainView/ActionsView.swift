@@ -62,7 +62,7 @@ struct ActionsView: MediaGeneratorView {
     
     private var progressLabel: String {
         let operation = appState.userData.mode.operationName.firstUppercased
-        let generated = String(format: Constants.double2Signs, appState.generation.generatedCount)
+        let generated = String(format: Constants.double2Signs, appState.generation.processedCount)
         let total = appState.userData.count
         let media = appState.userData.mode.mediaName
         let progress = String(format: Constants.double2Signs, appState.generation.progress)
@@ -176,9 +176,10 @@ struct ActionsView: MediaGeneratorView {
     
     private func resetProgress() {
         appState.generation.inProgress = true
-        appState.generation.generatedCount = 0
+        appState.generation.processedCount = 0
+        appState.generation.completedVideosCount = 0
+        appState.generation.failedVideosCount = 0
         appState.generation.operationProgress = 0
-        appState.generation.completedFileCount = 0
         appState.generation.isCancelRequested = false
     }
     

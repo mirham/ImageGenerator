@@ -12,6 +12,10 @@ extension View {
         modifier(IsHiddenModifier(hidden: hidden, remove: remove))
     }
     
+    func pointerOnHover() -> some View {
+        modifier(PointerOnHoverModifier())
+    }
+    
     @ViewBuilder
     func safeGlassEffect() -> some View {
         if #available(macOS 26.0, *) {

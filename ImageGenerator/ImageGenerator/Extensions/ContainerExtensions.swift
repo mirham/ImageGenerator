@@ -113,6 +113,11 @@ extension Container {
         }.singleton
     }
     
+    var loggingService: Factory<LoggingServiceType> {
+        Factory(self) { LoggingService() }
+            .singleton
+    }
+    
     // MARK: Image generation strategies registration
     
     static var imageGenerationStrategies: [KeyPath<Container, Factory<ImageGenerationStrategyType>>] = [

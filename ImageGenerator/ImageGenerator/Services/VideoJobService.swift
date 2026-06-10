@@ -118,7 +118,7 @@ class VideoJobService: BaseJobService, VideoJobServiceType {
         }
         
         let fileContribution = OSAllocatedUnfairLock(initialState: 0.0)
-        let onOpComplete = { @Sendable (increment: VideoProgress) in
+        let onOperationComplete = { @Sendable (increment: VideoProgress) in
             print("\(increment), increment: \(increment.value)")
             
             fileContribution.withLock { $0 += increment.value }
@@ -128,16 +128,26 @@ class VideoJobService: BaseJobService, VideoJobServiceType {
             }
         }
         
-        guard await videoGenerationService.generateAsync(
-            videoData: videoData,
-            strategy: strategy,
-            onOperationComplete: onOpComplete
-        ) else { return }
+        var contribution = 0.0
         
-        let contribution = fileContribution.withLock { $0 }
-        
-        await updateStatusAsync {
-            $0.withVideoCompleted(operationContribution: contribution)
+        do {
+            try await videoGenerationService.generateAsync(
+                videoData: videoData,
+                strategy: strategy,
+                onOperationComplete: onOperationComplete)
+            
+            contribution = fileContribution.withLock { $0 }
+            
+            await updateStatusAsync {
+                $0.withVideoCompleted(operationContribution: contribution)
+            }
+        }
+        catch {
+            contribution = fileContribution.withLock { $0 }
+            
+            await updateStatusAsync {
+                $0.withVideoFailed(operationContribution: contribution)
+            }
         }
     }
     

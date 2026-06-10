@@ -98,6 +98,12 @@ struct Constants {
     static let iconStop = "stop.circle"
     static let iconPlus = "plus"
     static let iconMinus = "minus"
+    static let iconInfo = "info.circle"
+    static let iconLog = "list.dash.header.rectangle"
+    static let iconCopyLog = "doc.on.doc"
+    static let iconClearLog = "trash"
+    static let iconOpenCurrentLog = "doc.text"
+    static let iconEmptyLog = "text.alignleft"
     
     // MARK: Tab tags
     static let tabIdGenerateImages = 0
@@ -135,6 +141,7 @@ struct Constants {
     static let hintPostfix = "Add a postfix..."
     static let hintIncrease = "Increase"
     static let hintDecrease = "Decrease"
+    static let hintNoLogEntries = "No log entries"
     
     // MARK: Element names
     static let itemsCount = "Items count:"
@@ -155,11 +162,21 @@ struct Constants {
     static let fileSize = "File size"
     static let duration = "Duration"
     static let about = "About \(appName)"
+    static let log = "Log"
+    static let all = "All"
     
     // MARK: Tab names
     static let tabGenerateImages = "Generate images"
     static let tabDuplicateImages = "Duplicate image"
     static let tabGenerateVideos = "Generate videos"
+    
+    // MARK: Toolbar
+    static let toolbarOpenLogsFolder = "Open logs folder"
+    static let toolbarCopyLog = "Copy log"
+    static let toolbarClearLog = "Clear log"
+    static let toolbarOpenFullLog = "Open full log"
+    static let toolbarLogEntry = "%lld entry"
+    static let toolbarLogEntries = "%lld entries"
     
     // MARK: Dialogs
     static let dialogHeaderError = "Error"
@@ -176,12 +193,20 @@ struct Constants {
     static let comma = ","  
     static let dotChar: Character = "."
     static let commaChar: Character = ","
+    static let newline = "\n"
+    static let space = " "
     
     // MARK: Formatting
     static let durationFormatTemplate = "%01d:%02d:%02d"
     static let sizeFormatTemplate = "%.2f %@"
     static let intSuffix = ".0"
     static let double2Signs = "%.2f"
+    
+    // MARK: Log
+    static let logExtension = "log"
+    static let logPath = "\(appName)/Logs"
+    static let logMaxInMemoryEntries = 500
+    static let logMaxLogAgeDays = 30
     
     // MARK: About
     static let aboutSupportMail = "bWlyaGFtQGFidi5iZw=="

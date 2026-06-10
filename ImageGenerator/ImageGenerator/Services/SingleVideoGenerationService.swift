@@ -14,16 +14,19 @@ final class SingleVideoGenerationService: BaseVideoGenerationService, SingleVide
         videoData: VideoData,
         strategy: VideoGenerationStrategyType,
         duration: TimeInterval
-    ) async -> Bool {
+    ) async throws {
         let args = buildDurationArguments(
             videoData: videoData,
             strategy: strategy,
             duration: duration
         )
         
-        let result = await ffmpegService.runAsync(arguments: args)
-        
-        return result
+        do {
+            try await ffmpegService.runAsync(arguments: args)
+        }
+        catch {
+            throw VideoGererationError.singlePass(error.localizedDescription)
+        }
     }
     
     func withStreamLoopAsync(
@@ -32,7 +35,7 @@ final class SingleVideoGenerationService: BaseVideoGenerationService, SingleVide
         duration: TimeInterval,
         onOperationComplete:
             (@Sendable (_ increment: VideoProgress) async -> Void)?
-    ) async -> Bool {
+    ) async throws {
         let baseVideoUrl = tempFileService.makeTempVideoUrl(
             videoData: videoData,
             suffix: Constants.vfSuffixBase,
@@ -49,8 +52,12 @@ final class SingleVideoGenerationService: BaseVideoGenerationService, SingleVide
             outputURL: baseVideoUrl
         )
         
-        guard await ffmpegService.runAsync(arguments: baseArguments)
-        else { return false }
+        do {
+            try await ffmpegService.runAsync(arguments: baseArguments)
+        }
+        catch {
+            throw VideoGererationError.baseVideo(error.localizedDescription)
+        }
         
         await onOperationComplete?(.baseFile)
         
@@ -63,10 +70,13 @@ final class SingleVideoGenerationService: BaseVideoGenerationService, SingleVide
             "-y", videoData.outputUrl.path
         ]
         
-        let result = await ffmpegService.runAsync(arguments: loopArguments)
-        await onOperationComplete?(.streamLoop)
-        
-        return result
+        do {
+            try await ffmpegService.runAsync(arguments: loopArguments)
+            await onOperationComplete?(.streamLoop)
+        }
+        catch {
+            throw VideoGererationError.streamLoop(error.localizedDescription)
+        }
     }
     
     func withDoublingAsync(
@@ -76,12 +86,12 @@ final class SingleVideoGenerationService: BaseVideoGenerationService, SingleVide
         useHighBitrate: Bool = false,
         onOperationComplete:
             (@Sendable (_ increment: VideoProgress) async -> Void)?
-    ) async -> VideoGenerationResult? {
+    ) async throws -> VideoGenerationResult? {
         let maxChunkSize = Double(Constants.largeFileThreshold)
         let targetValue = target.targetValue
         let isDurationTarget = target.isDuration
         
-        guard let baseVideo = await buildBaseVideoAsync(
+        guard let baseVideo = try await buildBaseVideoAsync(
             videoData: videoData,
             strategy: strategy,
             highBitrate: useHighBitrate,
@@ -96,7 +106,7 @@ final class SingleVideoGenerationService: BaseVideoGenerationService, SingleVide
                 duration: baseVideo.duration)
         }
         
-        let doubledVideo = await runDoublingPhaseAsync(
+        let doubledVideo = try await runDoublingPhaseAsync(
             baseVideo: baseVideo,
             videoData: videoData,
             targetValue: targetValue,
@@ -111,7 +121,7 @@ final class SingleVideoGenerationService: BaseVideoGenerationService, SingleVide
             return nil
         }
         
-        let result = await buildFinalMergeAsync(
+        let result = try await buildFinalMergeAsync(
             currentVideo: currentVideo,
             baseClipUrl: baseVideo.url,
             videoData: videoData,
@@ -139,7 +149,7 @@ final class SingleVideoGenerationService: BaseVideoGenerationService, SingleVide
         isDurationTarget: Bool,
         onOperationComplete:
             (@Sendable (_ increment: VideoProgress) async -> Void)?
-    ) async -> VideoGenerationResult? {
+    ) async throws -> VideoGenerationResult? {
         let baseVideoUrl = tempFileService.makeTempVideoUrl(
             videoData: videoData,
             suffix: Constants.vfSuffixBase,
@@ -150,14 +160,14 @@ final class SingleVideoGenerationService: BaseVideoGenerationService, SingleVide
             + threadingArguments()
             + strategy.getCodecArguments(for: videoData)
             + ["-t", "\(Constants.baseClipDuration)", "-y", baseVideoUrl.path]
-        let result = await ffmpegService.runAsync(arguments: baseArgs)
         
-        await onOperationComplete?(.baseFile)
-        
-        guard result else {
+        do {
+            try await ffmpegService.runAsync(arguments: baseArgs)
+            await onOperationComplete?(.baseFile)
+        }
+        catch {
             await tempFileService.deleteFileAsync(at: baseVideoUrl)
-            
-            return nil
+            throw VideoGererationError.baseVideo(error.localizedDescription)
         }
         
         let metric: Double = isDurationTarget
@@ -176,7 +186,7 @@ final class SingleVideoGenerationService: BaseVideoGenerationService, SingleVide
         targetValue: Double,
         maxChunkSize: Double,
         onOperationComplete: (@Sendable (_ increment: VideoProgress) async -> Void)?
-    ) async -> VideoGenerationResult? {
+    ) async throws -> VideoGenerationResult? {
         var current = baseVideo
         let expectedCount = Int(log2(min(targetValue, maxChunkSize) / baseVideo.metric))
         
@@ -204,19 +214,18 @@ final class SingleVideoGenerationService: BaseVideoGenerationService, SingleVide
                 "-y", doubledUrl.path
             ]
             
-            let success = await ffmpegService.runAsync(arguments: concatArguments)
-            
-            await onOperationComplete?(.doubling(expectedCount: expectedCount))
-            await tempFileService.deleteFileAsync(at: concatUrl)
+            do {
+                try await ffmpegService.runAsync(arguments: concatArguments)
+                await onOperationComplete?(.doubling(expectedCount: expectedCount))
+                await tempFileService.deleteFileAsync(at: concatUrl)
+            }
+            catch {
+                await tempFileService.deleteFileAsync(at: doubledUrl)
+                throw VideoGererationError.doublingPhase(error.localizedDescription)
+            }
             
             if current.url != baseVideo.url {
                 await tempFileService.deleteFileAsync(at: current.url)
-            }
-            
-            guard success else {
-                await tempFileService.deleteFileAsync(at: doubledUrl)
-                
-                return nil
             }
             
             current = VideoGenerationResult(
@@ -238,7 +247,7 @@ final class SingleVideoGenerationService: BaseVideoGenerationService, SingleVide
         isDurationTarget: Bool,
         onOperationComplete:
             (@Sendable (_ increment: VideoProgress) async -> Void)?
-    ) async -> VideoGenerationResult? {
+    ) async throws -> VideoGenerationResult? {
         let fullCopiesCount = Int(targetValue / currentVideo.metric)
         let topupMetric = targetValue - Double(fullCopiesCount) * currentVideo.metric
         
@@ -249,7 +258,7 @@ final class SingleVideoGenerationService: BaseVideoGenerationService, SingleVide
             count: fullCopiesCount
         )
         
-        let topupVideo = await buildTopupVideoAsync(
+        let topupVideo = try await buildTopupVideoAsync(
             currentVideo: currentVideo,
             videoData: videoData,
             target: target,
@@ -286,19 +295,18 @@ final class SingleVideoGenerationService: BaseVideoGenerationService, SingleVide
             "-y", finalUrl.path
         ]
         
-        let success = await ffmpegService.runAsync(arguments: finalConcatArgs)
-        
-        await onOperationComplete?(.finalMerge)
-        await tempFileService.deleteFileAsync(at: finalConcatUrl)
+        do {
+            try await ffmpegService.runAsync(arguments: finalConcatArgs)
+            await onOperationComplete?(.finalMerge)
+            await tempFileService.deleteFileAsync(at: finalConcatUrl)
+        }
+        catch {
+            await tempFileService.deleteFileAsync(at: finalUrl)
+            throw VideoGererationError.streamLoop(error.localizedDescription)
+        }
         
         if let topupUrl = topupVideo?.url {
             await tempFileService.deleteFileAsync(at: topupUrl)
-        }
-        
-        guard success else {
-            await tempFileService.deleteFileAsync(at: finalUrl)
-            
-            return nil
         }
         
         let finalDuration = isDurationTarget
@@ -319,7 +327,7 @@ final class SingleVideoGenerationService: BaseVideoGenerationService, SingleVide
         topupMetric: Double,
         onOperationComplete:
             (@Sendable (_ increment: VideoProgress) async -> Void)?
-    ) async -> VideoGenerationResult? {
+    ) async throws -> VideoGenerationResult? {
         guard topupMetric > 0
         else { return nil }
         
@@ -334,13 +342,13 @@ final class SingleVideoGenerationService: BaseVideoGenerationService, SingleVide
             topupURL: topupUrl
         )
         
-        let result = await ffmpegService.runAsync(arguments: topupArgs)
-        await onOperationComplete?(.topup)
-        
-        guard result else {
+        do {
+            try await ffmpegService.runAsync(arguments: topupArgs)
+            await onOperationComplete?(.topup)
+        }
+        catch {
             await tempFileService.deleteFileAsync(at: topupUrl)
-            
-            return nil
+            throw VideoGererationError.topup(error.localizedDescription)
         }
         
         return VideoGenerationResult(

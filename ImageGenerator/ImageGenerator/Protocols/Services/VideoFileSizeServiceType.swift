@@ -14,7 +14,7 @@ protocol VideoFileSizeServiceType {
         outputUrl: URL,
         onOperationComplete:
             (@Sendable (_ increment: VideoProgress) async -> Void)?
-    ) async -> Bool
+    ) async throws
     
     func trimToUndershootThenPadAsync(
         oversizedURL: URL,
@@ -24,7 +24,7 @@ protocol VideoFileSizeServiceType {
         strategy: VideoGenerationStrategyType,
         onOperationComplete:
             (@Sendable ( _ increment: VideoProgress) async -> Void)?
-    ) async -> Bool
+    ) async throws
     
     func generateSmallFileExactAsync(
         videoData: VideoData,
@@ -32,7 +32,7 @@ protocol VideoFileSizeServiceType {
         targetBytes: Int,
         onOperationComplete:
             (@Sendable (_ increment: VideoProgress) async -> Void)?
-    ) async -> Bool
+    ) async throws
     
     func generateLargeFileExactAsync(
         videoData: VideoData,
@@ -40,5 +40,5 @@ protocol VideoFileSizeServiceType {
         targetBytes: Int,
         onOperationComplete:
             (@Sendable (_ increment: VideoProgress) async -> Void)?
-    ) async -> Bool
+    ) async throws
 }

@@ -10,11 +10,13 @@ import Foundation
 enum WindowType: String, Hashable {
     case main = "main-view"
     case info = "info-view"
+    case log = "log-view"
     
     var title: String {
         switch self {
             case .main: return String()
             case .info: return Constants.info
+            case .log: return Constants.log
         }
     }
     
@@ -22,6 +24,7 @@ enum WindowType: String, Hashable {
         switch self {
             case .main: return true
             case .info: return true
+            case .log: return true
         }
     }
     
@@ -29,6 +32,7 @@ enum WindowType: String, Hashable {
         switch self {
             case .main: return true
             case .info: return true
+            case .log: return true
         }
     }
     
@@ -36,6 +40,7 @@ enum WindowType: String, Hashable {
         switch self {
             case .main: return false
             case .info: return false
+            case .log: return true
         }
     }
     
@@ -43,6 +48,7 @@ enum WindowType: String, Hashable {
         switch self {
             case .main: return nil
             case .info: return nil
+            case .log: return CGSize(width: 800, height: 800)
         }
     }
     
@@ -50,6 +56,7 @@ enum WindowType: String, Hashable {
         switch self {
             case .main: return [.zoom]
             case .info: return [.miniaturize, .zoom]
+            case .log: return []
         }
     }
 }

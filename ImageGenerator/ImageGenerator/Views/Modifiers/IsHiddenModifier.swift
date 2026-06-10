@@ -12,12 +12,13 @@ struct IsHiddenModifier: ViewModifier {
     var remove = false
     
     func body(content: Content) -> some View {
-        if hidden && remove {
-            EmptyView()
-        } else if hidden {
-            content.hidden()
+        if hidden {
+            if !remove {
+                content.hidden()
+            }
         } else {
             content
         }
     }
 }
+

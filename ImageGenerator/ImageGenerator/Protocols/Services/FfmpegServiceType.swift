@@ -8,6 +8,6 @@
 import Foundation
 
 protocol FfmpegServiceType {
-    func runAsync(arguments: [String]) async -> Bool
+    func runAsync(arguments: [String]) async throws
 }
 

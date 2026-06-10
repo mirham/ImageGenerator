@@ -53,6 +53,17 @@
 		356760DD2D1406F500625233 /* ImageDuplicationOptionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 356760DC2D1406F500625233 /* ImageDuplicationOptionsView.swift */; };
 		356760E32D141AAC00625233 /* GenerationMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 356760E22D141AAC00625233 /* GenerationMode.swift */; };
 		3570A79A2FD9864100EA8923 /* CountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3570A7992FD9863700EA8923 /* CountView.swift */; };
+		3570A79C2FD9AC6700EA8923 /* LoggingService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3570A79B2FD9AC6700EA8923 /* LoggingService.swift */; };
+		3570A79E2FD9AD1500EA8923 /* LoggingServiceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3570A79D2FD9AD1500EA8923 /* LoggingServiceType.swift */; };
+		3570A7A02FD9AD3200EA8923 /* LogEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3570A79F2FD9AD3200EA8923 /* LogEntry.swift */; };
+		3570A7A22FD9AD4F00EA8923 /* LogEntryType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3570A7A12FD9AD4F00EA8923 /* LogEntryType.swift */; };
+		3570A7A42FD9AE1700EA8923 /* AppHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3570A7A32FD9AE1700EA8923 /* AppHelper.swift */; };
+		3570A7AA2FD9AF2A00EA8923 /* LogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3570A7A92FD9AF2A00EA8923 /* LogView.swift */; };
+		3570A7AC2FD9B01B00EA8923 /* ToolbarButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3570A7AB2FD9B01B00EA8923 /* ToolbarButton.swift */; };
+		3570A7AE2FD9B06900EA8923 /* PointerOnHoverModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3570A7AD2FD9B06900EA8923 /* PointerOnHoverModifier.swift */; };
+		3570A7B02FD9B0FF00EA8923 /* LogEntryRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3570A7AF2FD9B0FF00EA8923 /* LogEntryRow.swift */; };
+		3570A7B32FD9B68700EA8923 /* FfmpegError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3570A7B22FD9B68400EA8923 /* FfmpegError.swift */; };
+		3570A7B52FD9B8BA00EA8923 /* VideoGererationError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3570A7B42FD9B8BA00EA8923 /* VideoGererationError.swift */; };
 		3575CC9C2DD73AD900102D4E /* Factory in Frameworks */ = {isa = PBXBuildFile; productRef = 3575CC9B2DD73AD900102D4E /* Factory */; };
 		3578CCB62FC9BC11000E82A4 /* BaseJobService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3578CCB52FC9BC0D000E82A4 /* BaseJobService.swift */; };
 		3578CCB82FC9BC86000E82A4 /* VideoJobServiceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3578CCB72FC9BC83000E82A4 /* VideoJobServiceType.swift */; };
@@ -169,6 +180,17 @@
 		356760DC2D1406F500625233 /* ImageDuplicationOptionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDuplicationOptionsView.swift; sourceTree = "<group>"; };
 		356760E22D141AAC00625233 /* GenerationMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerationMode.swift; sourceTree = "<group>"; };
 		3570A7992FD9863700EA8923 /* CountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountView.swift; sourceTree = "<group>"; };
+		3570A79B2FD9AC6700EA8923 /* LoggingService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoggingService.swift; sourceTree = "<group>"; };
+		3570A79D2FD9AD1500EA8923 /* LoggingServiceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoggingServiceType.swift; sourceTree = "<group>"; };
+		3570A79F2FD9AD3200EA8923 /* LogEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogEntry.swift; sourceTree = "<group>"; };
+		3570A7A12FD9AD4F00EA8923 /* LogEntryType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogEntryType.swift; sourceTree = "<group>"; };
+		3570A7A32FD9AE1700EA8923 /* AppHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppHelper.swift; sourceTree = "<group>"; };
+		3570A7A92FD9AF2A00EA8923 /* LogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogView.swift; sourceTree = "<group>"; };
+		3570A7AB2FD9B01B00EA8923 /* ToolbarButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolbarButton.swift; sourceTree = "<group>"; };
+		3570A7AD2FD9B06900EA8923 /* PointerOnHoverModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PointerOnHoverModifier.swift; sourceTree = "<group>"; };
+		3570A7AF2FD9B0FF00EA8923 /* LogEntryRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogEntryRow.swift; sourceTree = "<group>"; };
+		3570A7B22FD9B68400EA8923 /* FfmpegError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FfmpegError.swift; sourceTree = "<group>"; };
+		3570A7B42FD9B8BA00EA8923 /* VideoGererationError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoGererationError.swift; sourceTree = "<group>"; };
 		3578CCB52FC9BC0D000E82A4 /* BaseJobService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseJobService.swift; sourceTree = "<group>"; };
 		3578CCB72FC9BC83000E82A4 /* VideoJobServiceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoJobServiceType.swift; sourceTree = "<group>"; };
 		3578CCB92FC9BCA8000E82A4 /* VideoJobService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoJobService.swift; sourceTree = "<group>"; };
@@ -295,6 +317,7 @@
 				3557DC192DCE00F800BE779E /* Extensions */,
 				355359902C64C87C004C172A /* Protocols */,
 				355359952C64D970004C172A /* Enums */,
+				3570A7B12FD9B66E00EA8923 /* Errors */,
 				35B8A13E2DD6597A000CFA1B /* Models */,
 				3553598C2C64C823004C172A /* Services */,
 				3553598D2C64C832004C172A /* Views */,
@@ -316,6 +339,7 @@
 			children = (
 				355359932C64C91E004C172A /* Constants.swift */,
 				3553598E2C64C855004C172A /* AppState.swift */,
+				3570A7A32FD9AE1700EA8923 /* AppHelper.swift */,
 				3514C5022C66210F004523CC /* AppDelegate.swift */,
 			);
 			path = Infrastructure;
@@ -340,6 +364,7 @@
 				355359982C64F4BA004C172A /* ImageJobService.swift */,
 				3578CCB92FC9BCA8000E82A4 /* VideoJobService.swift */,
 				35CDEEEC2FC5A6F700BEB092 /* ComputerService.swift */,
+				3570A79B2FD9AC6700EA8923 /* LoggingService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -352,15 +377,7 @@
 				3553599D2C6556FB004C172A /* Modifiers */,
 				3553599A2C6556B6004C172A /* Extensions */,
 				35DD841B2FC72D3C009E6D1F /* Controls */,
-				3553597D2C64C747004C172A /* MainView.swift */,
-				356760DA2D1404E500625233 /* ImageGenerationOptionsView.swift */,
-				356760DC2D1406F500625233 /* ImageDuplicationOptionsView.swift */,
-				35DD844A2FC85C82009E6D1F /* VideoGenerationOptionsView.swift */,
-				3570A7992FD9863700EA8923 /* CountView.swift */,
-				35DD84152FC71E1A009E6D1F /* NamingView.swift */,
-				35DD84192FC721F4009E6D1F /* OutputFolderView.swift */,
-				35DD84172FC71E31009E6D1F /* ActionsView.swift */,
-				3514C5002C661B3E004523CC /* InfoView.swift */,
+				3570A7A52FD9AEAD00EA8923 /* Implementation */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -390,6 +407,7 @@
 				35DD84542FC8BFED009E6D1F /* FileSizeUnit.swift */,
 				3549AB122FD6ACA80014EC73 /* FileSizeBase.swift */,
 				3549AB1C2FD8530A0014EC73 /* VideoProgress.swift */,
+				3570A7A12FD9AD4F00EA8923 /* LogEntryType.swift */,
 			);
 			path = Enums;
 			sourceTree = "<group>";
@@ -406,6 +424,7 @@
 			isa = PBXGroup;
 			children = (
 				3553599E2C655710004C172A /* IsHiddenModifier.swift */,
+				3570A7AD2FD9B06900EA8923 /* PointerOnHoverModifier.swift */,
 			);
 			path = Modifiers;
 			sourceTree = "<group>";
@@ -431,6 +450,57 @@
 			path = Builders;
 			sourceTree = "<group>";
 		};
+		3570A7A52FD9AEAD00EA8923 /* Implementation */ = {
+			isa = PBXGroup;
+			children = (
+				3570A7A62FD9AEC400EA8923 /* MainView */,
+				3570A7A82FD9AEFB00EA8923 /* LogView */,
+				3570A7A72FD9AEE700EA8923 /* InfoView */,
+			);
+			path = Implementation;
+			sourceTree = "<group>";
+		};
+		3570A7A62FD9AEC400EA8923 /* MainView */ = {
+			isa = PBXGroup;
+			children = (
+				3553597D2C64C747004C172A /* MainView.swift */,
+				356760DA2D1404E500625233 /* ImageGenerationOptionsView.swift */,
+				356760DC2D1406F500625233 /* ImageDuplicationOptionsView.swift */,
+				35DD844A2FC85C82009E6D1F /* VideoGenerationOptionsView.swift */,
+				3570A7992FD9863700EA8923 /* CountView.swift */,
+				35DD84152FC71E1A009E6D1F /* NamingView.swift */,
+				35DD84192FC721F4009E6D1F /* OutputFolderView.swift */,
+				35DD84172FC71E31009E6D1F /* ActionsView.swift */,
+			);
+			path = MainView;
+			sourceTree = "<group>";
+		};
+		3570A7A72FD9AEE700EA8923 /* InfoView */ = {
+			isa = PBXGroup;
+			children = (
+				3514C5002C661B3E004523CC /* InfoView.swift */,
+			);
+			path = InfoView;
+			sourceTree = "<group>";
+		};
+		3570A7A82FD9AEFB00EA8923 /* LogView */ = {
+			isa = PBXGroup;
+			children = (
+				3570A7A92FD9AF2A00EA8923 /* LogView.swift */,
+				3570A7AF2FD9B0FF00EA8923 /* LogEntryRow.swift */,
+			);
+			path = LogView;
+			sourceTree = "<group>";
+		};
+		3570A7B12FD9B66E00EA8923 /* Errors */ = {
+			isa = PBXGroup;
+			children = (
+				3570A7B22FD9B68400EA8923 /* FfmpegError.swift */,
+				3570A7B42FD9B8BA00EA8923 /* VideoGererationError.swift */,
+			);
+			path = Errors;
+			sourceTree = "<group>";
+		};
 		35B8A1352DD65742000CFA1B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -452,6 +522,7 @@
 				35B8A13C2DD65802000CFA1B /* ImageJobServiceType.swift */,
 				3578CCB72FC9BC83000E82A4 /* VideoJobServiceType.swift */,
 				35CDEEEE2FC5A77C00BEB092 /* ComputerServiceType.swift */,
+				3570A79D2FD9AD1500EA8923 /* LoggingServiceType.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -464,6 +535,7 @@
 				35B8A13F2DD65A0F000CFA1B /* ImageData.swift */,
 				35DD84262FC8441E009E6D1F /* VideoData.swift */,
 				3518B3482FD074A7000D6341 /* VideoGenerationResult.swift */,
+				3570A79F2FD9AD3200EA8923 /* LogEntry.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -499,6 +571,7 @@
 				35DD844C2FC8776F009E6D1F /* VideoModeControl.swift */,
 				35DD84562FC8D246009E6D1F /* DurationControl.swift */,
 				35DD84582FC8D457009E6D1F /* FileSizeControl.swift */,
+				3570A7AB2FD9B01B00EA8923 /* ToolbarButton.swift */,
 			);
 			path = Controls;
 			sourceTree = "<group>";
@@ -657,6 +730,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				35CDEF062FC5CD6000BEB092 /* ImageWritingStrategyFactoryType.swift in Sources */,
+				3570A7B02FD9B0FF00EA8923 /* LogEntryRow.swift in Sources */,
 				35DD84532FC8AC15009E6D1F /* ComparableExtensions.swift in Sources */,
 				35DD84252FC84289009E6D1F /* VideoResolution.swift in Sources */,
 				3549AB132FD6ACAD0014EC73 /* FileSizeBase.swift in Sources */,
@@ -668,6 +742,7 @@
 				3514C5032C66210F004523CC /* AppDelegate.swift in Sources */,
 				35B8A13A2DD657BD000CFA1B /* ContainerExtensions.swift in Sources */,
 				35CDEEFA2FC5B48000BEB092 /* ChunkingStrategyFactoryType.swift in Sources */,
+				3570A7AE2FD9B06900EA8923 /* PointerOnHoverModifier.swift in Sources */,
 				356760E32D141AAC00625233 /* GenerationMode.swift in Sources */,
 				3549AB152FD6D2AF0014EC73 /* StringExtensions.swift in Sources */,
 				35DD844B2FC85C82009E6D1F /* VideoGenerationOptionsView.swift in Sources */,
@@ -686,12 +761,14 @@
 				355359942C64C91E004C172A /* Constants.swift in Sources */,
 				35DD84352FC855D4009E6D1F /* MkvVideoGenerationStrategy.swift in Sources */,
 				3549AB172FD710BB0014EC73 /* VideoGenerationStateUpdate.swift in Sources */,
+				3570A7A02FD9AD3200EA8923 /* LogEntry.swift in Sources */,
 				3518B3552FD078A5000D6341 /* FfmpegService.swift in Sources */,
 				35DD84332FC8552D009E6D1F /* MovVideoGenerationStrategy.swift in Sources */,
 				3578CCB62FC9BC11000E82A4 /* BaseJobService.swift in Sources */,
 				35CDEEF22FC5AD9D00BEB092 /* ChunkingStrategyType.swift in Sources */,
 				3562D9622FBE080C00A1301B /* ImageGenerationStateUpdateBuilder.swift in Sources */,
 				35DD84592FC8D45A009E6D1F /* FileSizeControl.swift in Sources */,
+				3570A79C2FD9AC6700EA8923 /* LoggingService.swift in Sources */,
 				3562D9682FBF198200A1301B /* ImageCreationServiceType.swift in Sources */,
 				35CDEEEF2FC5A78200BEB092 /* ComputerServiceType.swift in Sources */,
 				3562D95F2FBDFEF400A1301B /* ImageColorSpace.swift in Sources */,
@@ -715,17 +792,22 @@
 				3549AB242FD865C10014EC73 /* ButtonType.swift in Sources */,
 				3549AB252FD865C10014EC73 /* WindowType.swift in Sources */,
 				3549AB262FD865C10014EC73 /* WindowController.swift in Sources */,
+				3570A7A42FD9AE1700EA8923 /* AppHelper.swift in Sources */,
 				3549AB272FD865C10014EC73 /* WindowRegistry.swift in Sources */,
+				3570A79E2FD9AD1500EA8923 /* LoggingServiceType.swift in Sources */,
 				3549AB282FD865C10014EC73 /* WindowManager.swift in Sources */,
 				35DD843F2FC85931009E6D1F /* VideoGenerationStrategyFactory.swift in Sources */,
 				3518B3432FD071B0000D6341 /* BaseVideoGenerationService.swift in Sources */,
+				3570A7B52FD9B8BA00EA8923 /* VideoGererationError.swift in Sources */,
 				35DD842F2FC853BB009E6D1F /* VideoGenerationStrategyType.swift in Sources */,
 				3549AB192FD716910014EC73 /* VideoGenerationStateUpdateBuilder.swift in Sources */,
+				3570A7AA2FD9AF2A00EA8923 /* LogView.swift in Sources */,
 				35B8A14F2DD668FD000CFA1B /* DuplicateImageStrategy.swift in Sources */,
 				3518B34D2FD07646000D6341 /* VideoFileSizeServiceType.swift in Sources */,
 				3578CCB82FC9BC86000E82A4 /* VideoJobServiceType.swift in Sources */,
 				35CDEF112FC5EFA900BEB092 /* CmykWritingStrategy.swift in Sources */,
 				355359922C64C8A8004C172A /* Settable.swift in Sources */,
+				3570A7A22FD9AD4F00EA8923 /* LogEntryType.swift in Sources */,
 				35B8A1472DD6642C000CFA1B /* ImageGenerationStrategyFactoryType.swift in Sources */,
 				3518B3532FD07879000D6341 /* FfmpegServiceType.swift in Sources */,
 				35CDEEFE2FC5C99100BEB092 /* ImageWritingStrategyType.swift in Sources */,
@@ -747,12 +829,14 @@
 				3514C5012C661B3E004523CC /* InfoView.swift in Sources */,
 				3518B3512FD0783D000D6341 /* VideoTempFileServiceType.swift in Sources */,
 				35DD842D2FC85113009E6D1F /* VideoGenerationServiceType.swift in Sources */,
+				3570A7B32FD9B68700EA8923 /* FfmpegError.swift in Sources */,
 				355359992C64F4BA004C172A /* ImageJobService.swift in Sources */,
 				35DD844D2FC87776009E6D1F /* VideoModeControl.swift in Sources */,
 				3518B3472FD072C0000D6341 /* VideoFileSizeService.swift in Sources */,
 				35DD843D2FC85912009E6D1F /* VideoGenerationStrategyFactoryType.swift in Sources */,
 				356760DD2D1406F500625233 /* ImageDuplicationOptionsView.swift in Sources */,
 				35CDEF002FC5CA8E00BEB092 /* JpegWritingStrategy.swift in Sources */,
+				3570A7AC2FD9B01B00EA8923 /* ToolbarButton.swift in Sources */,
 				35B8A14D2DD667B9000CFA1B /* GenerateImageStrategy.swift in Sources */,
 				3500FA872DD52EFA00B7A0A7 /* MediaGeneratorView.swift in Sources */,
 				35DD84372FC85610009E6D1F /* AviVideoGenerationStrategy.swift in Sources */,

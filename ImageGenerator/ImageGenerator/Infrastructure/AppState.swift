@@ -11,6 +11,7 @@ import Foundation
 class AppState : ObservableObject {
     @Published var userData = UserData() { didSet { setGenerationTotalCount() } }
     @Published var generation = Generation()
+    @Published var log = [LogEntry]()
     
     static let shared = AppState()
     
@@ -18,7 +19,7 @@ class AppState : ObservableObject {
         var updatedGeneration = generation
         
         if let generatedCount = update.generatedCount {
-            updatedGeneration.generatedCount += Double(generatedCount)
+            updatedGeneration.processedCount += Double(generatedCount)
         }
         
         if let isCancelRequested = update.isCancelRequested {
@@ -27,8 +28,10 @@ class AppState : ObservableObject {
         
         updatedGeneration.progress = calculateProgress(updatedGeneration)
         
+        print("Prog: \(updatedGeneration.progress), total: \(updatedGeneration.totalCount)")
+        
         if updatedGeneration.progress >= Constants.maxPercentage
-            || Int(updatedGeneration.generatedCount) >= updatedGeneration.totalCount {
+            || Int(updatedGeneration.processedCount) >= updatedGeneration.totalCount {
             updatedGeneration.inProgress = false
         }
         
@@ -43,11 +46,18 @@ class AppState : ObservableObject {
         }
         
         if update.videoCompleted {
-            updatedGeneration.completedFileCount += 1
+            updatedGeneration.completedVideosCount += 1
             updatedGeneration.operationProgress -= update.operationContribution ?? 0
         }
         
-        updatedGeneration.generatedCount = Double(updatedGeneration.completedFileCount)
+        if update.videoFailed {
+            updatedGeneration.failedVideosCount += 1
+            updatedGeneration.operationProgress -= update.operationContribution ?? 0
+        }
+        
+        updatedGeneration.processedCount =
+            Double(updatedGeneration.completedVideosCount)
+            + Double(updatedGeneration.failedVideosCount)
             + updatedGeneration.operationProgress
         
         if let inProgress = update.inProgress {
@@ -61,7 +71,9 @@ class AppState : ObservableObject {
         updatedGeneration.progress = calculateProgress(updatedGeneration)
         
         if updatedGeneration.progress >= Constants.maxPercentage
-            || updatedGeneration.completedFileCount >= updatedGeneration.totalCount {
+            || (updatedGeneration.completedVideosCount
+                + updatedGeneration.failedVideosCount)
+                >= updatedGeneration.totalCount {
             updatedGeneration.inProgress = false
         }
         
@@ -79,7 +91,7 @@ class AppState : ObservableObject {
         else { return 0 }
         
         return min(
-            (generation.generatedCount / Double(generation.totalCount))
+            (generation.processedCount / Double(generation.totalCount))
                 * Constants.maxPercentage,
             Constants.maxPercentage
         )
@@ -90,10 +102,11 @@ extension AppState {
     struct Generation {
         var inProgress : Bool = false
         var isCancelRequested: Bool = false
-        var generatedCount: Double = 0.0
+        var processedCount: Double = 0.0
         var progress: Double = 0.0
         var totalCount: Int = 0
-        var completedFileCount: Int = 0
+        var completedVideosCount: Int = 0
+        var failedVideosCount: Int = 0
         var operationProgress: Double = 0.0
     }
 }

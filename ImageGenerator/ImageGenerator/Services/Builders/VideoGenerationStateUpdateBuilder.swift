@@ -24,6 +24,14 @@ final class VideoGenerationStateUpdateBuilder {
     }
     
     @discardableResult
+    func withVideoFailed(operationContribution: Double) -> Self {
+        update.videoFailed = true
+        update.operationContribution = operationContribution
+        
+        return self
+    }
+    
+    @discardableResult
     func withInProgress(_ value: Bool) -> Self {
         update.inProgress = value
         

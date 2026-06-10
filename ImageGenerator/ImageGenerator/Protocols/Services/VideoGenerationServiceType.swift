@@ -11,5 +11,6 @@ protocol VideoGenerationServiceType {
     func generateAsync(
         videoData: VideoData,
         strategy: VideoGenerationStrategyType,
-        onOperationComplete: (@Sendable (_ increment: VideoProgress) async -> Void)?) async -> Bool
+        onOperationComplete:
+            (@Sendable (_ increment: VideoProgress) async -> Void)?) async throws
 }
