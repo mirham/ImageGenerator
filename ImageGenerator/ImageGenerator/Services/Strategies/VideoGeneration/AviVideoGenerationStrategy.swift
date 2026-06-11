@@ -23,94 +23,77 @@ final class AviVideoGenerationStrategy: VideoGenerationStrategyType {
         }
     }
     
-    func padFile(to url: URL, padding: Int) {
+    func padFile(to url: URL, padding: Int) throws {
         guard padding > 0
         else { return }
         
-        do {
-            let fileHandle = try FileHandle(forWritingTo: url)
-            
-            defer { try? fileHandle.close() }
-            
-            try fileHandle.seekToEnd()
-            
-            let maxChunkData = Int(UInt32.max) - 8
-            var remaining = padding
-            
-            while remaining > 0 {
-                guard remaining >= 8
-                else {
-                    writeZeros(
-                        fileHandle: fileHandle,
-                        count: remaining
-                    )
-                    
-                    break
-                }
+        let fileHandle = try FileHandle(forWritingTo: url)
+        
+        defer { try? fileHandle.close() }
+        
+        try fileHandle.seekToEnd()
+        
+        let maxChunkData = Int(UInt32.max) - 8
+        var remaining = padding
+        
+        while remaining > 0 {
+            guard remaining >= 8
+            else {
+                writeZeros(
+                    fileHandle: fileHandle,
+                    count: remaining
+                )
                 
-                let chunkTotal = min(remaining, maxChunkData + 8)
-                let chunkData = chunkTotal - 8
-                
-                let typeData = "JUNK".data(using: .ascii)!
-                var chunkSize = UInt32(chunkData).littleEndian
-                let sizeData = Data(bytes: &chunkSize, count: 4)
-                
-                try fileHandle.write(contentsOf: typeData)
-                try fileHandle.write(contentsOf: sizeData)
-                
-                if chunkData > 0 {
-                    writeZeros(
-                        fileHandle: fileHandle,
-                        count: chunkData
-                    )
-                }
-                
-                remaining -= chunkTotal
+                break
             }
-        } catch {
-            print("AVI padding failed: \(error)")
+            
+            let chunkTotal = min(remaining, maxChunkData + 8)
+            let chunkData = chunkTotal - 8
+            
+            let typeData = "JUNK".data(using: .ascii)!
+            var chunkSize = UInt32(chunkData).littleEndian
+            let sizeData = Data(bytes: &chunkSize, count: 4)
+            
+            try fileHandle.write(contentsOf: typeData)
+            try fileHandle.write(contentsOf: sizeData)
+            
+            if chunkData > 0 {
+                writeZeros(
+                    fileHandle: fileHandle,
+                    count: chunkData
+                )
+            }
+            
+            remaining -= chunkTotal
         }
     }
     
     func trimFile(
         sourceUrl: URL,
         targetBytes: Int,
-        outputUrl: URL) -> Bool {
+        outputUrl: URL) throws {
         guard let sourceSize = getFileSize(at: sourceUrl)
-        else { return false }
+        else { return }
         
         let undershoot = Int(Double(targetBytes) * Constants.undershootFactor)
         
-        do {
-            try FileManager.default.copyItem(at: sourceUrl, to: outputUrl)
-        } catch {
-            return false
-        }
+        try FileManager.default.copyItem(at: sourceUrl, to: outputUrl)
         
         if sourceSize <= targetBytes {
             let padding = targetBytes - sourceSize
             
             if padding > 0 {
-                padFile(to: outputUrl, padding: padding)
+                try padFile(to: outputUrl, padding: padding)
             }
             
-            return true
+            return
         }
         
-        do {
-            let fileHandle = try FileHandle(forWritingTo: outputUrl)
-            
-            try fileHandle.truncate(atOffset: UInt64(undershoot))
-            try fileHandle.close()
-        } catch {
-            return false
-        }
+        let fileHandle = try FileHandle(forWritingTo: outputUrl)
         
-        padFile(
-            to: outputUrl,
-            padding: targetBytes - undershoot)
-        
-        return true
+        try fileHandle.truncate(atOffset: UInt64(undershoot))
+        try fileHandle.close()
+        try padFile(to: outputUrl, padding: targetBytes - undershoot)
     }
     
     // MARK: Private functions

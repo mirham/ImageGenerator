@@ -13,6 +13,7 @@ class ImageJobService: BaseJobService, ImageJobServiceType {
     @Injected(\.chunkingStrategyFactory) private var chunkingStrategyFactory
     @Injected(\.imageCreationService) private var imageCreationService
     @Injected(\.imageWritingService) private var imageWritingService
+    @Injected(\.loggingService) private var loggingService
     
     var generationTask: Task<Void, Never>?
     
@@ -121,16 +122,33 @@ class ImageJobService: BaseJobService, ImageJobServiceType {
         
         let url = makeImageUrl(imageData: imageData, snapshot: snapshot)
         
-        imageWritingService.writeImage(
-            image,
-            to: url,
-            format: snapshot.outputFormat,
-            colorSpace: snapshot.colorSpace,
-            ppi: snapshot.ppi
-        )
+            do {
+                try imageWritingService.writeImage(
+                    image,
+                    to: url,
+                    format: snapshot.outputFormat,
+                    colorSpace: snapshot.colorSpace,
+                    ppi: snapshot.ppi
+                )
+                
+                loggingService.write(
+                    message: String(
+                        format: Constants.lmSuccessfullyGeneratedPhoto,
+                        element),
+                    type: .success)
+            }
+            catch {
+                loggingService.write(
+                    message: String(
+                        format: Constants.lmPhotoGenerationFailed,
+                        element,
+                        error.localizedDescription),
+                    type: .error)
+            }
             
-        await updateStatusAsync {
-            $0.withGeneratedCount(Constants.step)
+            await updateStatusAsync {
+                $0.withGeneratedCount(Constants.step)
+
         }
     }
     

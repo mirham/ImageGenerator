@@ -13,6 +13,7 @@ class VideoJobService: BaseJobService, VideoJobServiceType {
     @Injected(\.videoGenerationStrategyFactory) private var videoGenerationStrategyFactory
     @Injected(\.chunkingStrategyFactory) private var chunkingStrategyFactory
     @Injected(\.videoGenerationService) private var videoGenerationService
+    @Injected(\.loggingService) private var loggingService
     
     var generationTask: Task<Void, Never>?
     
@@ -119,8 +120,6 @@ class VideoJobService: BaseJobService, VideoJobServiceType {
         
         let fileContribution = OSAllocatedUnfairLock(initialState: 0.0)
         let onOperationComplete = { @Sendable (increment: VideoProgress) in
-            print("\(increment), increment: \(increment.value)")
-            
             fileContribution.withLock { $0 += increment.value }
             
             await self.updateStatusAsync {
@@ -141,6 +140,13 @@ class VideoJobService: BaseJobService, VideoJobServiceType {
             await updateStatusAsync {
                 $0.withVideoCompleted(operationContribution: contribution)
             }
+            
+            loggingService.write(
+                message: String(
+                    format: Constants.lmSuccessfullyGeneratedVideo,
+                    element
+                ),
+                type: .success)
         }
         catch {
             contribution = fileContribution.withLock { $0 }
@@ -148,6 +154,14 @@ class VideoJobService: BaseJobService, VideoJobServiceType {
             await updateStatusAsync {
                 $0.withVideoFailed(operationContribution: contribution)
             }
+            
+            loggingService.write(
+                message: String(
+                    format: Constants.lmVideoGenerationFailed,
+                    element,
+                    error.localizedDescription
+                ),
+                type: .error)
         }
     }
     

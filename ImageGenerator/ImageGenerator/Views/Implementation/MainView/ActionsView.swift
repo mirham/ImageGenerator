@@ -34,7 +34,9 @@ struct ActionsView: MediaGeneratorView {
                 generateButton
             }
         }
-        .padding()
+        .padding(.top)
+        .padding(.leading)
+        .padding(.trailing)
     }
     
     @ViewBuilder

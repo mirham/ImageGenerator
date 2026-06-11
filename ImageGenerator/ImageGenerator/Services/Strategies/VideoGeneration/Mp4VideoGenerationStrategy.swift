@@ -29,7 +29,7 @@ final class Mp4VideoGenerationStrategy: VideoGenerationStrategyType {
         }
     }
     
-    func padFile(to url: URL, padding: Int) {
+    func padFile(to url: URL, padding: Int) throws {
         guard padding > 0
         else { return }
         
@@ -40,53 +40,49 @@ final class Mp4VideoGenerationStrategy: VideoGenerationStrategyType {
             return
         }
         
-        do {
-            let fileHandle = try FileHandle(forWritingTo: url)
+        let fileHandle = try FileHandle(forWritingTo: url)
+        
+        defer { try? fileHandle.close() }
+        
+        try fileHandle.seekToEnd()
+        
+        let typeData = Constants.vfDataFree.data(using: .ascii)!
+        
+        if padding <= Int(UInt32.max) {
+            var boxSize = UInt32(padding).bigEndian
+            let sizeData = Data(bytes: &boxSize, count: 4)
             
-            defer { try? fileHandle.close() }
-            
-            try fileHandle.seekToEnd()
-            
-            let typeData = Constants.vfDataFree.data(using: .ascii)!
-            
-            if padding <= Int(UInt32.max) {
-                var boxSize = UInt32(padding).bigEndian
-                let sizeData = Data(bytes: &boxSize, count: 4)
+            try fileHandle.write(contentsOf: sizeData)
+            try fileHandle.write(contentsOf: typeData)
+        } else {
+            guard padding >= 16 else {
+                padWithZeros(to: url, padding: padding)
                 
-                try fileHandle.write(contentsOf: sizeData)
-                try fileHandle.write(contentsOf: typeData)
-            } else {
-                guard padding >= 16 else {
-                    padWithZeros(to: url, padding: padding)
-                    
-                    return
-                }
-                var marker = UInt32(1).bigEndian
-                let markerData = Data(bytes: &marker, count: 4)
-                var boxSize64 = UInt64(padding).bigEndian
-                let sizeData64 = Data(bytes: &boxSize64, count: 8)
-                
-                try fileHandle.write(contentsOf: markerData)
-                try fileHandle.write(contentsOf: typeData)
-                try fileHandle.write(contentsOf: sizeData64)
+                return
             }
+            var marker = UInt32(1).bigEndian
+            let markerData = Data(bytes: &marker, count: 4)
+            var boxSize64 = UInt64(padding).bigEndian
+            let sizeData64 = Data(bytes: &boxSize64, count: 8)
             
-            let headerSize = padding <= Int(UInt32.max) ? 8 : 16
-            let dataSize = padding - headerSize
-            
-            if dataSize > 0 {
-                writeZeros(fileHandle: fileHandle, count: dataSize)
-            }
-        } catch {
-            print("MP4 padding failed: \(error)")
+            try fileHandle.write(contentsOf: markerData)
+            try fileHandle.write(contentsOf: typeData)
+            try fileHandle.write(contentsOf: sizeData64)
+        }
+        
+        let headerSize = padding <= Int(UInt32.max) ? 8 : 16
+        let dataSize = padding - headerSize
+        
+        if dataSize > 0 {
+            writeZeros(fileHandle: fileHandle, count: dataSize)
         }
     }
     
     func trimFile(
         sourceUrl: URL,
         targetBytes: Int,
-        outputUrl: URL) -> Bool {
-        return false
+        outputUrl: URL) throws {
+        return
     }
     
     // MARK: Private functions

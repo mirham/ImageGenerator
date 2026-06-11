@@ -118,6 +118,39 @@ struct Constants {
     // MARK: ffmpeg
     static let ffmpegAppleSilicon = "ffmpeg-arm64"
     static let ffmpegIntel = "ffmpeg-x86_64"
+    static let ffmpegNoisePatterns = [
+        "ffmpeg version", "built with", "configuration:",
+        "libav", "libsw", "libpostproc", "sized interval",
+        "encoder ", "decoder ", "press [q]",
+        "handler_name", "Stream mapping",
+        "vendor_id", "minor_version",  "major_brand",
+        "stream mapping:",
+        "auto-inserting",
+        "@ 0x",
+        "duration:", "bitrate:",
+        "chapter #",
+        "stream #",
+        "stream mapping",
+        "metadata",
+        "-> stream",
+        "->",
+        "compatible_brands",
+        "Side data",
+        "cpb"
+    ]
+    static let ffmpegErrorPatterns = [
+        "error", "invalid", "failed", "no such file",
+        "permission denied", "could not", "cannot",
+        "not found", "unable to", "no space left",
+        "codec not currently supported", "unknown encoder",
+        "matches no streams", "does not contain"
+    ]
+    static let ffmpegWarningPatterns = [
+        "warning", "deprecated", "not officially supported",
+        "possibly truncated", "invalid data found",
+        "dts out of order", "non monotonous",
+        "bitrate tolerance", "past duration"
+    ]
     
     // MARK: Video files
     static let vfDataFree = "free"
@@ -207,6 +240,16 @@ struct Constants {
     static let logPath = "\(appName)/Logs"
     static let logMaxInMemoryEntries = 500
     static let logMaxLogAgeDays = 30
+    static let logSummaryErrors = "%d errors "
+    static let logSummaryWarnings = "%d warnings "
+    static let logSummaryErrorsAndWarnings = "%d errors, %d warnings "
+    static let logSummaryViewLog = "[view log]"
+    
+    // MARK: Log messages
+    static let lmSuccessfullyGeneratedPhoto = "Photo %lld successfuly generated."
+    static let lmSuccessfullyGeneratedVideo = "Video %lld successfuly generated."
+    static let lmPhotoGenerationFailed = "Failed generation of photo %lld: %1$@"
+    static let lmVideoGenerationFailed = "Failed generation of video %lld: %1$@"
     
     // MARK: About
     static let aboutSupportMail = "bWlyaGFtQGFidi5iZw=="

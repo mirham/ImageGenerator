@@ -13,5 +13,5 @@ protocol ImageWritingServiceType {
         to url: URL,
         format: ImageOutputFormat,
         colorSpace: ImageColorSpace,
-        ppi: CGFloat)
+        ppi: CGFloat) throws
 }

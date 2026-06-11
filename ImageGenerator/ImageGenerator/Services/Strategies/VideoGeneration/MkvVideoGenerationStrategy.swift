@@ -29,7 +29,7 @@ final class MkvVideoGenerationStrategy: VideoGenerationStrategyType {
         }
     }
     
-    func padFile(to url: URL, padding: Int) {
+    func padFile(to url: URL, padding: Int) throws {
         guard padding > 0
         else { return }
         
@@ -39,58 +39,54 @@ final class MkvVideoGenerationStrategy: VideoGenerationStrategyType {
             return
         }
         
-        do {
-            let fileHandle = try FileHandle(forWritingTo: url)
+        let fileHandle = try FileHandle(forWritingTo: url)
+        
+        defer { try? fileHandle.close() }
+        
+        try fileHandle.seekToEnd()
+        
+        if padding < 128 {
+            let dataSize = padding - 2
+            let sizeByte = UInt8(0x80 | dataSize)
+            try fileHandle.write(
+                contentsOf: Data([Constants.vfVoidId, sizeByte])
+            )
             
-            defer { try? fileHandle.close() }
-            
-            try fileHandle.seekToEnd()
-            
-            if padding < 128 {
-                let dataSize = padding - 2
-                let sizeByte = UInt8(0x80 | dataSize)
-                try fileHandle.write(
-                    contentsOf: Data([Constants.vfVoidId, sizeByte])
-                )
-                
-                if dataSize > 0 {
-                    writeZeros(
-                        fileHandle: fileHandle,
-                        count: dataSize)
-                }
-            } else {
-                guard padding >= 9 else {
-                    padWithZeros(to: url, padding: padding)
-                    return
-                }
-                let dataSize = padding - 9
-                let sizeValue = UInt64(dataSize)
-                var sizeBytes = Data(count: 8)
-                sizeBytes[0] = 0x01
-                sizeBytes[1] = UInt8((sizeValue >> 48) & 0xFF)
-                sizeBytes[2] = UInt8((sizeValue >> 40) & 0xFF)
-                sizeBytes[3] = UInt8((sizeValue >> 32) & 0xFF)
-                sizeBytes[4] = UInt8((sizeValue >> 24) & 0xFF)
-                sizeBytes[5] = UInt8((sizeValue >> 16) & 0xFF)
-                sizeBytes[6] = UInt8((sizeValue >> 8) & 0xFF)
-                sizeBytes[7] = UInt8( sizeValue & 0xFF)
-                try fileHandle.write(contentsOf: Data([Constants.vfVoidId]))
-                try fileHandle.write(contentsOf: sizeBytes)
-                
-                if dataSize > 0 {
-                    writeZeros( fileHandle: fileHandle, count: dataSize)
-                }
+            if dataSize > 0 {
+                writeZeros(
+                    fileHandle: fileHandle,
+                    count: dataSize)
             }
-        } catch {
-            print("MKV padding failed: \(error)")
+        } else {
+            guard padding >= 9 else {
+                padWithZeros(to: url, padding: padding)
+                return
+            }
+            let dataSize = padding - 9
+            let sizeValue = UInt64(dataSize)
+            var sizeBytes = Data(count: 8)
+            sizeBytes[0] = 0x01
+            sizeBytes[1] = UInt8((sizeValue >> 48) & 0xFF)
+            sizeBytes[2] = UInt8((sizeValue >> 40) & 0xFF)
+            sizeBytes[3] = UInt8((sizeValue >> 32) & 0xFF)
+            sizeBytes[4] = UInt8((sizeValue >> 24) & 0xFF)
+            sizeBytes[5] = UInt8((sizeValue >> 16) & 0xFF)
+            sizeBytes[6] = UInt8((sizeValue >> 8) & 0xFF)
+            sizeBytes[7] = UInt8( sizeValue & 0xFF)
+            try fileHandle.write(contentsOf: Data([Constants.vfVoidId]))
+            try fileHandle.write(contentsOf: sizeBytes)
+            
+            if dataSize > 0 {
+                writeZeros( fileHandle: fileHandle, count: dataSize)
+            }
         }
     }
     
     func trimFile(
         sourceUrl: URL,
         targetBytes: Int,
-        outputUrl: URL) -> Bool {
-        return false
+        outputUrl: URL) throws {
+        return
     }
     
     // MARK: Private functions

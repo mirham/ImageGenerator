@@ -30,8 +30,8 @@ final class WmvVideoGenerationStrategy: VideoGenerationStrategyType {
     func trimFile(
         sourceUrl: URL,
         targetBytes: Int,
-        outputUrl: URL) -> Bool {
-        return false
+        outputUrl: URL) throws {
+        return
     }
     
     // MARK: Private functions

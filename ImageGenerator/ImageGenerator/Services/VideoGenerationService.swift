@@ -150,12 +150,10 @@ final class VideoGenerationService: VideoGenerationServiceType {
             }
         }
         
-        if strategy.trimFile(
+        try strategy.trimFile(
             sourceUrl: oversized.url,
             targetBytes: targetBytes,
-            outputUrl: videoData.outputUrl) {
-            return
-        }
+            outputUrl: videoData.outputUrl)
         
         try await videoFileSizeService.trimToUndershootThenPadAsync(
             oversizedURL: oversized.url,

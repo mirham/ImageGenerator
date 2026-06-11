@@ -71,8 +71,9 @@ struct MainView: MediaGeneratorView {
         VStack(alignment: .leading) {
             NamingView()
             OutputFolderView()
-            Spacer()
             ActionsView()
+            LogSummaryView()
+            Spacer()
         }
     }
     
@@ -115,13 +116,13 @@ struct MainView: MediaGeneratorView {
     private func getWindowSize(for tab: Int) -> CGSize {
         switch tab {
             case Constants.tabIdGenerateImages:
-                return CGSize(width: 570, height: 610)
+                return CGSize(width: 570, height: 620)
             case Constants.tabIdDuplicateImage:
                 return CGSize(width: 570, height: 340)
             case Constants.tabIdGenerateVideos:
-                return CGSize(width: 570, height: 670)
+                return CGSize(width: 570, height: 680)
             default:
-                return CGSize(width: 570, height: 590)
+                return CGSize(width: 570, height: 600)
         }
     }
 }

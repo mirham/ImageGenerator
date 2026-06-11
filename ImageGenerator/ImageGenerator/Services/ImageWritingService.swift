@@ -16,14 +16,14 @@ final class ImageWritingService : ImageWritingServiceType {
         to url: URL,
         format: ImageOutputFormat,
         colorSpace: ImageColorSpace = .rgb,
-        ppi: CGFloat) {
+        ppi: CGFloat) throws {
         let quality = getJpegQuality(for: ciImage.extent.size)
         let targetColorSpace = colorSpace.cgColorSpace
         let strategy = imageWritingStrategyFactory.getStrategy(
             for: format,
             colorSpace: colorSpace)
         
-        try? strategy?.write(
+        try strategy?.write(
             ciImage, to: url,
             colorSpace: targetColorSpace,
             quality: quality,

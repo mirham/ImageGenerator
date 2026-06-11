@@ -69,7 +69,7 @@ final class VideoFileSizeService: BaseVideoGenerationService, VideoFileSizeServi
         let padding = targetBytes - currentSize
         
         if padding > 0 {
-            strategy.padFile(to: videoData.outputUrl, padding: padding)
+            try strategy.padFile(to: videoData.outputUrl, padding: padding)
         }
     }
     
@@ -105,9 +105,7 @@ final class VideoFileSizeService: BaseVideoGenerationService, VideoFileSizeServi
         let padding = targetBytes - currentSize
         
         if padding > 0 {
-            strategy.padFile(
-                to: videoData.outputUrl,
-                padding: padding)
+            try strategy.padFile(to: videoData.outputUrl, padding: padding)
         }
         
         try await retryWithReducedBitrateAsync(
@@ -169,9 +167,7 @@ final class VideoFileSizeService: BaseVideoGenerationService, VideoFileSizeServi
         let padding = targetBytes - currentSize
         
         if padding > 0 {
-            strategy.padFile(
-                to: videoData.outputUrl,
-                padding: padding)
+            try strategy.padFile(to: videoData.outputUrl, padding: padding)
         }
     }
     
@@ -217,8 +213,6 @@ final class VideoFileSizeService: BaseVideoGenerationService, VideoFileSizeServi
         guard retryPadding > 0
         else { return }
         
-        strategy.padFile(
-            to: videoData.outputUrl,
-            padding: retryPadding)
+        try strategy.padFile(to: videoData.outputUrl, padding: retryPadding)
     }
 }

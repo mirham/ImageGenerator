@@ -107,61 +107,19 @@ final class FfmpegService: FfmpegServiceType {
         let trimmed = line.trimmingCharacters(in: .whitespaces)
         let lower = trimmed.lowercased()
         
-        let noisePatterns = [
-            "ffmpeg version", "built with", "configuration:",
-            "libav", "libsw", "libpostproc", "sized interval",
-            "encoder ", "decoder ", "press [q]",
-            "handler_name", "Stream mapping",
-            "vendor_id", "minor_version",  "major_brand",
-            "stream mapping:",
-            "auto-inserting",
-            "@ 0x",
-            "duration:", "bitrate:",
-            "chapter #",
-            "stream #",
-            "stream mapping",
-            "metadata",
-            "-> stream",
-            "->",
-            "compatible_brands",
-            "Side data",
-            "cpb"
-        ]
-        
-        if noisePatterns.contains(where: { lower.contains($0) }) {
+        if Constants.ffmpegNoisePatterns
+            .contains(where: { lower.contains($0) }) {
             return .unknown
         }
         
-        let errorPatterns = [
-            "error", "invalid", "failed", "no such file",
-            "permission denied", "could not", "cannot",
-            "not found", "unable to", "no space left",
-            "codec not currently supported", "unknown encoder",
-            "matches no streams", "does not contain"
-        ]
-        
-        if errorPatterns.contains(where: { lower.contains($0) }) {
+        if Constants.ffmpegErrorPatterns
+            .contains(where: { lower.contains($0) }) {
             return .error
         }
         
-        let warningPatterns = [
-            "warning", "deprecated", "not officially supported",
-            "possibly truncated", "invalid data found",
-            "dts out of order", "non monotonous",
-            "bitrate tolerance", "past duration"
-        ]
-        
-        if warningPatterns.contains(where: { lower.contains($0) }) {
+        if Constants.ffmpegWarningPatterns
+            .contains(where: { lower.contains($0) }) {
             return .warning
-        }
-        
-        let successPatterns = [
-            "muxing overhead", "video:", "audio:",
-            "output #", "encoded "
-        ]
-        
-        if successPatterns.contains(where: { lower.contains($0) }) {
-            return .success
         }
         
         return .info

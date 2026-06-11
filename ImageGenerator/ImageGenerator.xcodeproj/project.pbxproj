@@ -68,6 +68,7 @@
 		3578CCB62FC9BC11000E82A4 /* BaseJobService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3578CCB52FC9BC0D000E82A4 /* BaseJobService.swift */; };
 		3578CCB82FC9BC86000E82A4 /* VideoJobServiceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3578CCB72FC9BC83000E82A4 /* VideoJobServiceType.swift */; };
 		3578CCBA2FC9BCAC000E82A4 /* VideoJobService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3578CCB92FC9BCA8000E82A4 /* VideoJobService.swift */; };
+		359CC5422FDADFB100F2AFB9 /* LogSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 359CC5412FDADFA200F2AFB9 /* LogSummaryView.swift */; };
 		35B8A13A2DD657BD000CFA1B /* ContainerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B8A1392DD657B5000CFA1B /* ContainerExtensions.swift */; };
 		35B8A13D2DD65807000CFA1B /* ImageJobServiceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B8A13C2DD65802000CFA1B /* ImageJobServiceType.swift */; };
 		35B8A1402DD65A28000CFA1B /* ImageData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B8A13F2DD65A0F000CFA1B /* ImageData.swift */; };
@@ -194,6 +195,7 @@
 		3578CCB52FC9BC0D000E82A4 /* BaseJobService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseJobService.swift; sourceTree = "<group>"; };
 		3578CCB72FC9BC83000E82A4 /* VideoJobServiceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoJobServiceType.swift; sourceTree = "<group>"; };
 		3578CCB92FC9BCA8000E82A4 /* VideoJobService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoJobService.swift; sourceTree = "<group>"; };
+		359CC5412FDADFA200F2AFB9 /* LogSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogSummaryView.swift; sourceTree = "<group>"; };
 		35B8A1392DD657B5000CFA1B /* ContainerExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContainerExtensions.swift; sourceTree = "<group>"; };
 		35B8A13C2DD65802000CFA1B /* ImageJobServiceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageJobServiceType.swift; sourceTree = "<group>"; };
 		35B8A13F2DD65A0F000CFA1B /* ImageData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageData.swift; sourceTree = "<group>"; };
@@ -471,6 +473,7 @@
 				35DD84152FC71E1A009E6D1F /* NamingView.swift */,
 				35DD84192FC721F4009E6D1F /* OutputFolderView.swift */,
 				35DD84172FC71E31009E6D1F /* ActionsView.swift */,
+				359CC5412FDADFA200F2AFB9 /* LogSummaryView.swift */,
 			);
 			path = MainView;
 			sourceTree = "<group>";
@@ -756,6 +759,7 @@
 				35B8A1432DD662F2000CFA1B /* ImageGenerationStrategyFactory.swift in Sources */,
 				3549AB1B2FD720C20014EC73 /* BitrateCalculator.swift in Sources */,
 				35CDEEED2FC5A6FF00BEB092 /* ComputerService.swift in Sources */,
+				359CC5422FDADFB100F2AFB9 /* LogSummaryView.swift in Sources */,
 				35B8A1492DD66598000CFA1B /* ImageGenerationService.swift in Sources */,
 				35CDEF022FC5CB3900BEB092 /* PngWritingStrategy.swift in Sources */,
 				355359942C64C91E004C172A /* Constants.swift in Sources */,

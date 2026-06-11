@@ -12,8 +12,8 @@ protocol VideoGenerationStrategyType {
     var isSupportsStreamLoop: Bool { get }
     
     func getCodecArguments(for videoData: VideoData) -> [String]
-    func padFile(to url: URL, padding: Int)
-    func trimFile(sourceUrl: URL, targetBytes: Int, outputUrl: URL) -> Bool
+    func padFile(to url: URL, padding: Int) throws
+    func trimFile(sourceUrl: URL, targetBytes: Int, outputUrl: URL) throws
 }
 
 extension VideoGenerationStrategyType {
