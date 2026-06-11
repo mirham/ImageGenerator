@@ -83,7 +83,7 @@ final class VideoGenerationService: VideoGenerationServiceType {
         
         defer {
             Task {
-                await videoTempFileService.deleteFileAsync(at: oversized.url)
+                try await videoTempFileService.deleteFileAsync(at: oversized.url)
             }
         }
         
@@ -146,7 +146,7 @@ final class VideoGenerationService: VideoGenerationServiceType {
         
         defer {
             Task {
-                await videoTempFileService.deleteFileAsync(at: oversized.url)
+                try await videoTempFileService.deleteFileAsync(at: oversized.url)
             }
         }
         

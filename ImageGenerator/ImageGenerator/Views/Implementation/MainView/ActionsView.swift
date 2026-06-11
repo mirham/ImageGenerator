@@ -8,11 +8,12 @@
 import SwiftUI
 import Factory
 
-struct ActionsView: MediaGeneratorView {
+struct ActionsView: MediaGeneratorView, LogDependentView {
     @EnvironmentObject var appState: AppState
     
     @Injected(\.imageJobService) private var imageJobService
     @Injected(\.videoJobService) private var videoJobService
+    @Injected(\.loggingService) private var loggingService
     
     @State private var activeAlert: ActiveAlert?
     @State private var overCancelButton = false
@@ -46,19 +47,26 @@ struct ActionsView: MediaGeneratorView {
         }
         .buttonStyle(GenerateButtonStyle())
         .disabled(!canGenerate)
+        .pointerOnHover()
     }
     
     @ViewBuilder
     private var progressView: some View {
+        let accentColor = getAccentColor(for: logSummary)
+        
         ProgressView(
             value: appState.generation.progress,
             total: Constants.maxPercentage,
-            label: {  Text(progressLabel) }
+            label: {
+                Text(progressLabel)
+                    .foregroundColor(.primary)
+            }
         )
+        .tint(accentColor)
         .padding(7)
         .overlay(
             RoundedRectangle(cornerRadius: 5)
-                .stroke(.blue, lineWidth: 2)
+                .stroke(accentColor, lineWidth: 2)
         )
     }
     
@@ -82,6 +90,7 @@ struct ActionsView: MediaGeneratorView {
                 .padding(7)
         }
         .buttonStyle(CancelButtonStyle(isHovering: $overCancelButton))
+        .pointerOnHover()
     }
     
     private var alertContent: (ActiveAlert) -> Alert {
@@ -183,6 +192,8 @@ struct ActionsView: MediaGeneratorView {
         appState.generation.failedVideosCount = 0
         appState.generation.operationProgress = 0
         appState.generation.isCancelRequested = false
+        
+        loggingService.clear()
     }
     
     // MARK: Inner types
@@ -205,7 +216,7 @@ private struct GenerateButtonStyle: ButtonStyle {
             .frame(maxWidth: .infinity)
             .background(
                 RoundedRectangle(cornerRadius: 5)
-                    .fill(Color.blue)
+                    .fill(Color.accentColor)
                     .opacity(configuration.isPressed ? 0.8 : 1)
             )
             .scaleEffect(configuration.isPressed ? 0.98 : 1)
@@ -220,7 +231,7 @@ private struct CancelButtonStyle: ButtonStyle {
         configuration.label
             .buttonStyle(.plain)
             .focusEffectDisabled()
-            .foregroundStyle(isHovering ? .red : .blue)
+            .foregroundStyle(isHovering ? .red : .accentColor)
             .onHover { isHovering = $0 }
             .scaleEffect(configuration.isPressed ? 0.95 : 1)
             .animation(.easeInOut(duration: 0.1), value: configuration.isPressed)

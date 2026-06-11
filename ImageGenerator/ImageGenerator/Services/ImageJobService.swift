@@ -136,6 +136,12 @@ class ImageJobService: BaseJobService, ImageJobServiceType {
                         format: Constants.lmSuccessfullyGeneratedPhoto,
                         element),
                     type: .success)
+                
+                loggingService.write(
+                    message: String(
+                        format: Constants.lmSuccessfullyGeneratedPhoto,
+                        element),
+                    type: .warning)
             }
             catch {
                 loggingService.write(

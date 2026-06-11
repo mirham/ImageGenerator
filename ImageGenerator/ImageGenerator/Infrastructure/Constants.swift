@@ -248,8 +248,8 @@ struct Constants {
     // MARK: Log messages
     static let lmSuccessfullyGeneratedPhoto = "Photo %lld successfuly generated."
     static let lmSuccessfullyGeneratedVideo = "Video %lld successfuly generated."
-    static let lmPhotoGenerationFailed = "Failed generation of photo %lld: %1$@"
-    static let lmVideoGenerationFailed = "Failed generation of video %lld: %1$@"
+    static let lmPhotoGenerationFailed = "Failed generation of photo %lld: %@"
+    static let lmVideoGenerationFailed = "Failed generation of video %lld: %@"
     
     // MARK: About
     static let aboutSupportMail = "bWlyaGFtQGFidi5iZw=="

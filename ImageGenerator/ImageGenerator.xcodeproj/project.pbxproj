@@ -69,6 +69,8 @@
 		3578CCB82FC9BC86000E82A4 /* VideoJobServiceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3578CCB72FC9BC83000E82A4 /* VideoJobServiceType.swift */; };
 		3578CCBA2FC9BCAC000E82A4 /* VideoJobService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3578CCB92FC9BCA8000E82A4 /* VideoJobService.swift */; };
 		359CC5422FDADFB100F2AFB9 /* LogSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 359CC5412FDADFA200F2AFB9 /* LogSummaryView.swift */; };
+		359CC5442FDB07F900F2AFB9 /* LogDependentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 359CC5432FDB07EE00F2AFB9 /* LogDependentView.swift */; };
+		359CC5462FDB087400F2AFB9 /* LogSummary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 359CC5452FDB087100F2AFB9 /* LogSummary.swift */; };
 		35B8A13A2DD657BD000CFA1B /* ContainerExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B8A1392DD657B5000CFA1B /* ContainerExtensions.swift */; };
 		35B8A13D2DD65807000CFA1B /* ImageJobServiceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B8A13C2DD65802000CFA1B /* ImageJobServiceType.swift */; };
 		35B8A1402DD65A28000CFA1B /* ImageData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B8A13F2DD65A0F000CFA1B /* ImageData.swift */; };
@@ -196,6 +198,8 @@
 		3578CCB72FC9BC83000E82A4 /* VideoJobServiceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoJobServiceType.swift; sourceTree = "<group>"; };
 		3578CCB92FC9BCA8000E82A4 /* VideoJobService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoJobService.swift; sourceTree = "<group>"; };
 		359CC5412FDADFA200F2AFB9 /* LogSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogSummaryView.swift; sourceTree = "<group>"; };
+		359CC5432FDB07EE00F2AFB9 /* LogDependentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogDependentView.swift; sourceTree = "<group>"; };
+		359CC5452FDB087100F2AFB9 /* LogSummary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogSummary.swift; sourceTree = "<group>"; };
 		35B8A1392DD657B5000CFA1B /* ContainerExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContainerExtensions.swift; sourceTree = "<group>"; };
 		35B8A13C2DD65802000CFA1B /* ImageJobServiceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageJobServiceType.swift; sourceTree = "<group>"; };
 		35B8A13F2DD65A0F000CFA1B /* ImageData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageData.swift; sourceTree = "<group>"; };
@@ -275,6 +279,7 @@
 			isa = PBXGroup;
 			children = (
 				3500FA852DD52EFA00B7A0A7 /* MediaGeneratorView.swift */,
+				359CC5432FDB07EE00F2AFB9 /* LogDependentView.swift */,
 			);
 			path = Protocols;
 			sourceTree = "<group>";
@@ -539,6 +544,7 @@
 				35DD84262FC8441E009E6D1F /* VideoData.swift */,
 				3518B3482FD074A7000D6341 /* VideoGenerationResult.swift */,
 				3570A79F2FD9AD3200EA8923 /* LogEntry.swift */,
+				359CC5452FDB087100F2AFB9 /* LogSummary.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -800,6 +806,7 @@
 				3549AB272FD865C10014EC73 /* WindowRegistry.swift in Sources */,
 				3570A79E2FD9AD1500EA8923 /* LoggingServiceType.swift in Sources */,
 				3549AB282FD865C10014EC73 /* WindowManager.swift in Sources */,
+				359CC5442FDB07F900F2AFB9 /* LogDependentView.swift in Sources */,
 				35DD843F2FC85931009E6D1F /* VideoGenerationStrategyFactory.swift in Sources */,
 				3518B3432FD071B0000D6341 /* BaseVideoGenerationService.swift in Sources */,
 				3570A7B52FD9B8BA00EA8923 /* VideoGererationError.swift in Sources */,
@@ -822,6 +829,7 @@
 				3557DC1B2DCE010B00BE779E /* NSImageExtensions.swift in Sources */,
 				35DD84552FC8BFF0009E6D1F /* FileSizeUnit.swift in Sources */,
 				35DD84272FC84423009E6D1F /* VideoData.swift in Sources */,
+				359CC5462FDB087400F2AFB9 /* LogSummary.swift in Sources */,
 				35CDEF0A2FC5D55E00BEB092 /* ImageWritingService.swift in Sources */,
 				35DD844F2FC897C9009E6D1F /* TinySlider.swift in Sources */,
 				356760DB2D1404E500625233 /* ImageGenerationOptionsView.swift in Sources */,

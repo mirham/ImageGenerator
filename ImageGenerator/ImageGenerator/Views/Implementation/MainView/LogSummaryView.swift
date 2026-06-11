@@ -8,17 +8,10 @@
 import SwiftUI
 import Factory
 
-struct LogSummaryView: View {
+struct LogSummaryView: LogDependentView {
     @EnvironmentObject var appState: AppState
     
     @Injected(\.windowManager) private var windowManager
-    
-    private var logSummary: LogSummary {
-        let errors = appState.log.filter { $0.type == .error }.count
-        let warnings = appState.log.filter { $0.type == .warning }.count
-       
-        return LogSummary(errors: errors, warnings: warnings)
-    }
     
     var body: some View {
         logSummaryRow
@@ -32,12 +25,12 @@ struct LogSummaryView: View {
         
         HStack(spacing: 4) {
             Text(summaryText(for: summary))
-                .foregroundColor(summaryColor(for: summary))
+                .foregroundColor(getAccentColor(for: summary))
             
             Button(Constants.logSummaryViewLog) {
                 windowManager.open(name: .log)
             }
-            .foregroundColor(summaryColor(for: summary))
+            .foregroundColor(getAccentColor(for: summary))
             .buttonStyle(.plain)
             .pointerOnHover()
         }
@@ -64,25 +57,6 @@ struct LogSummaryView: View {
             return String(
                 format: Constants.logSummaryWarnings,
                 summary.warnings)
-        }
-    }
-    
-    private func summaryColor(for summary: LogSummary) -> Color {
-        if summary.errors > 0 {
-            return .red
-        } else {
-            return .orange
-        }
-    }
-    
-    // MARK: Inner types
-    
-    private struct LogSummary {
-        let errors: Int
-        let warnings: Int
-        
-        var isEmpty: Bool {
-            get { errors == 0 && warnings == 0 }
         }
     }
 }

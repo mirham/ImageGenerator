@@ -64,7 +64,7 @@ final class VideoFileSizeService: BaseVideoGenerationService, VideoFileSizeServi
             throw VideoGererationError.trimToUndershoot(error.localizedDescription)
         }
         
-        let currentSize = await tempFileService
+        let currentSize = try await tempFileService
             .getFileSizeAsync(at: videoData.outputUrl) ?? 0
         let padding = targetBytes - currentSize
         
@@ -100,7 +100,7 @@ final class VideoFileSizeService: BaseVideoGenerationService, VideoFileSizeServi
             throw VideoGererationError.smallFileExact(error.localizedDescription)
         }
         
-        let currentSize = await tempFileService.getFileSizeAsync(
+        let currentSize = try await tempFileService.getFileSizeAsync(
             at: videoData.outputUrl) ?? 0
         let padding = targetBytes - currentSize
         
@@ -137,10 +137,10 @@ final class VideoFileSizeService: BaseVideoGenerationService, VideoFileSizeServi
         else { return }
         
         defer { Task
-            { await tempFileService.deleteFileAsync(at: base.url) }
+            { try await tempFileService.deleteFileAsync(at: base.url) }
         }
         
-        guard let baseSize = await tempFileService.getFileSizeAsync(at: base.url),
+        guard let baseSize = try await tempFileService.getFileSizeAsync(at: base.url),
               baseSize > 0
         else { return }
         
@@ -162,7 +162,7 @@ final class VideoFileSizeService: BaseVideoGenerationService, VideoFileSizeServi
             throw VideoGererationError.largeFileExact(error.localizedDescription)
         }
         
-        let currentSize = await tempFileService
+        let currentSize = try await tempFileService
             .getFileSizeAsync(at: videoData.outputUrl) ?? 0
         let padding = targetBytes - currentSize
         
@@ -206,7 +206,7 @@ final class VideoFileSizeService: BaseVideoGenerationService, VideoFileSizeServi
                 error.localizedDescription)
         }
         
-        let retrySize = await tempFileService
+        let retrySize = try await tempFileService
             .getFileSizeAsync(at: videoData.outputUrl) ?? 0
         let retryPadding = targetBytes - retrySize
         

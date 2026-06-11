@@ -8,9 +8,9 @@
 import Foundation
 
 protocol VideoTempFileServiceType {
-    func makeTempVideoUrl(videoData: VideoData, suffix: String, ext: String?) -> URL
-    func deleteFileAsync(at url: URL) async
-    func getFileSizeAsync(at url: URL) async -> Int?
+    func makeTempVideoUrl(videoData: VideoData, suffix: String, ext: String?) throws -> URL
+    func deleteFileAsync(at url: URL) async throws
+    func getFileSizeAsync(at url: URL) async throws -> Int?
     func writeConcatList(content: String, to url: URL) async throws
-    func wipeTempFolder()
+    func wipeTempFolder() throws
 }
