@@ -16,6 +16,7 @@ enum ImageOutputFormat : Int, CaseIterable, Identifiable, Codable, Equatable, De
     case png = 2
     case bmp = 3
     case tiff = 4
+    case heic = 5
     
     var description: String {
         switch self {
@@ -25,6 +26,17 @@ enum ImageOutputFormat : Int, CaseIterable, Identifiable, Codable, Equatable, De
             case .png: return "png"
             case .bmp: return "bmp"
             case .tiff: return "tiff"
+            case .heic: return "heic"
         }
+    }
+    
+    static func from(path: String) -> ImageOutputFormat {
+        from(url: URL(fileURLWithPath: path))
+    }
+    
+    static func from(url: URL) -> ImageOutputFormat {
+        let ext = url.pathExtension.lowercased()
+        
+        return allCases.first { $0.description == ext } ?? .notSupported
     }
 }

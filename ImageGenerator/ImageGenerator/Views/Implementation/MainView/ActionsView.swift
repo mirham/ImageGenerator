@@ -13,6 +13,7 @@ struct ActionsView: MediaGeneratorView, LogDependentView {
     
     @Injected(\.imageJobService) private var imageJobService
     @Injected(\.videoJobService) private var videoJobService
+    @Injected(\.fileService) private var fileService
     @Injected(\.loggingService) private var loggingService
     
     @State private var activeAlert: ActiveAlert?
@@ -131,14 +132,14 @@ struct ActionsView: MediaGeneratorView, LogDependentView {
     private var isFilesystemReady: Bool {
         let validations = [
             Validation(
-                condition: isFolderExists(
+                condition: fileService.doesFolderExist(
                     folderPath: appState.userData.outputFolder),
                 alert: .missingOutputFolder
             ),
             Validation(
                 condition:
                     appState.userData.mode != .duplicateImages
-                    || isFileExists(filePath: appState.userData.inputImage),
+                    || fileService.doesFileExist(filePath: appState.userData.inputImage),
                 alert: .missingInputFile
             )
         ]

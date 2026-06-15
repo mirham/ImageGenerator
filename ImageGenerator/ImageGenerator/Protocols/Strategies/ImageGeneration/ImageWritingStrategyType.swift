@@ -11,10 +11,7 @@ protocol ImageWritingStrategyType {
     var outputFormat: ImageOutputFormat { get }
     var colorSpace: ImageColorSpace { get }
     
-    func write(_ image: CIImage,
-               to url: URL,
-               colorSpace: CGColorSpace,
-               quality: CGFloat,
-               ppi: CGFloat,
-               context: CIContext) throws
+    func write(image: CIImage,
+               options: ImageOutputOptions,
+               to folder: URL) throws
 }

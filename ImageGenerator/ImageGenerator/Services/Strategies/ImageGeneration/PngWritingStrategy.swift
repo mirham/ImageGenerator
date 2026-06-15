@@ -12,40 +12,37 @@ final class PngWritingStrategy: ImageWritingStrategyType {
     let colorSpace: ImageColorSpace = .any
     let outputFormat: ImageOutputFormat = .png
     
-    func write(_ image: CIImage,
-               to url: URL,
-               colorSpace: CGColorSpace,
-               quality: CGFloat,
-               ppi: CGFloat,
-               context: CIContext) throws {
+    func write(image: CIImage,
+               options: ImageOutputOptions,
+               to folder: URL) throws {
+        let destination = folder.appendingPathComponent(options.fileName)
+        let format: CIFormat = options.colorSpace.model == .monochrome ? .L8 : .RGBA8
         
-        let format: CIFormat = colorSpace.model == .monochrome ? .L8 : .RGBA8
-        
-        if ppi == Constants.defaultPpi {
-            try context.writePNGRepresentation(
+        if options.ppi == Constants.defaultPpi {
+            try options.context.writePNGRepresentation(
                 of: image,
-                to: url,
+                to: destination,
                 format: format,
-                colorSpace: colorSpace)
+                colorSpace: options.colorSpace)
             return
         }
         
-        guard let cgImage = context.createCGImage(
+        guard let cgImage = options.context.createCGImage(
             image,
             from: image.extent,
             format: format,
-            colorSpace: colorSpace)
+            colorSpace: options.colorSpace)
         else { return }
         
         guard let destination = CGImageDestinationCreateWithURL(
-            url as CFURL,
+            destination as CFURL,
             UTType.png.identifier as CFString,
             1, nil)
         else { return }
         
         let properties: [CFString: Any] = [
-            kCGImagePropertyDPIWidth: ppi,
-            kCGImagePropertyDPIHeight: ppi
+            kCGImagePropertyDPIWidth: options.ppi,
+            kCGImagePropertyDPIHeight: options.ppi
         ]
         
         CGImageDestinationAddImage(destination, cgImage, properties as CFDictionary)

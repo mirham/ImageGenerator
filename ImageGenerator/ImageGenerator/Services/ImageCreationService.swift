@@ -29,16 +29,17 @@ final class ImageCreationService: ImageCreationServiceType {
         return numberImage.composited(over: background)
     }
     
-    func duplicate(number: Int, source: CGImage) -> CIImage {
-        let background = CIImage(cgImage: source)
-        let size = CGSize(width: source.width, height: source.height)
+    func duplicate(number: Int, source: CIImage) -> CIImage {
+        let size = CGSize(
+            width: source.extent.width,
+            height: source.extent.height)
         let number = renderNumberOverlay(
             number: number,
             size: size)
         
         return number.applyingFilter(
             Constants.defaultBlendMode,
-            parameters: [ kCIInputBackgroundImageKey: background ])
+            parameters: [ kCIInputBackgroundImageKey: source ])
     }
     
     // MARK: Private functions
@@ -55,31 +56,36 @@ final class ImageCreationService: ImageCreationServiceType {
         let padding: CGFloat = Constants.defaultNumberSizePadding
         let maxTextWidth = scaledSize.width * padding
         let maxTextHeight = scaledSize.height * padding
-        var fontSize = min(scaledSize.width, scaledSize.height)
-            * Constants.defaultNumberSizePercentage
-        var line: CTLine
-        var ascent: CGFloat = 0
-        var descent: CGFloat = 0
-        var textWidth: CGFloat = 0
-        var textHeight: CGFloat = 0
         
-        repeat {
-            let font = font(size: fontSize)
-            let attributes: [CFString: Any] = [
-                kCTFontAttributeName: font,
-                kCTForegroundColorAttributeName: CGColor(gray: 1.0, alpha: 1.0)
-            ]
-            let attributed = CFAttributedStringCreate(
-                nil, "\(number)" as CFString,
-                attributes as CFDictionary)!
-            line = CTLineCreateWithAttributedString(attributed)
-            textWidth = CTLineGetTypographicBounds(line, &ascent, &descent, nil)
-            textHeight = ascent + descent
+        var low: CGFloat = 1
+        var high = min(scaledSize.width, scaledSize.height) * Constants.defaultNumberSizePercentage
+        var bestLine: CTLine?
+        var bestAscent: CGFloat = 0
+        var bestDescent: CGFloat = 0
+        var bestTextWidth: CGFloat = 0
+        
+        while high - low > 0.5 {
+            let mid = (low + high) / 2
+            var ascent: CGFloat = 0
+            var descent: CGFloat = 0
             
-            if textWidth <= maxTextWidth && textHeight <= maxTextHeight { break }
+            let line = makeLine(number: number, fontSize: mid)
+            let textWidth = CTLineGetTypographicBounds(line, &ascent, &descent, nil)
+            let textHeight = ascent + descent
             
-            fontSize *= 0.9
-        } while fontSize > 1
+            if textWidth <= maxTextWidth && textHeight <= maxTextHeight {
+                low = mid
+                bestLine = line
+                bestAscent = ascent
+                bestDescent = descent
+                bestTextWidth = textWidth
+            } else {
+                high = mid
+            }
+        }
+        
+        let line = bestLine ?? makeLine(number: number, fontSize: 1)
+        let textHeight = bestAscent + bestDescent
         
         guard let context = CGContext(
             data: nil,
@@ -91,10 +97,10 @@ final class ImageCreationService: ImageCreationServiceType {
             bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
         ) else { return CIImage.empty() }
         
-        let x = (scaledSize.width - textWidth) / 2
+        let x = (scaledSize.width - bestTextWidth) / 2
         let y = (scaledSize.height - textHeight) / 2
         
-        context.textPosition = CGPoint(x: x, y: y + descent)
+        context.textPosition = CGPoint(x: x, y: y + bestDescent)
         CTLineDraw(line, context)
         
         guard let cgImage = context.makeImage()
@@ -102,6 +108,19 @@ final class ImageCreationService: ImageCreationServiceType {
         
         let scaleDown = CGAffineTransform(scaleX: 1/scale, y: 1/scale)
         return CIImage(cgImage: cgImage).transformed(by: scaleDown)
+    }
+
+    private func makeLine(number: Int, fontSize: CGFloat) -> CTLine {
+        let attributes: [CFString: Any] = [
+            kCTFontAttributeName: font(size: fontSize),
+            kCTForegroundColorAttributeName: CGColor(gray: 1.0, alpha: 1.0)
+        ]
+        let attributed = CFAttributedStringCreate(
+            nil,
+            "\(number)" as CFString,
+            attributes as CFDictionary)!
+        
+        return CTLineCreateWithAttributedString(attributed)
     }
     
     private func font(size: CGFloat) -> CTFont {

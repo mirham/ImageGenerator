@@ -113,6 +113,12 @@ extension Container {
         }.singleton
     }
     
+    var fileService: Factory<FileServiceType> {
+        Factory(self) {
+            FileService()
+        }.singleton
+    }
+    
     var loggingService: Factory<LoggingServiceType> {
         Factory(self) { LoggingService() }
             .singleton
@@ -159,7 +165,8 @@ extension Container {
          \.jpegWritingStrategy,
          \.pngWritingStrategy,
          \.bmpWritingStrategy,
-         \.tiffWritingStrategy
+         \.tiffWritingStrategy,
+         \.heicWritingStrategy
     ]
     
     func imageWritingStrategies() -> [ImageWritingStrategyType] {
@@ -176,11 +183,11 @@ extension Container {
     
     static var videoGenerationStrategies: [KeyPath<Container, Factory<VideoGenerationStrategyType>>] = [
         \.mp4VideoStrategy,
-         \.movVideoStrategy,
-         \.mkvVideoStrategy,
-         \.aviVideoStrategy,
-         \.webmVideoStrategy,
-         \.wmvVideoStrategy
+        \.movVideoStrategy,
+        \.mkvVideoStrategy,
+        \.aviVideoStrategy,
+        \.webmVideoStrategy,
+        \.wmvVideoStrategy
     ]
     
     func videoGenerationStrategies() -> [VideoGenerationStrategyType] {
@@ -253,6 +260,12 @@ extension SharedContainer {
     var tiffWritingStrategy: Factory<ImageWritingStrategyType> {
         Factory(self) {
             TiffWritingStrategy()
+        }
+    }
+    
+    var heicWritingStrategy: Factory<ImageWritingStrategyType> {
+        Factory(self) {
+            HeicWritingStrategy()
         }
     }
     

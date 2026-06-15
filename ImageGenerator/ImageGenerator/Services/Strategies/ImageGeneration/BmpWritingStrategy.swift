@@ -12,32 +12,32 @@ final class BmpWritingStrategy: ImageWritingStrategyType {
     let colorSpace: ImageColorSpace = .any
     let outputFormat: ImageOutputFormat = .bmp
     
-    func write(_ image: CIImage,
-               to url: URL,
-               colorSpace: CGColorSpace,
-               quality: CGFloat,
-               ppi: CGFloat,
-               context: CIContext) throws {
+    func write(image: CIImage,
+               options: ImageOutputOptions,
+               to folder: URL) throws {
+        let format: CIFormat = options.colorSpace.model == .monochrome
+            ? .L8
+            : .RGBA8
         
-        let format: CIFormat = colorSpace.model == .monochrome ? .L8 : .RGBA8
-        
-        guard let cgImage = context.createCGImage(
+        guard let cgImage = options.context.createCGImage(
             image,
             from: image.extent,
             format: format,
-            colorSpace: colorSpace)
+            colorSpace: options.colorSpace)
         else { return }
         
+        let destination = folder.appendingPathComponent(options.fileName)
+        
         guard let destination = CGImageDestinationCreateWithURL(
-            url as CFURL,
+            destination as CFURL,
             UTType.bmp.identifier as CFString,
             1,
             nil)
         else { return }
         
         let properties: [CFString: Any] = [
-            kCGImagePropertyDPIWidth: ppi,
-            kCGImagePropertyDPIHeight: ppi
+            kCGImagePropertyDPIWidth: options.ppi,
+            kCGImagePropertyDPIHeight: options.ppi
         ]
         
         CGImageDestinationAddImage(destination, cgImage, properties as CFDictionary)

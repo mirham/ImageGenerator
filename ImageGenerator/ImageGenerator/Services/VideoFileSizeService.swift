@@ -33,7 +33,7 @@ final class VideoFileSizeService: BaseVideoGenerationService, VideoFileSizeServi
             await onOperationComplete?(.trimToExact)
         }
         catch {
-            throw VideoGererationError.trimToExactDuration(error.localizedDescription)
+            throw VideoGenerationError.trimToExactDuration(error.localizedDescription)
         }
     }
     
@@ -61,7 +61,7 @@ final class VideoFileSizeService: BaseVideoGenerationService, VideoFileSizeServi
             await onOperationComplete?(.trimToUndershootThenPad)
         }
         catch {
-            throw VideoGererationError.trimToUndershoot(error.localizedDescription)
+            throw VideoGenerationError.trimToUndershoot(error.localizedDescription)
         }
         
         let currentSize = try await tempFileService
@@ -97,7 +97,7 @@ final class VideoFileSizeService: BaseVideoGenerationService, VideoFileSizeServi
             await onOperationComplete?(.generateSmallFileExact)
         }
         catch {
-            throw VideoGererationError.smallFileExact(error.localizedDescription)
+            throw VideoGenerationError.smallFileExact(error.localizedDescription)
         }
         
         let currentSize = try await tempFileService.getFileSizeAsync(
@@ -159,7 +159,7 @@ final class VideoFileSizeService: BaseVideoGenerationService, VideoFileSizeServi
             await onOperationComplete?(.streamLoopLargeFile)
         }
         catch {
-            throw VideoGererationError.largeFileExact(error.localizedDescription)
+            throw VideoGenerationError.largeFileExact(error.localizedDescription)
         }
         
         let currentSize = try await tempFileService
@@ -202,7 +202,7 @@ final class VideoFileSizeService: BaseVideoGenerationService, VideoFileSizeServi
             await onOperationComplete?(.retry)
         }
         catch {
-            throw VideoGererationError.retryWithReducedBitrate(
+            throw VideoGenerationError.retryWithReducedBitrate(
                 error.localizedDescription)
         }
         

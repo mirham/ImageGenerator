@@ -9,9 +9,8 @@ import CoreImage
 
 protocol ImageWritingServiceType {
     func writeImage(
-        _ ciImage: CIImage,
-        to url: URL,
-        format: ImageOutputFormat,
-        colorSpace: ImageColorSpace,
-        ppi: CGFloat) throws
+        image: CIImage?,
+        originalImagePath: URL?,
+        options: ImageOutputOptions,
+        to folder: URL) throws
 }

@@ -1,5 +1,5 @@
 //
-//  FfmpegError.swift
+//  VideoGenerationError.swift
 //  ImageGenerator
 //
 //  Created by UglyGeorge on 10.06.2026.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum VideoGererationError: LocalizedError {
+enum VideoGenerationError: LocalizedError {
     case baseVideo(String)
     case singlePass(String)
     case streamLoop(String)
@@ -20,7 +20,7 @@ enum VideoGererationError: LocalizedError {
     case largeFileExact(String)
     case retryWithReducedBitrate(String)
     
-    var errorDescription: String? {
+    var errorDescription: String {
         switch self {
             case .baseVideo(let error):
                 return  "Generation of base video failed: \(error)"

@@ -78,7 +78,6 @@ enum PickerStyleType {
 // MARK: Initializers
 
 extension EnumPicker {
-    // Without custom content
     init(
         selection: Binding<T>,
         enumType: T.Type,
@@ -95,7 +94,6 @@ extension EnumPicker {
         )
     }
     
-    // With custom content that shows based on condition
     init(
         selection: Binding<T>,
         enumType: T.Type,

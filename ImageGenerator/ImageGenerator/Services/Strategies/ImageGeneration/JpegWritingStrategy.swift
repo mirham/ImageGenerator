@@ -12,28 +12,26 @@ final class JpegWritingStrategy: ImageWritingStrategyType {
     let colorSpace: ImageColorSpace = .any
     let outputFormat: ImageOutputFormat = .jpeg
     
-    func write(_ image: CIImage,
-               to url: URL,
-               colorSpace: CGColorSpace,
-               quality: CGFloat,
-               ppi: CGFloat,
-               context: CIContext) throws {
-        
-        let options: [CIImageRepresentationOption: Any] = [
+    func write(image: CIImage,
+               options: ImageOutputOptions,
+               to folder: URL) throws {
+        let destination = folder.appendingPathComponent(options.fileName)
+        let quality = getJpegQuality(for: image.extent.size)
+        let representationOptions: [CIImageRepresentationOption: Any] = [
             CIImageRepresentationOption(
                 rawValue: kCGImageDestinationLossyCompressionQuality as String): quality,
             CIImageRepresentationOption(
                 rawValue: kCGImagePropertyOrientation as String): 1
         ]
         
-        guard let data = context.jpegRepresentation(
+        guard let data = options.context.jpegRepresentation(
             of: image,
-            colorSpace: colorSpace,
-            options: options)
+            colorSpace: options.colorSpace,
+            options: representationOptions)
         else { return }
         
-        if ppi == Constants.defaultPpi {
-            try data.write(to: url, options: .atomic)
+        if options.ppi == Constants.defaultPpi {
+            try data.write(to: destination, options: .atomic)
             return
         }
         
@@ -42,18 +40,30 @@ final class JpegWritingStrategy: ImageWritingStrategyType {
         else { return }
         
         guard let destination = CGImageDestinationCreateWithURL(
-            url as CFURL,
+            destination as CFURL,
             UTType.jpeg.identifier as CFString,
             1, nil)
         else { return }
         
         let properties: [CFString: Any] = [
             kCGImageDestinationLossyCompressionQuality: quality,
-            kCGImagePropertyDPIWidth: ppi,
-            kCGImagePropertyDPIHeight: ppi
+            kCGImagePropertyDPIWidth: options.ppi,
+            kCGImagePropertyDPIHeight: options.ppi
         ]
         
         CGImageDestinationAddImage(destination, cgImage, properties as CFDictionary)
         CGImageDestinationFinalize(destination)
+    }
+    
+    // MARK: Private functions
+    
+    private func getJpegQuality(for size: CGSize) -> Double {
+        let area = size.width * size.height
+        let threshold = Constants.defaultJpegQualityThreshold
+            * Constants.defaultJpegQualityThreshold
+        
+        return area > threshold
+            ? Constants.lowerJpegQuality
+            : Constants.defaultJpegQuality
     }
 }

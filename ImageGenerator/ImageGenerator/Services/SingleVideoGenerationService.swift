@@ -25,7 +25,7 @@ final class SingleVideoGenerationService: BaseVideoGenerationService, SingleVide
             try await ffmpegService.runAsync(arguments: args)
         }
         catch {
-            throw VideoGererationError.singlePass(error.localizedDescription)
+            throw VideoGenerationError.singlePass(error.localizedDescription)
         }
     }
     
@@ -56,7 +56,7 @@ final class SingleVideoGenerationService: BaseVideoGenerationService, SingleVide
             try await ffmpegService.runAsync(arguments: baseArguments)
         }
         catch {
-            throw VideoGererationError.baseVideo(error.localizedDescription)
+            throw VideoGenerationError.baseVideo(error.localizedDescription)
         }
         
         await onOperationComplete?(.baseFile)
@@ -75,7 +75,7 @@ final class SingleVideoGenerationService: BaseVideoGenerationService, SingleVide
             await onOperationComplete?(.streamLoop)
         }
         catch {
-            throw VideoGererationError.streamLoop(error.localizedDescription)
+            throw VideoGenerationError.streamLoop(error.localizedDescription)
         }
     }
     
@@ -167,7 +167,7 @@ final class SingleVideoGenerationService: BaseVideoGenerationService, SingleVide
         }
         catch {
             try await tempFileService.deleteFileAsync(at: baseVideoUrl)
-            throw VideoGererationError.baseVideo(error.localizedDescription)
+            throw VideoGenerationError.baseVideo(error.localizedDescription)
         }
         
         let metric: Double = isDurationTarget
@@ -225,7 +225,7 @@ final class SingleVideoGenerationService: BaseVideoGenerationService, SingleVide
             }
             catch {
                 try await tempFileService.deleteFileAsync(at: doubledUrl)
-                throw VideoGererationError.doublingPhase(error.localizedDescription)
+                throw VideoGenerationError.doublingPhase(error.localizedDescription)
             }
             
             if current.url != baseVideo.url {
@@ -306,7 +306,7 @@ final class SingleVideoGenerationService: BaseVideoGenerationService, SingleVide
         }
         catch {
             try await tempFileService.deleteFileAsync(at: finalUrl)
-            throw VideoGererationError.streamLoop(error.localizedDescription)
+            throw VideoGenerationError.streamLoop(error.localizedDescription)
         }
         
         if let topupUrl = topupVideo?.url {
@@ -352,7 +352,7 @@ final class SingleVideoGenerationService: BaseVideoGenerationService, SingleVide
         }
         catch {
             try await tempFileService.deleteFileAsync(at: topupUrl)
-            throw VideoGererationError.topup(error.localizedDescription)
+            throw VideoGenerationError.topup(error.localizedDescription)
         }
         
         return VideoGenerationResult(

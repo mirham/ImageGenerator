@@ -30,22 +30,4 @@ extension MediaGeneratorView {
         
         return result
     }
-    
-    func isFileExists(filePath: String) -> Bool {
-        let fileManager = FileManager.default
-        let result = fileManager.fileExists(atPath: filePath)
-        
-        return result
-    }
-    
-    func isFolderExists(folderPath: String) -> Bool {
-        let fileManager = FileManager.default
-        var isDir: ObjCBool = false
-        let result = fileManager.fileExists(
-                atPath: folderPath,
-                isDirectory: &isDir)
-            && isDir.boolValue
-        
-        return result
-    }
 }
