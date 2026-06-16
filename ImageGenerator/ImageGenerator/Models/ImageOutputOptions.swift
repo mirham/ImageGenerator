@@ -13,6 +13,8 @@ struct ImageOutputOptions {
     let format: ImageOutputFormat
     let colorSpace: ImageColorSpace
     let ppi: CGFloat
+    let isAnimated: Bool
+    var sourceUrl: URL? = nil
     
     var context: CIContext {
         let threadMap = Thread.current.threadDictionary

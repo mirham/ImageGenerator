@@ -11,6 +11,7 @@ import UniformTypeIdentifiers
 final class PngWritingStrategy: ImageWritingStrategyType {
     let colorSpace: ImageColorSpace = .any
     let outputFormat: ImageOutputFormat = .png
+    let isAnimated = false
     
     func write(image: CIImage,
                options: ImageOutputOptions,

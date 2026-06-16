@@ -11,6 +11,7 @@ import UniformTypeIdentifiers
 final class HeicWritingStrategy: ImageWritingStrategyType {
     let colorSpace: ImageColorSpace = .any
     let outputFormat: ImageOutputFormat = .heic
+    let isAnimated = false
     
     func write(image: CIImage,
                options: ImageOutputOptions,

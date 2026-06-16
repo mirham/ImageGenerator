@@ -28,7 +28,8 @@ final class ImageWritingService : ImageWritingServiceType {
         
         guard let strategy = imageWritingStrategyFactory.getStrategy(
                 for: options.format,
-                colorSpace: options.colorSpace),
+                colorSpace: options.colorSpace,
+                isAnimated: options.isAnimated),
               let image = image
         else { return }
             

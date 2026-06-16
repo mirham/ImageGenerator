@@ -20,6 +20,7 @@
 		3518B3512FD0783D000D6341 /* VideoTempFileServiceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3518B3502FD07835000D6341 /* VideoTempFileServiceType.swift */; };
 		3518B3532FD07879000D6341 /* FfmpegServiceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3518B3522FD07873000D6341 /* FfmpegServiceType.swift */; };
 		3518B3552FD078A5000D6341 /* FfmpegService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3518B3542FD078A2000D6341 /* FfmpegService.swift */; };
+		351D96D72FE1A9C0009B08D8 /* GifAnimatedWritingStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 351D96D62FE1A9B1009B08D8 /* GifAnimatedWritingStrategy.swift */; };
 		3549AB132FD6ACAD0014EC73 /* FileSizeBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3549AB122FD6ACA80014EC73 /* FileSizeBase.swift */; };
 		3549AB152FD6D2AF0014EC73 /* StringExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3549AB142FD6D2A80014EC73 /* StringExtensions.swift */; };
 		3549AB172FD710BB0014EC73 /* VideoGenerationStateUpdate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3549AB162FD710B80014EC73 /* VideoGenerationStateUpdate.swift */; };
@@ -157,6 +158,7 @@
 		3518B3502FD07835000D6341 /* VideoTempFileServiceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoTempFileServiceType.swift; sourceTree = "<group>"; };
 		3518B3522FD07873000D6341 /* FfmpegServiceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FfmpegServiceType.swift; sourceTree = "<group>"; };
 		3518B3542FD078A2000D6341 /* FfmpegService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FfmpegService.swift; sourceTree = "<group>"; };
+		351D96D62FE1A9B1009B08D8 /* GifAnimatedWritingStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GifAnimatedWritingStrategy.swift; sourceTree = "<group>"; };
 		3549AB122FD6ACA80014EC73 /* FileSizeBase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileSizeBase.swift; sourceTree = "<group>"; };
 		3549AB142FD6D2A80014EC73 /* StringExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringExtensions.swift; sourceTree = "<group>"; };
 		3549AB162FD710B80014EC73 /* VideoGenerationStateUpdate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoGenerationStateUpdate.swift; sourceTree = "<group>"; };
@@ -661,6 +663,7 @@
 				35D2E3272FE08BF2003A13B3 /* HeicWritingStrategy.swift */,
 				35D2E3292FE147F0003A13B3 /* WebPWritingStrategy.swift */,
 				35D2E32B2FE14815003A13B3 /* GifWritingStrategy.swift */,
+				351D96D62FE1A9B1009B08D8 /* GifAnimatedWritingStrategy.swift */,
 				35D2E32D2FE14861003A13B3 /* Jp2WritingStrategy.swift */,
 			);
 			path = ImageGeneration;
@@ -888,6 +891,7 @@
 				3500FA872DD52EFA00B7A0A7 /* MediaGeneratorView.swift in Sources */,
 				35DD84372FC85610009E6D1F /* AviVideoGenerationStrategy.swift in Sources */,
 				3518B3452FD07230000D6341 /* SingleVideoGenerationService.swift in Sources */,
+				351D96D72FE1A9C0009B08D8 /* GifAnimatedWritingStrategy.swift in Sources */,
 				35DD84572FC8D248009E6D1F /* DurationControl.swift in Sources */,
 				3518B3492FD074A9000D6341 /* VideoGenerationResult.swift in Sources */,
 				35B8A1402DD65A28000CFA1B /* ImageData.swift in Sources */,

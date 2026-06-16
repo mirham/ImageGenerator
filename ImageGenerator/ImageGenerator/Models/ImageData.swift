@@ -46,6 +46,7 @@ class ImageData {
     var outputFormat: ImageOutputFormat = .notSupported
     var outputColorSpace: ImageColorSpace = .any
     var outputPpi: CGFloat = Constants.defaultPpi
+    var isAnimated: Bool = false
     var outputImageName: String {
         let namePart = originalImageName.map { "\($0) " } ?? String()
         let extensionName = originalImageExtension ?? outputFormat.description
@@ -73,7 +74,9 @@ class ImageData {
             fileName: outputImageName,
             format: outputFormat,
             colorSpace: detectedColorSpace,
-            ppi: originalImagePpi ?? outputPpi)
+            ppi: originalImagePpi ?? outputPpi,
+            isAnimated: isAnimated,
+            sourceUrl: originalImagePath)
         
         return result
     }

@@ -12,6 +12,7 @@ import UniformTypeIdentifiers
 final class CmykWritingStrategy: ImageWritingStrategyType {
     let outputFormat: ImageOutputFormat = .notSupported
     let colorSpace: ImageColorSpace = .cmyk
+    let isAnimated = false
     
     func write(image: CIImage,
                options: ImageOutputOptions,

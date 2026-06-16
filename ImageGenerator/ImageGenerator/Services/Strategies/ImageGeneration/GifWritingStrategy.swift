@@ -11,6 +11,7 @@ import UniformTypeIdentifiers
 final class GifWritingStrategy: ImageWritingStrategyType {
     let colorSpace: ImageColorSpace = .any
     let outputFormat: ImageOutputFormat = .gif
+    let isAnimated = false
     
     func write(image: CIImage,
                options: ImageOutputOptions,

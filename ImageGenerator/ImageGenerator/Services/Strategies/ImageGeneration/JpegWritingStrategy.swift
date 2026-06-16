@@ -11,6 +11,7 @@ import UniformTypeIdentifiers
 final class JpegWritingStrategy: ImageWritingStrategyType {
     let colorSpace: ImageColorSpace = .any
     let outputFormat: ImageOutputFormat = .jpeg
+    let isAnimated = false
     
     func write(image: CIImage,
                options: ImageOutputOptions,

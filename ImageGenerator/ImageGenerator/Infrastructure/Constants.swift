@@ -34,7 +34,6 @@ struct Constants {
     static let maxPercentage: Double = 100
     static let defaultScaleFactor: CGFloat = 1.0
     static let maxConcurrencyLimit: Int = 16
-    static let defaultBlendMode = "CIDifferenceBlendMode"
     static let defaultJpegQualityThreshold: Double = 4000.0
     static let defaultJpegQuality: Double = 0.85
     static let lowerJpegQuality: Double = 0.75
@@ -109,6 +108,10 @@ struct Constants {
     static let tabIdGenerateImages = 0
     static let tabIdDuplicateImage = 1
     static let tabIdGenerateVideos = 2
+    
+    // MARK: Blend modes
+    static let blendModeDefault = "CIDifferenceBlendMode"
+    static let blendModeGifAnimated = "CIDifferenceBlendMode"
     
     // MARK: sysctlbyname
     static let sysctlbynamePerfCores = "hw.perflevel0.physicalcpu"

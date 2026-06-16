@@ -47,7 +47,10 @@ class ImageGenerationService : ImageGenerationServiceType {
             StateSnapshot(appState)
         }
         
-        imageData.originalImagePath = URL(fileURLWithPath: snapshot.originalImagePath)
+        let path = URL(fileURLWithPath: snapshot.originalImagePath)
+        
+        imageData.isAnimated = isAnimated(path)
+        imageData.originalImagePath = path
         loadOriginalImage(imageData: imageData)
         
         guard imageData.outputFormat != .notSupported
@@ -94,6 +97,13 @@ class ImageGenerationService : ImageGenerationServiceType {
         let image = CIImage(contentsOf: url, options: ciOptions)
         
         imageData.originalImage = image
+    }
+    
+    private func isAnimated(_ url: URL) -> Bool {
+        guard let source = CGImageSourceCreateWithURL(url as CFURL, nil)
+        else { return false }
+        
+        return CGImageSourceGetCount(source) > 1
     }
     
     // MARK: Inner types

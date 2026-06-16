@@ -11,6 +11,7 @@ import UniformTypeIdentifiers
 final class Jp2WritingStrategy: ImageWritingStrategyType {
     let colorSpace: ImageColorSpace = .any
     let outputFormat: ImageOutputFormat = .jp2
+    let isAnimated = false
     
     func write(image: CIImage,
                options: ImageOutputOptions,
@@ -25,7 +26,8 @@ final class Jp2WritingStrategy: ImageWritingStrategyType {
         guard let imageDestination = CGImageDestinationCreateWithURL(
             destinationURL as CFURL,
             "public.jpeg-2000" as CFString,
-            1, nil)
+            1,
+            nil)
         else { return }
         
         let properties: [CFString: Any] = [

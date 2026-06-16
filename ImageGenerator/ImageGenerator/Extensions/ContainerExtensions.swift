@@ -169,6 +169,7 @@ extension Container {
          \.heicWritingStrategy,
          \.webPWritingStrategy,
          \.gifWritingStrategy,
+         \.gifAnimatedWritingStrategy,
          \.jp2WritingStrategy
     ]
     
@@ -281,6 +282,12 @@ extension SharedContainer {
     var gifWritingStrategy: Factory<ImageWritingStrategyType> {
         Factory(self) {
             GifWritingStrategy()
+        }
+    }
+    
+    var gifAnimatedWritingStrategy: Factory<ImageWritingStrategyType> {
+        Factory(self) {
+            GifAnimatedWritingStrategy()
         }
     }
     

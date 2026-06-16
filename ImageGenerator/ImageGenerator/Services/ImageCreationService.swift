@@ -38,7 +38,7 @@ final class ImageCreationService: ImageCreationServiceType {
             size: size)
         
         return number.applyingFilter(
-            Constants.defaultBlendMode,
+            Constants.blendModeDefault,
             parameters: [ kCIInputBackgroundImageKey: source ])
     }
     

@@ -107,7 +107,6 @@ class ImageJobService: BaseJobService, ImageJobServiceType {
             prefix: snapshot.prefix,
             postfix: snapshot.postfix)
         
-            
         let image = await generationStrategy.generateImageAsync(
             imageData: imageData)
         

@@ -11,6 +11,7 @@ import WebP
 final class WebPWritingStrategy: ImageWritingStrategyType {
     let colorSpace: ImageColorSpace = .any
     let outputFormat: ImageOutputFormat = .webP
+    let isAnimated = false
     
     func write(image: CIImage,
                options: ImageOutputOptions,
