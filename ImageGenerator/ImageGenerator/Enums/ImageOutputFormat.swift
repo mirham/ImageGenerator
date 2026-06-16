@@ -60,7 +60,7 @@ enum ImageOutputFormat : Int, CaseIterable, Identifiable, Codable, Equatable, De
             case .jp2:
                 return [.sRGB, .cmyk, .adobeRGB]
             case .webP:
-                return [.rgb, .cmyk]
+                return [.rgb, .sRGB, .cmyk]
         }
     }
     

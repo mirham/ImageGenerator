@@ -17,6 +17,7 @@ final class WebPWritingStrategy: ImageWritingStrategyType {
                options: ImageOutputOptions,
                to folder: URL) throws {
         try validateColorSpace(options.colorSpace)
+        
         let destinationURL = folder.appendingPathComponent(options.fileName)
         let format: CIFormat = .RGBA8
         let colorSpace = options.colorSpace
