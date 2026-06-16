@@ -105,6 +105,10 @@
 		35D2E3242FE03CA5003A13B3 /* ImageOutputOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35D2E3232FE03C84003A13B3 /* ImageOutputOptions.swift */; };
 		35D2E3262FE04210003A13B3 /* CIImageExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35D2E3252FE04205003A13B3 /* CIImageExtensions.swift */; };
 		35D2E3282FE08BF6003A13B3 /* HeicWritingStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35D2E3272FE08BF2003A13B3 /* HeicWritingStrategy.swift */; };
+		35D2E32A2FE147F4003A13B3 /* WebPWritingStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35D2E3292FE147F0003A13B3 /* WebPWritingStrategy.swift */; };
+		35D2E32C2FE14818003A13B3 /* GifWritingStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35D2E32B2FE14815003A13B3 /* GifWritingStrategy.swift */; };
+		35D2E32E2FE14864003A13B3 /* Jp2WritingStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35D2E32D2FE14861003A13B3 /* Jp2WritingStrategy.swift */; };
+		35D2E3312FE152D7003A13B3 /* WebP in Frameworks */ = {isa = PBXBuildFile; productRef = 35D2E3302FE152D7003A13B3 /* WebP */; };
 		35DD84122FC622B7009E6D1F /* DescriptableEnum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35DD84112FC622B3009E6D1F /* DescriptableEnum.swift */; };
 		35DD84162FC71E26009E6D1F /* NamingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35DD84152FC71E1A009E6D1F /* NamingView.swift */; };
 		35DD84182FC71E3B009E6D1F /* ActionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35DD84172FC71E31009E6D1F /* ActionsView.swift */; };
@@ -239,6 +243,9 @@
 		35D2E3232FE03C84003A13B3 /* ImageOutputOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageOutputOptions.swift; sourceTree = "<group>"; };
 		35D2E3252FE04205003A13B3 /* CIImageExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CIImageExtensions.swift; sourceTree = "<group>"; };
 		35D2E3272FE08BF2003A13B3 /* HeicWritingStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeicWritingStrategy.swift; sourceTree = "<group>"; };
+		35D2E3292FE147F0003A13B3 /* WebPWritingStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebPWritingStrategy.swift; sourceTree = "<group>"; };
+		35D2E32B2FE14815003A13B3 /* GifWritingStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GifWritingStrategy.swift; sourceTree = "<group>"; };
+		35D2E32D2FE14861003A13B3 /* Jp2WritingStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Jp2WritingStrategy.swift; sourceTree = "<group>"; };
 		35DD84112FC622B3009E6D1F /* DescriptableEnum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DescriptableEnum.swift; sourceTree = "<group>"; };
 		35DD84152FC71E1A009E6D1F /* NamingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NamingView.swift; sourceTree = "<group>"; };
 		35DD84172FC71E31009E6D1F /* ActionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionsView.swift; sourceTree = "<group>"; };
@@ -278,6 +285,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				35D2E3312FE152D7003A13B3 /* WebP in Frameworks */,
 				3575CC9C2DD73AD900102D4E /* Factory in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -651,6 +659,9 @@
 				35CDEF032FC5CB9700BEB092 /* BmpWritingStrategy.swift */,
 				35CDEF122FC5F79D00BEB092 /* TiffWritingStrategy.swift */,
 				35D2E3272FE08BF2003A13B3 /* HeicWritingStrategy.swift */,
+				35D2E3292FE147F0003A13B3 /* WebPWritingStrategy.swift */,
+				35D2E32B2FE14815003A13B3 /* GifWritingStrategy.swift */,
+				35D2E32D2FE14861003A13B3 /* Jp2WritingStrategy.swift */,
 			);
 			path = ImageGeneration;
 			sourceTree = "<group>";
@@ -724,6 +735,7 @@
 			mainGroup = 3553596F2C64C747004C172A;
 			packageReferences = (
 				3575CC9A2DD73AD900102D4E /* XCRemoteSwiftPackageReference "Factory" */,
+				35D2E32F2FE152D7003A13B3 /* XCRemoteSwiftPackageReference "Swift-WebP" */,
 			);
 			productRefGroup = 355359792C64C747004C172A /* Products */;
 			projectDirPath = "";
@@ -754,10 +766,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				35CDEF062FC5CD6000BEB092 /* ImageWritingStrategyFactoryType.swift in Sources */,
+				35D2E32A2FE147F4003A13B3 /* WebPWritingStrategy.swift in Sources */,
 				3570A7B02FD9B0FF00EA8923 /* LogEntryRow.swift in Sources */,
 				35DD84532FC8AC15009E6D1F /* ComparableExtensions.swift in Sources */,
 				35DD84252FC84289009E6D1F /* VideoResolution.swift in Sources */,
 				3549AB132FD6ACAD0014EC73 /* FileSizeBase.swift in Sources */,
+				35D2E32C2FE14818003A13B3 /* GifWritingStrategy.swift in Sources */,
 				35DD841A2FC721FD009E6D1F /* OutputFolderView.swift in Sources */,
 				35B8A13D2DD65807000CFA1B /* ImageJobServiceType.swift in Sources */,
 				3518B34F2FD077F0000D6341 /* VideoTempFileService.swift in Sources */,
@@ -773,6 +787,7 @@
 				35DD844B2FC85C82009E6D1F /* VideoGenerationOptionsView.swift in Sources */,
 				35CDEEF42FC5ADDD00BEB092 /* MediaType.swift in Sources */,
 				35DD842B2FC84DBA009E6D1F /* VideoGenerationService.swift in Sources */,
+				35D2E32E2FE14864003A13B3 /* Jp2WritingStrategy.swift in Sources */,
 				35DD841D2FC72D63009E6D1F /* LabeledRow.swift in Sources */,
 				35CDEEF62FC5AE4E00BEB092 /* ImageChunkingStrategy.swift in Sources */,
 				35DD841F2FC72FB2009E6D1F /* EnumPicker.swift in Sources */,
@@ -1104,6 +1119,14 @@
 				minimumVersion = 2.5.0;
 			};
 		};
+		35D2E32F2FE152D7003A13B3 /* XCRemoteSwiftPackageReference "Swift-WebP" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ainame/Swift-WebP";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.6.1;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1111,6 +1134,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 3575CC9A2DD73AD900102D4E /* XCRemoteSwiftPackageReference "Factory" */;
 			productName = Factory;
+		};
+		35D2E3302FE152D7003A13B3 /* WebP */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 35D2E32F2FE152D7003A13B3 /* XCRemoteSwiftPackageReference "Swift-WebP" */;
+			productName = WebP;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

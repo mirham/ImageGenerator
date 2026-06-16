@@ -15,6 +15,8 @@ final class HeicWritingStrategy: ImageWritingStrategyType {
     func write(image: CIImage,
                options: ImageOutputOptions,
                to folder: URL) throws {
+        try validateColorSpace(options.colorSpace)
+        
         let destination = folder.appendingPathComponent(options.fileName)
         let representationOptions: [CIImageRepresentationOption: Any] = [
             CIImageRepresentationOption(
@@ -24,22 +26,13 @@ final class HeicWritingStrategy: ImageWritingStrategyType {
         ]
         
         let data: Data?
-        let colorSpace = CGColorSpace(name: CGColorSpace.sRGB)!
+        let colorSpace = options.colorSpace
         
-        if options.colorSpace.model == .monochrome {
-            let converted = image.matchedToWorkingSpace(from: options.colorSpace) ?? image
-            data = options.context.heifRepresentation(
-                of: converted,
-                format: .RGBA8,
-                colorSpace: colorSpace,
-                options: representationOptions)
-        } else {
-            data = options.context.heifRepresentation(
-                of: image,
-                format: .RGBA8,
-                colorSpace: colorSpace,
-                options: representationOptions)
-        }
+        data = options.context.heifRepresentation(
+            of: image,
+            format: .RGBA8,
+            colorSpace: colorSpace.cgColorSpace,
+            options: representationOptions)
         
         guard let data
         else { return }

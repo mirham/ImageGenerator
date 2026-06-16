@@ -24,7 +24,7 @@ class ImageGenerationService : ImageGenerationServiceType {
         }
         
         imageData.outputFormat = snapshot.format
-        imageData.outputColorSpace = snapshot.colorSpace.cgColorSpace
+        imageData.outputColorSpace = snapshot.colorSpace
         imageData.outputPpi = snapshot.ppi
         imageData.resetOriginalImageData()
         
@@ -53,7 +53,7 @@ class ImageGenerationService : ImageGenerationServiceType {
         guard imageData.outputFormat != .notSupported
         else {
             loggingService.write(
-                message: ImageGenerationError.nonWritableFile.errorDescription,
+                message: ImageGenerationError.nonWritableFile.localizedDescription,
                 type: .warning)
             
             return nil
@@ -79,7 +79,7 @@ class ImageGenerationService : ImageGenerationServiceType {
             loggingService.write(
                 message: ImageGenerationError
                     .originalFileNotFound(path)
-                    .errorDescription,
+                    .localizedDescription,
                 type: .error)
             
             return

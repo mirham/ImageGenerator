@@ -12,10 +12,10 @@ import Factory
 final class ImageWritingStrategyFactory: ImageWritingStrategyFactoryType {
     func getStrategy(
         for outputFormat: ImageOutputFormat,
-        colorSpace: CGColorSpace) -> (any ImageWritingStrategyType)? {
+        colorSpace: ImageColorSpace) -> (any ImageWritingStrategyType)? {
             let strategies = Container.shared.imageWritingStrategies()
             
-            if colorSpace.model == .cmyk {
+            if colorSpace == .cmyk {
                 return strategies.first(where: { $0.colorSpace == .cmyk })
             }
             

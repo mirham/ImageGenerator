@@ -11,5 +11,5 @@ import Foundation
 protocol ImageWritingStrategyFactoryType {
     func getStrategy(
         for outputFormat: ImageOutputFormat,
-        colorSpace: CGColorSpace) -> ImageWritingStrategyType?
+        colorSpace: ImageColorSpace) -> ImageWritingStrategyType?
 }

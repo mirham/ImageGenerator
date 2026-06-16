@@ -15,15 +15,15 @@ final class BmpWritingStrategy: ImageWritingStrategyType {
     func write(image: CIImage,
                options: ImageOutputOptions,
                to folder: URL) throws {
-        let format: CIFormat = options.colorSpace.model == .monochrome
-            ? .L8
-            : .RGBA8
+        try validateColorSpace(options.colorSpace)
+        
+        let format: CIFormat = .RGBA8
         
         guard let cgImage = options.context.createCGImage(
             image,
             from: image.extent,
             format: format,
-            colorSpace: options.colorSpace)
+            colorSpace: options.colorSpace.cgColorSpace)
         else { return }
         
         let destination = folder.appendingPathComponent(options.fileName)

@@ -12,7 +12,7 @@ enum FfmpegError: LocalizedError {
     case launchFailed(String)
     case processFailed
     
-    var errorDescription: String {
+    var errorDescription: String? {
         switch self {
             case .binaryNotFound:
                 return  "FFmpeg binary not found"

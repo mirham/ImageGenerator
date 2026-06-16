@@ -20,7 +20,7 @@ enum VideoGenerationError: LocalizedError {
     case largeFileExact(String)
     case retryWithReducedBitrate(String)
     
-    var errorDescription: String {
+    var errorDescription: String? {
         switch self {
             case .baseVideo(let error):
                 return  "Generation of base video failed: \(error)"

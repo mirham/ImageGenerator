@@ -47,9 +47,18 @@ struct ImageGenerationOptionsView: MediaGeneratorView {
             EnumPicker(
                 selection: $selectedColorSpace,
                 enumType: ImageColorSpace.self,
-                style: .segmented
-            ) { colorSpace in
-                appState.userData.imageColorSpace = colorSpace
+                style: .segmented,
+                onSelect: { colorSpace in
+                    appState.userData.imageColorSpace = colorSpace
+                },
+                availableCases: selectedFormat.supportedColorSpaces
+            )
+        }
+        .onChange(of: selectedFormat) { _, newFormat in
+            if !newFormat.supportedColorSpaces.contains(selectedColorSpace),
+               let first = newFormat.supportedColorSpaces.first {
+                selectedColorSpace = first
+                appState.userData.imageColorSpace = first
             }
         }
     }

@@ -9,17 +9,17 @@ import CoreGraphics
 import CoreImage
 
 struct ImageOutputOptions {
-    let format: ImageOutputFormat
     let fileName: String
-    let colorSpace: CGColorSpace
+    let format: ImageOutputFormat
+    let colorSpace: ImageColorSpace
     let ppi: CGFloat
     
     var context: CIContext {
         let threadMap = Thread.current.threadDictionary
         
-        let outputColorSpace = colorSpace.model == .cmyk
-            ? CGColorSpace(name: CGColorSpace.sRGB)!
-            : colorSpace
+        let outputColorSpace = (colorSpace == .cmyk || colorSpace == .greyscale)
+            ? ImageColorSpace.sRGB.cgColorSpace
+            : colorSpace.cgColorSpace
         
         let key = "\(Constants.contextKey)_\(outputColorSpace.name ?? "unknown" as CFString)"
         

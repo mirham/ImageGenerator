@@ -15,7 +15,9 @@ final class TiffWritingStrategy: ImageWritingStrategyType {
     func write(image: CIImage,
                options: ImageOutputOptions,
                to folder: URL) throws {
-        let format: CIFormat = options.colorSpace.model == .monochrome
+        try validateColorSpace(options.colorSpace)
+        
+        let format: CIFormat = options.colorSpace == .greyscale
             ? .L8
             : .RGBA8
         
@@ -23,7 +25,7 @@ final class TiffWritingStrategy: ImageWritingStrategyType {
             image,
             from: image.extent,
             format: format,
-            colorSpace: options.colorSpace)
+            colorSpace: options.colorSpace.cgColorSpace)
         else { return }
         
         let destination = folder.appendingPathComponent(options.fileName)

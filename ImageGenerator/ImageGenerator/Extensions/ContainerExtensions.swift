@@ -166,7 +166,10 @@ extension Container {
          \.pngWritingStrategy,
          \.bmpWritingStrategy,
          \.tiffWritingStrategy,
-         \.heicWritingStrategy
+         \.heicWritingStrategy,
+         \.webPWritingStrategy,
+         \.gifWritingStrategy,
+         \.jp2WritingStrategy
     ]
     
     func imageWritingStrategies() -> [ImageWritingStrategyType] {
@@ -266,6 +269,24 @@ extension SharedContainer {
     var heicWritingStrategy: Factory<ImageWritingStrategyType> {
         Factory(self) {
             HeicWritingStrategy()
+        }
+    }
+    
+    var webPWritingStrategy: Factory<ImageWritingStrategyType> {
+        Factory(self) {
+            WebPWritingStrategy()
+        }
+    }
+    
+    var gifWritingStrategy: Factory<ImageWritingStrategyType> {
+        Factory(self) {
+            GifWritingStrategy()
+        }
+    }
+    
+    var jp2WritingStrategy: Factory<ImageWritingStrategyType> {
+        Factory(self) {
+            Jp2WritingStrategy()
         }
     }
     

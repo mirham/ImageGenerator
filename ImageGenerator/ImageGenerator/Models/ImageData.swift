@@ -44,10 +44,13 @@ class ImageData {
     }
     
     var outputFormat: ImageOutputFormat = .notSupported
-    var outputColorSpace: CGColorSpace = CGColorSpaceCreateDeviceRGB()
+    var outputColorSpace: ImageColorSpace = .any
     var outputPpi: CGFloat = Constants.defaultPpi
     var outputImageName: String {
-        return "\(prefix)\(originalImageName ?? String()) \(imageNumber)\(postfix).\(originalImageExtension ?? outputFormat.description)"
+        let namePart = originalImageName.map { "\($0) " } ?? String()
+        let extensionName = originalImageExtension ?? outputFormat.description
+        
+        return "\(prefix)\(namePart)\(imageNumber)\(postfix).\(extensionName)"
     }
     
     init(imageNumber:Int,
@@ -64,10 +67,12 @@ class ImageData {
     }
     
     func asOutputOptions() -> ImageOutputOptions {
+        let detectedColorSpace = ImageColorSpace.detect(
+            from: originalImageColorSpace ?? outputColorSpace.cgColorSpace)
         let result = ImageOutputOptions(
-            format: outputFormat,
             fileName: outputImageName,
-            colorSpace: originalImageColorSpace ?? outputColorSpace,
+            format: outputFormat,
+            colorSpace: detectedColorSpace,
             ppi: originalImagePpi ?? outputPpi)
         
         return result

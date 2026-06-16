@@ -15,15 +15,19 @@ final class PngWritingStrategy: ImageWritingStrategyType {
     func write(image: CIImage,
                options: ImageOutputOptions,
                to folder: URL) throws {
+        try validateColorSpace(options.colorSpace)
+        
         let destination = folder.appendingPathComponent(options.fileName)
-        let format: CIFormat = options.colorSpace.model == .monochrome ? .L8 : .RGBA8
+        let format: CIFormat = options.colorSpace == .greyscale
+            ? .L8
+            : .RGBA8
         
         if options.ppi == Constants.defaultPpi {
             try options.context.writePNGRepresentation(
                 of: image,
                 to: destination,
                 format: format,
-                colorSpace: options.colorSpace)
+                colorSpace: options.colorSpace.cgColorSpace)
             return
         }
         
@@ -31,7 +35,7 @@ final class PngWritingStrategy: ImageWritingStrategyType {
             image,
             from: image.extent,
             format: format,
-            colorSpace: options.colorSpace)
+            colorSpace: options.colorSpace.cgColorSpace)
         else { return }
         
         guard let destination = CGImageDestinationCreateWithURL(

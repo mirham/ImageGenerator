@@ -15,6 +15,8 @@ final class JpegWritingStrategy: ImageWritingStrategyType {
     func write(image: CIImage,
                options: ImageOutputOptions,
                to folder: URL) throws {
+        try validateColorSpace(options.colorSpace)
+        
         let destination = folder.appendingPathComponent(options.fileName)
         let quality = getJpegQuality(for: image.extent.size)
         let representationOptions: [CIImageRepresentationOption: Any] = [
@@ -26,7 +28,7 @@ final class JpegWritingStrategy: ImageWritingStrategyType {
         
         guard let data = options.context.jpegRepresentation(
             of: image,
-            colorSpace: options.colorSpace,
+            colorSpace: options.colorSpace.cgColorSpace,
             options: representationOptions)
         else { return }
         

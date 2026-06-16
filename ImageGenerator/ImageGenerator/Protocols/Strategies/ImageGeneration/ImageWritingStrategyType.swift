@@ -15,3 +15,10 @@ protocol ImageWritingStrategyType {
                options: ImageOutputOptions,
                to folder: URL) throws
 }
+
+extension ImageWritingStrategyType {
+    func validateColorSpace(_ colorSpace: ImageColorSpace) throws {
+        guard outputFormat.supports(colorSpace: colorSpace)
+        else { throw ImageGenerationError.unsupportedColorSpace(colorSpace, outputFormat) }
+    }
+}
