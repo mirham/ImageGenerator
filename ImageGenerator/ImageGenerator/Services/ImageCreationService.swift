@@ -107,6 +107,7 @@ final class ImageCreationService: ImageCreationServiceType {
         else { return CIImage.empty() }
         
         let scaleDown = CGAffineTransform(scaleX: 1/scale, y: 1/scale)
+        
         return CIImage(cgImage: cgImage).transformed(by: scaleDown)
     }
 

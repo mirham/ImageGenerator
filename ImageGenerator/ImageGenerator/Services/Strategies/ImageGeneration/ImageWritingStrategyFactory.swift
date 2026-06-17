@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import CoreGraphics
 import Factory
 
 final class ImageWritingStrategyFactory: ImageWritingStrategyFactoryType {
@@ -16,20 +15,32 @@ final class ImageWritingStrategyFactory: ImageWritingStrategyFactoryType {
         isAnimated: Bool) -> (any ImageWritingStrategyType)? {
             let strategies = Container.shared.imageWritingStrategies()
             
-            if colorSpace == .cmyk {
-                return strategies.first(where: { $0.colorSpace == .cmyk })
-            }
+            let matcher = StrategyMatcher(
+                outputFormat: outputFormat,
+                colorSpace: colorSpace,
+                isAnimated: isAnimated
+            )
             
-            if outputFormat == .jpeg || outputFormat == .jpg {
-                return strategies.first(where: { $0.outputFormat == .jpeg })
+            return strategies.first(where: matcher.matches)
+    }
+    
+    // MARK: Inner types
+    
+    private struct StrategyMatcher {
+        let outputFormat: ImageOutputFormat
+        let colorSpace: ImageColorSpace
+        let isAnimated: Bool
+        
+        func matches(_ strategy: any ImageWritingStrategyType) -> Bool {
+            if colorSpace == .cmyk {
+                return strategy.colorSpace == .cmyk
             }
             
             if outputFormat == .gif && isAnimated {
-                return strategies.first(
-                    where: { $0.outputFormat == .gif && $0.isAnimated }
-                )
+                return strategy.outputFormat == .gif && strategy.isAnimated
             }
             
-            return strategies.first(where: { $0.outputFormat == outputFormat })
+            return strategy.outputFormat == outputFormat
         }
+    }
 }

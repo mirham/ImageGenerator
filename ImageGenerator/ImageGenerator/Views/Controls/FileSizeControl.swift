@@ -95,12 +95,11 @@ struct FileSizeControl: View {
     private var unitPicker: some View {
         HStack(spacing: 0) {
             Picker(String(), selection: $unit) {
-                Text(FileSizeUnit.kb.rawValue).tag(FileSizeUnit.kb)
-                Text(FileSizeUnit.mb.rawValue).tag(FileSizeUnit.mb)
-                Text(FileSizeUnit.gb.rawValue).tag(FileSizeUnit.gb)
+                Text(FileSizeUnit.kb.displayName(for: base)).tag(FileSizeUnit.kb)
+                Text(FileSizeUnit.mb.displayName(for: base)).tag(FileSizeUnit.mb)
+                Text(FileSizeUnit.gb.displayName(for: base)).tag(FileSizeUnit.gb)
             }
             .pickerStyle(.segmented)
-            
             Picker(String(), selection: $base) {
                 Text(FileSizeBase.base2.description).tag(FileSizeBase.base2)
                 Text(FileSizeBase.base10.description).tag(FileSizeBase.base10)

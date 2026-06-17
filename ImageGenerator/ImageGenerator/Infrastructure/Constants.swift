@@ -17,6 +17,7 @@ struct Constants {
     static let maxChunkSize = 100
     static let minChunkSize = 1
     static let minCountFactor: Double = 1.0
+    static let centimetersPerInch = 2.54
     static let gopSize = 30
     static let gopsPerWorkerDivisor = 2
     static let maxChunkFrames = 300
@@ -36,6 +37,7 @@ struct Constants {
     static let maxConcurrencyLimit: Int = 16
     static let defaultJpegQualityThreshold: Double = 4000.0
     static let defaultJpegQuality: Double = 0.85
+    static let defaultHeicQuality: Double = 0.85
     static let lowerJpegQuality: Double = 0.75
     static let sizedContextKey = "CGContext_%1$@x%2$@"
     static let contextKey = "CIContext"
@@ -53,7 +55,7 @@ struct Constants {
     static let defaultDurationSeconds: TimeInterval = 60
     static let maxDurationHours = 10
     static let kibi: Double = 1024
-    static let smallFileDuration = 3.0
+    static let smallVideoDuration = 1.0
     static let baseClipDuration: Double = 3.0
     static let minFileSizeBytesBase2: Double = kibi // 1 KiB
     static let minFileSizeBytesBase10: Double = 1000 // 1 KB
@@ -70,6 +72,8 @@ struct Constants {
     static let minBitrate: Int = 100_000
     static let defaultStartAt: Int = 1
     static let tempFolder = "Image_Generator_Tmp_Video"
+    static let defaultVideoChunkSize: Int = Int(kibi * kibi)
+    static let jpeg2000: CFString = "public.jpeg-2000" as CFString
     
     // MARK: Settings key names
     static let settingsKeyMode = "mode"
@@ -103,6 +107,9 @@ struct Constants {
     static let iconClearLog = "trash"
     static let iconOpenCurrentLog = "doc.text"
     static let iconEmptyLog = "text.alignleft"
+    static let iconSummaryError = "xmark.octagon.fill"
+    static let iconSummaryWarning = "exclamationmark.triangle.fill"
+    static let iconSummaryShowLog = "chevron.right"
     
     // MARK: Tab tags
     static let tabIdGenerateImages = 0
@@ -111,7 +118,7 @@ struct Constants {
     
     // MARK: Blend modes
     static let blendModeDefault = "CIDifferenceBlendMode"
-    static let blendModeGifAnimated = "CIDifferenceBlendMode"
+    static let blendModeGifAnimated = "CIScreenBlendMode"
     
     // MARK: sysctlbyname
     static let sysctlbynamePerfCores = "hw.perflevel0.physicalcpu"
@@ -171,55 +178,55 @@ struct Constants {
     static let hintWidth = "\(minWidth)..\(maxWidth)"
     static let hintHeight = "\(minHeight)..\(maxHeight)"
     static let hintCount = "\(minCount)..\(maxCount)"
-    static let hintOutputFolder = "Select a folder..."
-    static let hintInputImage = "Select an image..."
-    static let hintPrefix = "Add a prefix..."
-    static let hintPostfix = "Add a postfix..."
-    static let hintIncrease = "Increase"
-    static let hintDecrease = "Decrease"
-    static let hintNoLogEntries = "No log entries"
+    static let hintOutputFolder = "Select an output folder…"
+    static let hintInputImage = "Select an image…"
+    static let hintPrefix = "Enter a prefix…"
+    static let hintPostfix = "Enter a suffix…"
+    static let hintIncrease = "Increase value"
+    static let hintDecrease = "Decrease value"
+    static let hintNoLogEntries = "No log entries found"
     
     // MARK: Element names
-    static let itemsCount = "Items count:"
-    static let startAt = "Start at:"
-    static let format = "Format:"
-    static let duplicatingImage = "Duplicating image:"
-    static let resolution = "Resolution:"
-    static let colorSpace = "Color space:"
     static let ok = "OK"
-    static let outputFolder = "Output folder:"
-    static let choose = "Choose..."
-    static let generate = "Go"
-    static let progressbarText = "Generating %1$@"
+    static let choose = "Choose…"
+    static let generate = "Generate"
     static let info = "Info"
-    static let prefix = "Prefix:"
-    static let postfix = "Postfix:"
-    static let mode = "Mode:"
-    static let fileSize = "File size"
-    static let duration = "Duration"
-    static let about = "About \(appName)"
     static let log = "Log"
     static let all = "All"
+    static let about = "About \(appName)"
+    static let itemsCount = "Item count:"
+    static let startAt = "Start at:"
+    static let format = "Format:"
+    static let duplicatingImage = "Duplicate image:"
+    static let resolution = "Resolution:"
+    static let colorSpace = "Color space:"
+    static let outputFolder = "Output folder:"
+    static let prefix = "Prefix:"
+    static let postfix = "Suffix:"
+    static let mode = "Mode:"
+    static let fileSize = "File size:"
+    static let duration = "Duration:"
+    static let unknown = "unknown"
     
     // MARK: Tab names
-    static let tabGenerateImages = "Generate images"
-    static let tabDuplicateImages = "Duplicate image"
-    static let tabGenerateVideos = "Generate videos"
+    static let tabGenerateImages = "Generate Images"
+    static let tabDuplicateImages = "Duplicate Images"
+    static let tabGenerateVideos = "Generate Videos"
     
     // MARK: Toolbar
-    static let toolbarOpenLogsFolder = "Open logs folder"
-    static let toolbarCopyLog = "Copy log"
-    static let toolbarClearLog = "Clear log"
-    static let toolbarOpenFullLog = "Open full log"
+    static let toolbarOpenLogsFolder = "Show Logs in Finder"
+    static let toolbarCopyLog = "Copy Log"
+    static let toolbarClearLog = "Clear Log"
+    static let toolbarOpenFullLog = "Open Full Log"
     static let toolbarLogEntry = "%lld entry"
     static let toolbarLogEntries = "%lld entries"
     
     // MARK: Dialogs
     static let dialogHeaderError = "Error"
-    static let dialogHeaderMissingInputFile = "Input image file is not found or wrong one"
-    static let dialogBodyMissingInputFile = "Select a valid input image file."
-    static let dialogHeaderMissingOutputFolder = "Output folder not found"
-    static let dialogBodyMissingOutputFolder = "Select a valid output folder."
+    static let dialogHeaderMissingInputFile = "Input Image Not Found"
+    static let dialogBodyMissingInputFile = "Please select a valid input image file."
+    static let dialogHeaderMissingOutputFolder = "Output Folder Not Found"
+    static let dialogBodyMissingOutputFolder = "Please select a valid output folder."
     
     // MARK: Symbols
     static let slash = "/"
@@ -246,13 +253,14 @@ struct Constants {
     static let logSummaryErrors = "%d errors "
     static let logSummaryWarnings = "%d warnings "
     static let logSummaryErrorsAndWarnings = "%d errors, %d warnings "
-    static let logSummaryViewLog = "[view log]"
+    static let logSummaryViewLog = "view log"
     
     // MARK: Log messages
-    static let lmSuccessfullyGeneratedPhoto = "Photo %lld successfuly generated."
-    static let lmSuccessfullyGeneratedVideo = "Video %lld successfuly generated."
-    static let lmPhotoGenerationFailed = "Failed generation of photo %lld: %@"
-    static let lmVideoGenerationFailed = "Failed generation of video %lld: %@"
+    static let lmSuccessfullyGeneratedPhoto = "Successfully generated photo %lld."
+    static let lmSuccessfullyGeneratedVideo = "Successfully generated video %lld."
+    static let lmPhotoGenerationFailed = "Failed to generate photo %lld: %@"
+    static let lmVideoGenerationFailed = "Failed to generate video %lld: %@"
+    static let lmVideoWmvSizeWarning = "WMV cannot be padded exactly, accept approximate size"
     
     // MARK: About
     static let aboutSupportMail = "bWlyaGFtQGFidi5iZw=="

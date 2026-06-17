@@ -16,7 +16,8 @@ extension Container {
     var appState: Factory<AppState> {
         Factory(self) {
             MainActor.assumeIsolated { AppState.shared }
-        }.singleton
+        }
+        .singleton
     }
     
     // MARK: Windows management
@@ -32,7 +33,7 @@ extension Container {
     var windowRegistry: Factory<WindowRegistry> {
         Factory(self) {
             MainActor.assumeIsolated {
-                WindowRegistry(manager: self.windowManager())
+                WindowRegistry(manager: Container.shared.windowManager())
             }
         }.singleton
     }
@@ -49,13 +50,15 @@ extension Container {
     var imageCreationService: Factory<ImageCreationServiceType> {
         Factory(self) {
             ImageCreationService()
-        }.singleton
+        }
+        .singleton
     }
     
     var imageWritingService: Factory<ImageWritingServiceType> {
         Factory(self) {
             ImageWritingService()
-        }.singleton
+        }
+        .singleton
     }
     
     var imageJobService: Factory<ImageJobServiceType> {
@@ -116,12 +119,15 @@ extension Container {
     var fileService: Factory<FileServiceType> {
         Factory(self) {
             FileService()
-        }.singleton
+        }
+        .singleton
     }
     
     var loggingService: Factory<LoggingServiceType> {
-        Factory(self) { LoggingService() }
-            .singleton
+        Factory(self) {
+            LoggingService()
+        }
+        .singleton
     }
     
     // MARK: Image generation strategies registration
@@ -138,7 +144,8 @@ extension Container {
     var imageGenerationStrategyFactory: Factory<ImageGenerationStrategyFactoryType> {
         Factory(self) {
             ImageGenerationStrategyFactory()
-        }.singleton
+        }
+        .singleton
     }
     
     // MARK: Chunking strategies registration
@@ -155,7 +162,8 @@ extension Container {
     var chunkingStrategyFactory: Factory<ChunkingStrategyFactoryType> {
         Factory(self) {
             ChunkingStrategyFactory()
-        }.singleton
+        }
+        .singleton
     }
     
     // MARK: Image writing strategies registration
@@ -180,7 +188,8 @@ extension Container {
     var imageWritingStrategyFactory: Factory<ImageWritingStrategyFactoryType> {
         Factory(self) {
             ImageWritingStrategyFactory()
-        }.singleton
+        }
+        .singleton
     }
     
     // MARK: Video generation strategies registration
@@ -201,7 +210,8 @@ extension Container {
     var videoGenerationStrategyFactory: Factory<VideoGenerationStrategyFactoryType> {
         Factory(self) {
             VideoGenerationStrategyFactory()
-        }.singleton
+        }
+        .singleton
     }
 }
 
@@ -226,13 +236,15 @@ extension SharedContainer {
     var imageChunkingStrategy: Factory<ChunkingStrategyType> {
         Factory(self) {
             ImageChunkingStrategy()
-        }.singleton
+        }
+        .singleton
     }
     
     var videoChunkingStrategy: Factory<ChunkingStrategyType> {
         Factory(self) {
             VideoChunkingStrategy()
-        }.singleton
+        }
+        .singleton
     }
     
     // MARK: Image writing strategies registration

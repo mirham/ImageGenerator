@@ -81,6 +81,9 @@
 		35B8A14B2DD665CE000CFA1B /* ImageGenerationServiceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B8A14A2DD665CE000CFA1B /* ImageGenerationServiceType.swift */; };
 		35B8A14D2DD667B9000CFA1B /* GenerateImageStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B8A14C2DD667A7000CFA1B /* GenerateImageStrategy.swift */; };
 		35B8A14F2DD668FD000CFA1B /* DuplicateImageStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B8A14E2DD668FD000CFA1B /* DuplicateImageStrategy.swift */; };
+		35C42AB92FE2D91100FF5155 /* CharExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35C42AB82FE2D90600FF5155 /* CharExtensions.swift */; };
+		35C42ABB2FE2F1E400FF5155 /* VideoPaddingOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35C42ABA2FE2F1E300FF5155 /* VideoPaddingOptions.swift */; };
+		35C42ABD2FE2F26E00FF5155 /* VideoPaddingFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35C42ABC2FE2F26700FF5155 /* VideoPaddingFormat.swift */; };
 		35CDEEEB2FC59AE400BEB092 /* CIColorExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CDEEEA2FC59ADC00BEB092 /* CIColorExtensions.swift */; };
 		35CDEEED2FC5A6FF00BEB092 /* ComputerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CDEEEC2FC5A6F700BEB092 /* ComputerService.swift */; };
 		35CDEEEF2FC5A78200BEB092 /* ComputerServiceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CDEEEE2FC5A77C00BEB092 /* ComputerServiceType.swift */; };
@@ -220,6 +223,9 @@
 		35B8A14A2DD665CE000CFA1B /* ImageGenerationServiceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageGenerationServiceType.swift; sourceTree = "<group>"; };
 		35B8A14C2DD667A7000CFA1B /* GenerateImageStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenerateImageStrategy.swift; sourceTree = "<group>"; };
 		35B8A14E2DD668FD000CFA1B /* DuplicateImageStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DuplicateImageStrategy.swift; sourceTree = "<group>"; };
+		35C42AB82FE2D90600FF5155 /* CharExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharExtensions.swift; sourceTree = "<group>"; };
+		35C42ABA2FE2F1E300FF5155 /* VideoPaddingOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPaddingOptions.swift; sourceTree = "<group>"; };
+		35C42ABC2FE2F26700FF5155 /* VideoPaddingFormat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPaddingFormat.swift; sourceTree = "<group>"; };
 		35CDEEEA2FC59ADC00BEB092 /* CIColorExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CIColorExtensions.swift; sourceTree = "<group>"; };
 		35CDEEEC2FC5A6F700BEB092 /* ComputerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComputerService.swift; sourceTree = "<group>"; };
 		35CDEEEE2FC5A77C00BEB092 /* ComputerServiceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComputerServiceType.swift; sourceTree = "<group>"; };
@@ -432,6 +438,7 @@
 				35DD84222FC84241009E6D1F /* VideoOutputFormat.swift */,
 				35DD84242FC84284009E6D1F /* VideoResolution.swift */,
 				35DD84282FC84BA6009E6D1F /* VideoGenerationMode.swift */,
+				35C42ABC2FE2F26700FF5155 /* VideoPaddingFormat.swift */,
 				35DD84542FC8BFED009E6D1F /* FileSizeUnit.swift */,
 				3549AB122FD6ACA80014EC73 /* FileSizeBase.swift */,
 				3549AB1C2FD8530A0014EC73 /* VideoProgress.swift */,
@@ -465,6 +472,7 @@
 				35D2E3252FE04205003A13B3 /* CIImageExtensions.swift */,
 				35DD84522FC8AC0F009E6D1F /* ComparableExtensions.swift */,
 				3549AB142FD6D2A80014EC73 /* StringExtensions.swift */,
+				35C42AB82FE2D90600FF5155 /* CharExtensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -566,6 +574,7 @@
 				35B8A13F2DD65A0F000CFA1B /* ImageData.swift */,
 				35D2E3232FE03C84003A13B3 /* ImageOutputOptions.swift */,
 				35DD84262FC8441E009E6D1F /* VideoData.swift */,
+				35C42ABA2FE2F1E300FF5155 /* VideoPaddingOptions.swift */,
 				3518B3482FD074A7000D6341 /* VideoGenerationResult.swift */,
 				3570A79F2FD9AD3200EA8923 /* LogEntry.swift */,
 				359CC5452FDB087100F2AFB9 /* LogSummary.swift */,
@@ -657,14 +666,14 @@
 				35CDEF072FC5CDC600BEB092 /* ImageWritingStrategyFactory.swift */,
 				35CDEF102FC5EFA100BEB092 /* CmykWritingStrategy.swift */,
 				35CDEEFF2FC5CA8300BEB092 /* JpegWritingStrategy.swift */,
+				35D2E32D2FE14861003A13B3 /* Jp2WritingStrategy.swift */,
+				35D2E32B2FE14815003A13B3 /* GifWritingStrategy.swift */,
+				351D96D62FE1A9B1009B08D8 /* GifAnimatedWritingStrategy.swift */,
 				35CDEF012FC5CB3200BEB092 /* PngWritingStrategy.swift */,
 				35CDEF032FC5CB9700BEB092 /* BmpWritingStrategy.swift */,
 				35CDEF122FC5F79D00BEB092 /* TiffWritingStrategy.swift */,
 				35D2E3272FE08BF2003A13B3 /* HeicWritingStrategy.swift */,
 				35D2E3292FE147F0003A13B3 /* WebPWritingStrategy.swift */,
-				35D2E32B2FE14815003A13B3 /* GifWritingStrategy.swift */,
-				351D96D62FE1A9B1009B08D8 /* GifAnimatedWritingStrategy.swift */,
-				35D2E32D2FE14861003A13B3 /* Jp2WritingStrategy.swift */,
 			);
 			path = ImageGeneration;
 			sourceTree = "<group>";
@@ -773,6 +782,7 @@
 				3570A7B02FD9B0FF00EA8923 /* LogEntryRow.swift in Sources */,
 				35DD84532FC8AC15009E6D1F /* ComparableExtensions.swift in Sources */,
 				35DD84252FC84289009E6D1F /* VideoResolution.swift in Sources */,
+				35C42ABB2FE2F1E400FF5155 /* VideoPaddingOptions.swift in Sources */,
 				3549AB132FD6ACAD0014EC73 /* FileSizeBase.swift in Sources */,
 				35D2E32C2FE14818003A13B3 /* GifWritingStrategy.swift in Sources */,
 				35DD841A2FC721FD009E6D1F /* OutputFolderView.swift in Sources */,
@@ -781,6 +791,7 @@
 				3562D95D2FBDFA7700A1301B /* ImageResolution.swift in Sources */,
 				35CDEF132FC5F7A100BEB092 /* TiffWritingStrategy.swift in Sources */,
 				3514C5032C66210F004523CC /* AppDelegate.swift in Sources */,
+				35C42ABD2FE2F26E00FF5155 /* VideoPaddingFormat.swift in Sources */,
 				35B8A13A2DD657BD000CFA1B /* ContainerExtensions.swift in Sources */,
 				35CDEEFA2FC5B48000BEB092 /* ChunkingStrategyFactoryType.swift in Sources */,
 				35D2E3202FDFF8F6003A13B3 /* FileService.swift in Sources */,
@@ -817,6 +828,7 @@
 				3562D9682FBF198200A1301B /* ImageCreationServiceType.swift in Sources */,
 				35CDEEEF2FC5A78200BEB092 /* ComputerServiceType.swift in Sources */,
 				3562D95F2FBDFEF400A1301B /* ImageColorSpace.swift in Sources */,
+				35C42AB92FE2D91100FF5155 /* CharExtensions.swift in Sources */,
 				35D2E31E2FDFF873003A13B3 /* FileServiceType.swift in Sources */,
 				35DD84122FC622B7009E6D1F /* DescriptableEnum.swift in Sources */,
 				3553599F2C655710004C172A /* IsHiddenModifier.swift in Sources */,

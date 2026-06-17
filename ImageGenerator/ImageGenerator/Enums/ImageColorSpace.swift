@@ -51,7 +51,8 @@ enum ImageColorSpace: Int, CaseIterable, Identifiable, Codable, Equatable, Descr
     static func detect(from: CGColorSpace) -> ImageColorSpace {
         switch from.model {
             case .rgb:
-                guard let name = from.name else { return .rgb }
+                guard let name = from.name
+                else { return .rgb }
                 
                 let map: [CFString: ImageColorSpace] = [
                     CGColorSpace.sRGB as CFString: .sRGB,

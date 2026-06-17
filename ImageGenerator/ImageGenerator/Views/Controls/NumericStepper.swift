@@ -47,6 +47,7 @@ struct NumericStepper<Value: Strideable & LosslessStringConvertible>: View {
     
     // MARK: View sections
     
+    @ViewBuilder
     private func stepperButton(direction: Int, icon: String) -> some View {
         Rectangle()
             .fill(Color.clear)

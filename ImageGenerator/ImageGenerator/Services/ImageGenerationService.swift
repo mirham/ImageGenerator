@@ -75,9 +75,10 @@ class ImageGenerationService : ImageGenerationServiceType {
     
     private func loadOriginalImage(imageData: ImageData) {
         guard let url = imageData.originalImagePath,
-              fileService.doesFileExist(filePath: url.path())
+              fileService.doesFileExist(filePath: url.path(percentEncoded: false))
         else {
-            let path = imageData.originalImagePath?.path() ?? String()
+            let path = imageData.originalImagePath?.path(percentEncoded: false)
+                ?? String()
             
             loggingService.write(
                 message: ImageGenerationError

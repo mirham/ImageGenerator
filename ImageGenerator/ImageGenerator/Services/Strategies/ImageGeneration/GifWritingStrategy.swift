@@ -18,31 +18,42 @@ final class GifWritingStrategy: ImageWritingStrategyType {
                to folder: URL) throws {
         try validateColorSpace(options.colorSpace)
         
-        let format: CIFormat = .RGBA8
+        let destinationUrl = folder.appendingPathComponent(options.fileName)
+        let cgImage = try createCGImage(from: image, options: options)
         
-        guard let cgImage = options.context.createCGImage(
+        try writeGif(cgImage: cgImage, to: destinationUrl, ppi: options.ppi)
+    }
+    
+    // MARK: Private functions
+    
+    private func createCGImage(
+        from image: CIImage,
+        options: ImageOutputOptions) throws -> CGImage {
+        guard let result = options.context.createCGImage(
             image,
             from: image.extent,
-            format: format,
-            colorSpace: options.colorSpace.cgColorSpace)
-        else { return }
+            format: .RGBA8,
+            colorSpace: options.colorSpace.cgColorSpace
+        ) else { throw ImageGenerationError.cgImageCreationFailed }
         
-        let destinationURL = folder.appendingPathComponent(options.fileName)
-        
+        return result
+    }
+    
+    private func writeGif(cgImage: CGImage, to url: URL, ppi: Double) throws {
         guard let destination = CGImageDestinationCreateWithURL(
-            destinationURL as CFURL,
+            url as CFURL,
             UTType.gif.identifier as CFString,
             1,
-            nil)
-        else { return }
+            nil
+        ) else { throw ImageGenerationError.destinationCreationFailed }
         
         let gifProperties: [CFString: Any] = [
             kCGImagePropertyGIFDictionary: [
                 kCGImagePropertyGIFLoopCount: 0,
                 kCGImagePropertyGIFHasGlobalColorMap: true
             ] as [CFString: Any],
-            kCGImagePropertyDPIWidth: options.ppi,
-            kCGImagePropertyDPIHeight: options.ppi
+            kCGImagePropertyDPIWidth: ppi,
+            kCGImagePropertyDPIHeight: ppi
         ]
         
         let frameProperties: [CFString: Any] = [
@@ -51,8 +62,18 @@ final class GifWritingStrategy: ImageWritingStrategyType {
             ] as [CFString: Any]
         ]
         
-        CGImageDestinationAddImage(destination, cgImage, frameProperties as CFDictionary)
-        CGImageDestinationSetProperties(destination, gifProperties as CFDictionary)
-        CGImageDestinationFinalize(destination)
+        CGImageDestinationAddImage(
+            destination,
+            cgImage,
+            frameProperties as CFDictionary
+        )
+        
+        CGImageDestinationSetProperties(
+            destination,
+            gifProperties as CFDictionary
+        )
+        
+        guard CGImageDestinationFinalize(destination)
+        else { throw ImageGenerationError.destinationFinalizationFailed }
     }
 }

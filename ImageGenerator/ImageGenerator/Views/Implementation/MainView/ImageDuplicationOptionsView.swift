@@ -6,14 +6,29 @@
 //
 
 import SwiftUI
+import Factory
 
 struct ImageDuplicationOptionsView: MediaGeneratorView {
     @EnvironmentObject var appState: AppState
+    
+    @Injected(\.fileService) private var fileService
     
     @State private var inputImage: String = .init()
     @State private var showFileImporter = false
     @State private var showError = false
     @State private var errorMessage: String = .init()
+    
+    private var defaultImportDirectory: URL? {
+        let inputImage = appState.userData.inputImage
+        
+        guard !inputImage.isEmpty,
+              fileService.doesFileExist(filePath: inputImage)
+        else { return .desktopDirectory }
+        
+        let url = URL(filePath: inputImage)
+        
+        return url.deletingLastPathComponent()
+    }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -37,7 +52,7 @@ struct ImageDuplicationOptionsView: MediaGeneratorView {
         ) { result in
             handleFileImport(result)
         }
-        .fileDialogDefaultDirectory(.desktopDirectory)
+        .fileDialogDefaultDirectory(defaultImportDirectory)
         .alert(isPresented: $showError) {
             errorAlert
         }

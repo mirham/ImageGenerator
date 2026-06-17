@@ -15,12 +15,11 @@ enum FfmpegError: LocalizedError {
     var errorDescription: String? {
         switch self {
             case .binaryNotFound:
-                return  "FFmpeg binary not found"
+                return "FFmpeg binary not found"
             case .launchFailed(let error):
-                return "FFmpeg launch error: \(error)"
+                return "Failed to launch FFmpeg: \(error)"
             case .processFailed:
                 return "FFmpeg process failed"
-               
         }
     }
 }

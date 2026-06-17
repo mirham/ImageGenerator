@@ -20,8 +20,8 @@ enum VideoGenerationMode: Codable, Equatable {
     
     var targetValue: Double {
         switch self {
-            case .duration(let d): return d
-            case .fileSize(let fs): return Double(fs)
+            case .duration(let duration): return duration
+            case .fileSize(let fileSize): return Double(fileSize)
         }
     }
 }

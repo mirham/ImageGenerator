@@ -21,12 +21,8 @@ final class SingleVideoGenerationService: BaseVideoGenerationService, SingleVide
             duration: duration
         )
         
-        do {
-            try await ffmpegService.runAsync(arguments: args)
-        }
-        catch {
-            throw VideoGenerationError.singlePass(error.localizedDescription)
-        }
+        do { try await ffmpegService.runAsync(arguments: args) }
+        catch { throw VideoGenerationError.singlePass(error.localizedDescription) }
     }
     
     func withStreamLoopAsync(
@@ -52,12 +48,8 @@ final class SingleVideoGenerationService: BaseVideoGenerationService, SingleVide
             outputURL: baseVideoUrl
         )
         
-        do {
-            try await ffmpegService.runAsync(arguments: baseArguments)
-        }
-        catch {
-            throw VideoGenerationError.baseVideo(error.localizedDescription)
-        }
+        do { try await ffmpegService.runAsync(arguments: baseArguments) }
+        catch { throw VideoGenerationError.baseVideo(error.localizedDescription) }
         
         await onOperationComplete?(.baseFile)
         
@@ -74,9 +66,7 @@ final class SingleVideoGenerationService: BaseVideoGenerationService, SingleVide
             try await ffmpegService.runAsync(arguments: loopArguments)
             await onOperationComplete?(.streamLoop)
         }
-        catch {
-            throw VideoGenerationError.streamLoop(error.localizedDescription)
-        }
+        catch { throw VideoGenerationError.streamLoop(error.localizedDescription) }
     }
     
     func withDoublingAsync(
@@ -159,7 +149,7 @@ final class SingleVideoGenerationService: BaseVideoGenerationService, SingleVide
             useHighBitrate: highBitrate)
             + threadingArguments()
             + strategy.getCodecArguments(for: videoData)
-            + ["-t", "\(Constants.baseClipDuration)", "-y", baseVideoUrl.path]
+            + ["-t", "\(Constants.defaultVideoDuration)", "-y", baseVideoUrl.path]
         
         do {
             try await ffmpegService.runAsync(arguments: baseArgs)

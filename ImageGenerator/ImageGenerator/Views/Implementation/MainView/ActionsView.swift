@@ -188,6 +188,7 @@ struct ActionsView: MediaGeneratorView, LogDependentView {
     
     private func resetProgress() {
         appState.generation.inProgress = true
+        appState.generation.progress = 0
         appState.generation.processedCount = 0
         appState.generation.completedVideosCount = 0
         appState.generation.failedVideosCount = 0

@@ -1,5 +1,5 @@
 //
-//  FileSizeService.swift
+//  VideoFileSizeService.swift
 //  ImageGenerator
 //
 //  Created by UglyGeorge on 03.06.2026.
@@ -80,7 +80,7 @@ final class VideoFileSizeService: BaseVideoGenerationService, VideoFileSizeServi
         onOperationComplete:
             (@Sendable (_ increment: VideoProgress) async -> Void)?
     ) async throws {
-        let duration = Constants.smallFileDuration
+        let duration = Constants.smallVideoDuration
         let bitrate = BitrateCalculator.calculateBitrate(
             targetBytes: targetBytes,
             duration: duration)
@@ -136,8 +136,10 @@ final class VideoFileSizeService: BaseVideoGenerationService, VideoFileSizeServi
         )
         else { return }
         
-        defer { Task
-            { try await tempFileService.deleteFileAsync(at: base.url) }
+        defer {
+            Task {
+                try await tempFileService.deleteFileAsync(at: base.url)
+            }
         }
         
         guard let baseSize = try await tempFileService.getFileSizeAsync(at: base.url),
@@ -202,8 +204,7 @@ final class VideoFileSizeService: BaseVideoGenerationService, VideoFileSizeServi
             await onOperationComplete?(.retry)
         }
         catch {
-            throw VideoGenerationError.retryWithReducedBitrate(
-                error.localizedDescription)
+            throw VideoGenerationError.retryWithReducedBitrate( error.localizedDescription)
         }
         
         let retrySize = try await tempFileService

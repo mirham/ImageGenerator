@@ -9,7 +9,8 @@ import SwiftUI
 
 class AppHelper {
     static func copyTextToClipboard(text : String) {
-        guard !text.isEmpty else { return }
+        guard !text.isEmpty
+        else { return }
         
         NSPasteboard.general.declareTypes([.string], owner: nil)
         

@@ -18,12 +18,10 @@ struct ImageOutputOptions {
     
     var context: CIContext {
         let threadMap = Thread.current.threadDictionary
-        
         let outputColorSpace = (colorSpace == .cmyk || colorSpace == .greyscale)
             ? ImageColorSpace.sRGB.cgColorSpace
             : colorSpace.cgColorSpace
-        
-        let key = "\(Constants.contextKey)_\(outputColorSpace.name ?? "unknown" as CFString)"
+        let key = "\(Constants.contextKey)_\(outputColorSpace.name ?? Constants.unknown as CFString)"
         
         if let existing = threadMap[key] as? CIContext {
             return existing
@@ -41,6 +39,7 @@ struct ImageOutputOptions {
         )
         
         threadMap[key] = context
+        
         return context
     }
 }

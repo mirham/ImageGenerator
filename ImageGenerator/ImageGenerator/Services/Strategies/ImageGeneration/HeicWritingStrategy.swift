@@ -18,48 +18,77 @@ final class HeicWritingStrategy: ImageWritingStrategyType {
                to folder: URL) throws {
         try validateColorSpace(options.colorSpace)
         
-        let destination = folder.appendingPathComponent(options.fileName)
-        let representationOptions: [CIImageRepresentationOption: Any] = [
-            CIImageRepresentationOption(
-                rawValue: kCGImageDestinationLossyCompressionQuality as String): Constants.defaultJpegQuality,
-            CIImageRepresentationOption(
-                rawValue: kCGImagePropertyOrientation as String): 1
-        ]
-        
-        let data: Data?
-        let colorSpace = options.colorSpace
-        
-        data = options.context.heifRepresentation(
-            of: image,
-            format: .RGBA8,
-            colorSpace: colorSpace.cgColorSpace,
-            options: representationOptions)
-        
-        guard let data
-        else { return }
+        let destinationUrl = folder.appendingPathComponent(options.fileName)
+        let data = try generateHeicData(from: image, options: options)
         
         if options.ppi == Constants.defaultPpi {
-            try data.write(to: destination, options: .atomic)
+            try data.write(to: destinationUrl, options: .atomic)
+            
             return
         }
         
-        guard let source = CGImageSourceCreateWithData(data as CFData, nil),
-              let cgImage = CGImageSourceCreateImageAtIndex(source, 0, nil)
-        else { return }
-        
-        guard let imageDestination = CGImageDestinationCreateWithURL(
-            destination as CFURL,
-            UTType.heic.identifier as CFString,
-            1, nil)
-        else { return }
-        
-        let properties: [CFString: Any] = [
-            kCGImageDestinationLossyCompressionQuality: Constants.defaultJpegQuality,
-            kCGImagePropertyDPIWidth: options.ppi,
-            kCGImagePropertyDPIHeight: options.ppi
+        try writeWithCustomPpi(
+            data: data,
+            to: destinationUrl,
+            ppi: options.ppi
+        )
+    }
+    
+    // MARK: Private functions
+    
+    private func generateHeicData(
+        from image: CIImage,
+        options: ImageOutputOptions) throws -> Data {
+        let representationOptions: [CIImageRepresentationOption: Any] = [
+            .init(rawValue: kCGImageDestinationLossyCompressionQuality as String): Constants.defaultJpegQuality,
+            .init(rawValue: kCGImagePropertyOrientation as String): 1
         ]
         
-        CGImageDestinationAddImage(imageDestination, cgImage, properties as CFDictionary)
-        CGImageDestinationFinalize(imageDestination)
+        guard let result = options.context.heifRepresentation(
+            of: image,
+            format: .RGBA8,
+            colorSpace: options.colorSpace.cgColorSpace,
+            options: representationOptions
+        ) else {
+            throw ImageGenerationError.generationFailed
+        }
+        
+        return result
+    }
+    
+    private func writeWithCustomPpi(
+        data: Data,
+        to url: URL,
+        ppi: Double) throws {
+        guard let source = CGImageSourceCreateWithData(data as CFData, nil),
+              let cgImage = CGImageSourceCreateImageAtIndex(source, 0, nil)
+        else { throw ImageGenerationError.imageSourceCreationFailed }
+        
+        guard let destination = CGImageDestinationCreateWithURL(
+            url as CFURL,
+            UTType.heic.identifier as CFString,
+            1,
+            nil
+        ) else { throw ImageGenerationError.destinationCreationFailed }
+        
+        let properties: [CFString: Any] = [
+            kCGImageDestinationLossyCompressionQuality: Constants.defaultHeicQuality,
+            kCGImagePropertyDPIWidth: ppi,
+            kCGImagePropertyDPIHeight: ppi
+        ]
+        
+        CGImageDestinationAddImage(
+            destination,
+            cgImage,
+            properties as CFDictionary
+        )
+        
+        try finalize(destination: destination)
+    }
+    
+    private func finalize(destination: CGImageDestination) throws {
+        guard CGImageDestinationFinalize(destination) else {
+            throw ImageGenerationError.destinationFinalizationFailed
+        }
     }
 }

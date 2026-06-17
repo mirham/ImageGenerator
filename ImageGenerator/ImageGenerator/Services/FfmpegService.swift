@@ -13,7 +13,7 @@ final class FfmpegService: FfmpegServiceType {
     @Injected(\.loggingService) private var loggingService
     
     func runAsync(arguments: [String]) async throws {
-        guard let ffmpegUrl = getFfmpegUrl()
+        guard let ffmpegUrl = try getFfmpegUrl()
         else { throw FfmpegError.binaryNotFound }
         
         let process = Process()
@@ -54,8 +54,8 @@ final class FfmpegService: FfmpegServiceType {
     
     // MARK: Private functions
     
-    private func getFfmpegUrl() -> URL? {
-        let binaryName = computerService.isAppleSilicon() 
+    private func getFfmpegUrl() throws -> URL? {
+        let binaryName = computerService.isAppleSilicon()
             ? Constants.ffmpegAppleSilicon
             : Constants.ffmpegIntel
         
@@ -64,12 +64,12 @@ final class FfmpegService: FfmpegServiceType {
             withExtension: nil)
         else { return nil }
         
-        ensureExecutable(url: result)
+        try ensureExecutable(url: result)
         
         return result
     }
     
-    private func ensureExecutable(url: URL) {
+    private func ensureExecutable(url: URL) throws {
         guard let attrs = try? FileManager.default.attributesOfItem(
             atPath: url.path),
               let permissions = attrs[.posixPermissions] as? Int
@@ -80,7 +80,7 @@ final class FfmpegService: FfmpegServiceType {
         guard permissions & executableBits == 0
         else { return }
         
-        try? FileManager.default.setAttributes(
+        try FileManager.default.setAttributes(
             [.posixPermissions: permissions | executableBits],
             ofItemAtPath: url.path)
     }

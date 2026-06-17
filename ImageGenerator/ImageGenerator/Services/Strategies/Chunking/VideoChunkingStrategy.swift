@@ -31,16 +31,25 @@ final class VideoChunkingStrategy: ChunkingStrategyType {
         let durationFactor = durationFactor(for: duration)
         let formatFactor = formatFactor(for: format)
         let chipFactor = computerService.isAppleSilicon() ? 1.3 : 1.0
-        
-        let effectiveWorkers = max(1, Int(Double(cpuWorkers) * resolutionFactor * durationFactor * formatFactor * chipFactor))
+        let effectiveWorkers = max(
+            1,
+            Int(Double(cpuWorkers)
+                * resolutionFactor
+                * durationFactor
+                * formatFactor
+                * chipFactor)
+        )
         let baseChunk = effectiveWorkers * Constants.targetChunksPerWorker
         let countFactor = max(Constants.minCountFactor, log10(Double(count)))
         let scaled = Int(Double(baseChunk) * countFactor)
         
-        return max(Constants.minChunkSize, min(Constants.maxChunkSize, scaled))
+        return max(
+            Constants.minChunkSize,
+            min(Constants.maxChunkSize, scaled)
+        )
     }
     
-    // MARK: Private methods
+    // MARK: Private functions
     
     private func resolutionFactor(for size: CGSize) -> Double {
         let pixels = size.width * size.height

@@ -18,23 +18,32 @@ final class WebPWritingStrategy: ImageWritingStrategyType {
                to folder: URL) throws {
         try validateColorSpace(options.colorSpace)
         
-        let destinationURL = folder.appendingPathComponent(options.fileName)
-        let format: CIFormat = .RGBA8
-        let colorSpace = options.colorSpace
+        let destinationUrl = folder.appendingPathComponent(options.fileName)
+        let cgImage = try createCgImage(from: image, options: options)
+        let data = try encodeWebP(cgImage: cgImage)
         
-        guard let cgImage = options.context.createCGImage(
+        try data.write(to: destinationUrl)
+    }
+    
+    // MARK: Private functions
+    
+    private func createCgImage(
+        from image: CIImage,
+        options: ImageOutputOptions) throws -> CGImage {
+        guard let result = options.context.createCGImage(
             image,
             from: image.extent,
-            format: format,
-            colorSpace: colorSpace.cgColorSpace)
-        else {
-            throw ImageGenerationError.generationFailed
-        }
+            format: .RGBA8,
+            colorSpace: options.colorSpace.cgColorSpace
+        ) else { throw ImageGenerationError.cgImageCreationFailed }
         
+        return result
+    }
+    
+    private func encodeWebP(cgImage: CGImage) throws -> Data {
         let encoder = WebPEncoder()
         let config: WebPEncoderConfig = .preset(.photo, quality: 1.0)
-        let data = try encoder.encode(cgImage, config: config)
         
-        try data.write(to: destinationURL)
+        return try encoder.encode(cgImage, config: config)
     }
 }

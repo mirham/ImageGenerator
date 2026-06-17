@@ -18,25 +18,44 @@ final class Jp2WritingStrategy: ImageWritingStrategyType {
                to folder: URL) throws {
         try validateColorSpace(options.colorSpace)
         
-        let destinationURL = folder.appendingPathComponent(options.fileName)
+        let destinationUrl = folder.appendingPathComponent(options.fileName)
+        let cgImage = try createCGImage(from: image, context: options.context)
         
-        guard let cgImage = options.context.createCGImage(image, from: image.extent)
-        else { return }
+        try writeJp2(cgImage: cgImage, to: destinationUrl, ppi: options.ppi)
+    }
+    
+    // MARK: Private functions
+    
+    private func createCGImage(
+        from image: CIImage,
+        context: CIContext) throws -> CGImage {
+        guard let result = context.createCGImage(image, from: image.extent)
+        else { throw ImageGenerationError.cgImageCreationFailed }
         
-        guard let imageDestination = CGImageDestinationCreateWithURL(
-            destinationURL as CFURL,
-            "public.jpeg-2000" as CFString,
+        return result
+    }
+    
+    private func writeJp2(cgImage: CGImage, to url: URL, ppi: Double) throws {
+        guard let destination = CGImageDestinationCreateWithURL(
+            url as CFURL,
+            Constants.jpeg2000,
             1,
-            nil)
-        else { return }
+            nil
+        ) else { throw ImageGenerationError.destinationCreationFailed }
         
         let properties: [CFString: Any] = [
             kCGImageDestinationLossyCompressionQuality: Constants.defaultJpegQuality,
-            kCGImagePropertyDPIWidth: options.ppi,
-            kCGImagePropertyDPIHeight: options.ppi
+            kCGImagePropertyDPIWidth: ppi,
+            kCGImagePropertyDPIHeight: ppi
         ]
         
-        CGImageDestinationAddImage(imageDestination, cgImage, properties as CFDictionary)
-        CGImageDestinationFinalize(imageDestination)
+        CGImageDestinationAddImage(
+            destination,
+            cgImage,
+            properties as CFDictionary
+        )
+        
+        guard CGImageDestinationFinalize(destination)
+        else { throw ImageGenerationError.destinationFinalizationFailed }
     }
 }
