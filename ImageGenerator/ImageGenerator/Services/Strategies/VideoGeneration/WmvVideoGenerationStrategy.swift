@@ -19,23 +19,22 @@ final class WmvVideoGenerationStrategy: VideoGenerationStrategyType {
             case .duration:
                 return durationArguments()
             case .fileSize(let bytes):
-                let bitrate = calculateBitrate(for: bytes)
-                
+                let bitrate = calculateBitrate(
+                    for: bytes,
+                    maxBitrate: 50_000_000,
+                    minBitrate: 1_000_000)
                 return fileSizeArguments(bitrate: bitrate)
         }
     }
     
-    func padFile(to url: URL, padding: Int) {
+    func padFile(to url: URL, padding: Int) throws {
         loggingService.write(
             message: Constants.lmVideoWmvSizeWarning,
             type: .warning
         )
     }
     
-    func trimFile(
-        sourceUrl: URL,
-        targetBytes: Int,
-        outputUrl: URL) throws {
+    func trimFile(sourceUrl: URL, targetBytes: Int, outputUrl: URL) throws {
         return
     }
     
@@ -57,18 +56,5 @@ final class WmvVideoGenerationStrategy: VideoGenerationStrategyType {
             "-g", "600",
             "-pix_fmt", "yuv420p"
         ]
-    }
-    
-    private func calculateBitrate(for targetBytes: Int) -> Int {
-        let maxBitrate = 50_000_000
-        let minBitrate = 1_000_000
-        
-        let targetDuration = max(
-            10.0,
-            Double(targetBytes) * 8.0 / Double(maxBitrate)
-        )
-        let bitrate = Int(Double(targetBytes) * 8.0 / targetDuration)
-        
-        return max(minBitrate, min(maxBitrate, bitrate))
     }
 }
