@@ -26,7 +26,13 @@ final class FileService: FileServiceType {
         return result
     }
     
-    func copyItem(at source: URL, toFolder folder: URL, withNewName name: String) throws {
+    func getFileSize(at url: URL) -> Int? {
+        let attrs = try? FileManager.default.attributesOfItem(atPath: url.path)
+        
+        return attrs?[.size] as? Int
+    }
+    
+    func copy(at source: URL, toFolder folder: URL, withNewName name: String) throws {
         let destination = folder.appending(
             path: name,
             directoryHint: .notDirectory)
@@ -34,5 +40,13 @@ final class FileService: FileServiceType {
         try FileManager.default.copyItem(
             atPath: source.path,
             toPath: destination.path)
+    }
+    
+    func copy(at source: URL, to destination: URL) throws {
+        if FileManager.default.fileExists(atPath: destination.path) {
+            try FileManager.default.removeItem(at: destination)
+        }
+        
+        try FileManager.default.copyItem(at: source, to: destination)
     }
 }

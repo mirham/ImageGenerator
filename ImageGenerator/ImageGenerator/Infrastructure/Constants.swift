@@ -260,7 +260,8 @@ struct Constants {
     static let lmSuccessfullyGeneratedVideo = "Successfully generated video %lld."
     static let lmPhotoGenerationFailed = "Failed to generate photo %lld: %@"
     static let lmVideoGenerationFailed = "Failed to generate video %lld: %@"
-    static let lmVideoWmvSizeWarning = "WMV cannot be padded exactly, accept approximate size"
+    static let lmVideoWmvPadSizeWarning = "WMV cannot be padded exactly, accept approximate size"
+    static let lmVideoWmvTrimSizeWarning = "WMV cannot be trimmed exactly, accept approximate size"
     static let lmVideoSizeTooSmallToExactSize = "Cannot achieve a target file size of %d bytes, the minimum file size with current settings is %d bytes"
     
     // MARK: About

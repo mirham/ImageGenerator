@@ -5,10 +5,11 @@
 //  Created by UglyGeorge on 28.05.2026.
 //
 
-import Foundation
 import Factory
+import Foundation
 
 final class WmvVideoGenerationStrategy: VideoGenerationStrategyType {
+    @Injected(\.fileService) internal var fileService
     @Injected(\.loggingService) var loggingService
     
     let format: VideoOutputFormat = .wmv
@@ -29,13 +30,20 @@ final class WmvVideoGenerationStrategy: VideoGenerationStrategyType {
     
     func padFile(to url: URL, padding: Int) throws {
         loggingService.write(
-            message: Constants.lmVideoWmvSizeWarning,
+            message: Constants.lmVideoWmvPadSizeWarning,
             type: .warning
         )
     }
     
     func trimFile(sourceUrl: URL, targetBytes: Int, outputUrl: URL) throws {
-        return
+        if sourceUrl != outputUrl {
+            try FileManager.default.copyItem(at: sourceUrl, to: outputUrl)
+        }
+        
+        loggingService.write(
+            message: Constants.lmVideoWmvTrimSizeWarning,
+            type: .warning
+        )
     }
     
     // MARK: Private functions

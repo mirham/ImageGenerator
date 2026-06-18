@@ -18,7 +18,7 @@ final class ImageWritingService : ImageWritingServiceType {
         options: ImageOutputOptions,
         to folder: URL) throws {
         if image == nil, let path = originalImagePath {
-            try fileService.copyItem(
+            try fileService.copy(
                 at: path,
                 toFolder: folder,
                 withNewName: options.fileName)

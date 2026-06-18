@@ -85,6 +85,7 @@
 		35C42ABB2FE2F1E400FF5155 /* VideoPaddingOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35C42ABA2FE2F1E300FF5155 /* VideoPaddingOptions.swift */; };
 		35C42ABD2FE2F26E00FF5155 /* VideoPaddingFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35C42ABC2FE2F26700FF5155 /* VideoPaddingFormat.swift */; };
 		35C42ABF2FE3D40000FF5155 /* FileSizeCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35C42ABE2FE3D3FB00FF5155 /* FileSizeCategory.swift */; };
+		35C42AC32FE433D900FF5155 /* TsVideoGenerationStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35C42AC22FE433D500FF5155 /* TsVideoGenerationStrategy.swift */; };
 		35CDEEEB2FC59AE400BEB092 /* CIColorExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CDEEEA2FC59ADC00BEB092 /* CIColorExtensions.swift */; };
 		35CDEEED2FC5A6FF00BEB092 /* ComputerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CDEEEC2FC5A6F700BEB092 /* ComputerService.swift */; };
 		35CDEEEF2FC5A78200BEB092 /* ComputerServiceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CDEEEE2FC5A77C00BEB092 /* ComputerServiceType.swift */; };
@@ -228,6 +229,7 @@
 		35C42ABA2FE2F1E300FF5155 /* VideoPaddingOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPaddingOptions.swift; sourceTree = "<group>"; };
 		35C42ABC2FE2F26700FF5155 /* VideoPaddingFormat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPaddingFormat.swift; sourceTree = "<group>"; };
 		35C42ABE2FE3D3FB00FF5155 /* FileSizeCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileSizeCategory.swift; sourceTree = "<group>"; };
+		35C42AC22FE433D500FF5155 /* TsVideoGenerationStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TsVideoGenerationStrategy.swift; sourceTree = "<group>"; };
 		35CDEEEA2FC59ADC00BEB092 /* CIColorExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CIColorExtensions.swift; sourceTree = "<group>"; };
 		35CDEEEC2FC5A6F700BEB092 /* ComputerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComputerService.swift; sourceTree = "<group>"; };
 		35CDEEEE2FC5A77C00BEB092 /* ComputerServiceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComputerServiceType.swift; sourceTree = "<group>"; };
@@ -690,6 +692,7 @@
 				35DD84342FC855CF009E6D1F /* MkvVideoGenerationStrategy.swift */,
 				35DD84362FC8560D009E6D1F /* AviVideoGenerationStrategy.swift */,
 				35DD84382FC856BD009E6D1F /* WebmVideoGenerationStrategy.swift */,
+				35C42AC22FE433D500FF5155 /* TsVideoGenerationStrategy.swift */,
 				35DD843A2FC856F9009E6D1F /* WmvVideoGenerationStrategy.swift */,
 			);
 			path = VideoGeneration;
@@ -781,6 +784,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				35CDEF062FC5CD6000BEB092 /* ImageWritingStrategyFactoryType.swift in Sources */,
+				35C42AC32FE433D900FF5155 /* TsVideoGenerationStrategy.swift in Sources */,
 				35D2E32A2FE147F4003A13B3 /* WebPWritingStrategy.swift in Sources */,
 				3570A7B02FD9B0FF00EA8923 /* LogEntryRow.swift in Sources */,
 				35DD84532FC8AC15009E6D1F /* ComparableExtensions.swift in Sources */,

@@ -82,6 +82,7 @@ final class VideoChunkingStrategy: ChunkingStrategyType {
             case .avi: return 0.9
             case .mkv: return 0.8
             case .wmv: return 0.7
+            case .ts: return 0.8
             case .webm: return 0.5
         }
     }

@@ -8,6 +8,7 @@
 import Foundation
 
 protocol VideoGenerationStrategyType {
+    var fileService: FileServiceType { get }
     var format: VideoOutputFormat { get }
     var isSupportsStreamLoop: Bool { get }
     
@@ -17,11 +18,6 @@ protocol VideoGenerationStrategyType {
 }
 
 extension VideoGenerationStrategyType {
-    func getFileSize(at url: URL) -> Int? {
-        let attrs = try? FileManager.default.attributesOfItem(atPath: url.path)
-        return attrs?[.size] as? Int
-    }
-    
     func writeZeros(fileHandle: FileHandle, count: Int) throws {
         let chunkSize = 1024 * 1024
         let fullChunk = Data(count: chunkSize)
@@ -70,6 +66,10 @@ extension VideoGenerationStrategyType {
                     to: url,
                     padding: padding,
                     voidId: voidId)
+            case .tsNullPackets:
+                try padTsNullPackets(
+                    to: url,
+                    padding: padding)
             case .none:
                 return
         }
@@ -81,9 +81,9 @@ extension VideoGenerationStrategyType {
         outputUrl: URL,
         padFormat: VideoPaddingFormat
     ) throws {
-        let sourceSize = getFileSize(at: sourceUrl) ?? 0
+        let sourceSize = fileService.getFileSize(at: sourceUrl) ?? 0
         
-        try FileManager.default.copyItem(at: sourceUrl, to: outputUrl)
+        try fileService.copy(at: sourceUrl, to: outputUrl)
         
         if sourceSize == targetBytes { return }
         
@@ -275,6 +275,56 @@ extension VideoGenerationStrategyType {
             if dataSize > 0 {
                 try writeZeros(fileHandle: fileHandle, count: dataSize)
             }
+        }
+    }
+    
+    private func padTsNullPackets(to url: URL, padding: Int) throws {
+        guard padding > 0 else { return }
+        
+        let fileHandle = try FileHandle(forWritingTo: url)
+        defer { try? fileHandle.close() }
+        
+        try fileHandle.seekToEnd()
+        
+        let packetSize = 188
+        let fullPackets = padding / packetSize
+        let remainder = padding % packetSize
+        
+        var nullPacket = Data(count: packetSize)
+        nullPacket[0] = 0x47
+        nullPacket[1] = 0x1F
+        nullPacket[2] = 0xFF
+        nullPacket[3] = 0x10
+        
+        for i in 4..<packetSize {
+            nullPacket[i] = 0xFF
+        }
+        
+        if fullPackets > 0 {
+            let chunkPacketCount = 1024
+            let chunkDataSize = chunkPacketCount * packetSize
+            
+            var chunk = Data(count: chunkDataSize)
+            for packetOffset in stride(from: 0, to: chunkDataSize, by: packetSize) {
+                chunk.replaceSubrange(packetOffset..<(packetOffset + packetSize), with: nullPacket)
+            }
+            
+            var packetsRemaining = fullPackets
+            while packetsRemaining > 0 {
+                let batchSize = min(packetsRemaining, chunkPacketCount)
+                let batchBytes = batchSize * packetSize
+                
+                let writeData = batchSize == chunkPacketCount
+                ? chunk
+                : Data(chunk.prefix(batchBytes))
+                
+                try fileHandle.write(contentsOf: writeData)
+                packetsRemaining -= batchSize
+            }
+        }
+        
+        if remainder > 0 {
+            try writeZeros(fileHandle: fileHandle, count: remainder)
         }
     }
 }

@@ -12,12 +12,12 @@ final class VideoFileSizeService: BaseVideoGenerationService, VideoFileSizeServi
     @Injected(\.singleVideoGenerationService) private var singleVideoGenerationService
     @Injected(\.loggingService) private var loggingService
         
-    func trimToExactDurationAsync(
+    func trimToDurationExactAsync(
         sourceUrl: URL,
         duration: TimeInterval,
         outputUrl: URL,
         onOperationComplete:
-            (@Sendable (_ increment: VideoProgress) async -> Void)?
+        (@Sendable (_ increment: VideoProgress) async -> Void)?
     ) async throws {
         let args = [
             "-ss", "0",
@@ -38,49 +38,12 @@ final class VideoFileSizeService: BaseVideoGenerationService, VideoFileSizeServi
         }
     }
     
-    func trimToUndersizedThenPadAsync(
-        oversizedURL: URL,
-        videoData: VideoData,
-        undersizedTarget: Int,
-        targetBytes: Int,
-        strategy: VideoGenerationStrategyType,
-        onOperationComplete:
-            (@Sendable (_ increment: VideoProgress) async -> Void)?
-    ) async throws {
-        let trimArgs = [
-            "-ss", "0",
-            "-i", oversizedURL.path,
-            "-map", "0",
-            "-c", "copy",
-            "-fs", "\(undersizedTarget)",
-            "-avoid_negative_ts", "make_zero",
-            "-y", videoData.outputUrl.path
-        ]
-        
-        do {
-            try await ffmpegService.runAsync(arguments: trimArgs)
-        }
-        catch {
-            throw VideoGenerationError.trimToUndersize(error.localizedDescription)
-        }
-        
-        let currentSize = try await tempFileService
-            .getFileSizeAsync(at: videoData.outputUrl) ?? 0
-        let padding = targetBytes - currentSize
-        
-        if padding > 0 {
-            try strategy.padFile(to: videoData.outputUrl, padding: padding)
-        }
-        
-        await onOperationComplete?(.trimToUndershootThenPad)
-    }
-    
     func generateSmallFileExactAsync(
         videoData: VideoData,
         strategy: VideoGenerationStrategyType,
         targetBytes: Int,
         onOperationComplete:
-            (@Sendable (_ increment: VideoProgress) async -> Void)?
+        (@Sendable (_ increment: VideoProgress) async -> Void)?
     ) async throws {
         let duration = Constants.smallVideoDuration
         let bitrate = BitrateCalculator.calculateBitrate(
@@ -127,7 +90,7 @@ final class VideoFileSizeService: BaseVideoGenerationService, VideoFileSizeServi
         strategy: VideoGenerationStrategyType,
         targetBytes: Int,
         onOperationComplete:
-            (@Sendable (_ increment: VideoProgress) async -> Void)?
+        (@Sendable (_ increment: VideoProgress) async -> Void)?
     ) async throws {
         let undershootTarget = Int(Double(targetBytes) * Constants.undersizedFactor)
         guard let base = try await singleVideoGenerationService.withDoublingAsync(
@@ -187,7 +150,7 @@ final class VideoFileSizeService: BaseVideoGenerationService, VideoFileSizeServi
         previousBitrate: Int,
         duration: TimeInterval,
         onOperationComplete:
-            (@Sendable (_ increment: VideoProgress) async -> Void)?
+        (@Sendable (_ increment: VideoProgress) async -> Void)?
     ) async throws {
         let reducedBitrate = max(
             Constants.minBitrate,

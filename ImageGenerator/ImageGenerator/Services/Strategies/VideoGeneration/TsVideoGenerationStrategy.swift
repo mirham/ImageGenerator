@@ -1,18 +1,18 @@
 //
-//  MovVideoGenerationStrategy.swift
+//  TsVideoGenerationStrategy.swift
 //  ImageGenerator
 //
-//  Created by UglyGeorge on 28.05.2026.
+//  Created by UglyGeorge on 18.06.2026.
 //
 
-import Factory
 import Foundation
+import Factory
 
-final class MovVideoGenerationStrategy: VideoGenerationStrategyType {
+final class TsVideoGenerationStrategy: VideoGenerationStrategyType {
     @Injected(\.fileService) internal var fileService
     @Injected(\.computerService) private var computerService
     
-    let format: VideoOutputFormat = .mov
+    let format: VideoOutputFormat = .ts
     let isSupportsStreamLoop: Bool = true
     
     func getCodecArguments(for videoData: VideoData) -> [String] {
@@ -25,7 +25,8 @@ final class MovVideoGenerationStrategy: VideoGenerationStrategyType {
                 let bitrate = calculateBitrate(
                     for: bytes,
                     maxBitrate: 50_000_000,
-                    minBitrate: 1_000_000)
+                    minBitrate: 1_000_000
+                )
                 return computerService.isAppleSilicon()
                     ? appleSiliconFileSizeArguments(bitrate: bitrate)
                     : intelFileSizeArguments(bitrate: bitrate)
@@ -33,11 +34,13 @@ final class MovVideoGenerationStrategy: VideoGenerationStrategyType {
     }
     
     func padFile(to url: URL, padding: Int) throws {
-        try padFile(
-            to: url,
-            padding: padding,
-            format: .isoBmff(type: "free")
-        )
+        let packetSize = 188
+        
+        if padding >= packetSize {
+            try padFile(to: url, padding: padding, format: .tsNullPackets)
+        } else {
+            try padWithZeros(to: url, padding: padding)
+        }
     }
     
     func trimFile(sourceUrl: URL, targetBytes: Int, outputUrl: URL) throws {
@@ -45,7 +48,7 @@ final class MovVideoGenerationStrategy: VideoGenerationStrategyType {
             sourceUrl: sourceUrl,
             targetBytes: targetBytes,
             outputUrl: outputUrl,
-            padFormat: .isoBmff(type: "free")
+            padFormat: .tsNullPackets
         )
     }
     
@@ -60,20 +63,7 @@ final class MovVideoGenerationStrategy: VideoGenerationStrategyType {
             "-g", "600",
             "-bf", "0",
             "-pix_fmt", "yuv420p",
-            "-movflags", "+faststart"
-        ]
-    }
-    
-    private func appleSiliconFileSizeArguments(bitrate: Int) -> [String] {
-        [
-            "-c:v", "h264_videotoolbox",
-            "-allow_sw", "1",
-            "-realtime", "1",
-            "-b:v", "\(bitrate)",
-            "-g", "600",
-            "-bf", "0",
-            "-pix_fmt", "yuv420p",
-            "-movflags", "+faststart"
+            "-f", "mpegts"
         ]
     }
     
@@ -86,7 +76,21 @@ final class MovVideoGenerationStrategy: VideoGenerationStrategyType {
             "-bf", "0",
             "-tune", "fastdecode",
             "-pix_fmt", "yuv420p",
-            "-movflags", "+faststart"
+            "-f", "mpegts"
+        ]
+    }
+    
+    private func appleSiliconFileSizeArguments(bitrate: Int) -> [String] {
+        [
+            "-c:v", "h264_videotoolbox",
+            "-allow_sw", "1",
+            "-realtime", "1",
+            "-b:v", "\(bitrate)",
+            "-g", "600",
+            "-bf", "0",
+            "-pix_fmt", "yuv420p",
+            "-f", "mpegts",
+            "-muxrate", "\(bitrate + 2_000_000)"
         ]
     }
     
@@ -99,7 +103,8 @@ final class MovVideoGenerationStrategy: VideoGenerationStrategyType {
             "-bf", "0",
             "-tune", "fastdecode",
             "-pix_fmt", "yuv420p",
-            "-movflags", "+faststart"
+            "-f", "mpegts",
+            "-muxrate", "\(bitrate + 2_000_000)"
         ]
     }
 }

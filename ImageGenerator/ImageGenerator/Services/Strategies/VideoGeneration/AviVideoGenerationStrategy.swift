@@ -6,8 +6,11 @@
 //
 
 import Foundation
+import Factory
 
 final class AviVideoGenerationStrategy: VideoGenerationStrategyType {
+    @Injected(\.fileService) internal var fileService
+    
     let format: VideoOutputFormat = .avi
     let isSupportsStreamLoop: Bool = false
     

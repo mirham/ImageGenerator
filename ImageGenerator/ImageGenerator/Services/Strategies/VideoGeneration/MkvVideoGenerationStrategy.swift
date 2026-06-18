@@ -9,6 +9,7 @@ import Factory
 import Foundation
 
 final class MkvVideoGenerationStrategy: VideoGenerationStrategyType {
+    @Injected(\.fileService) internal var fileService
     @Injected(\.computerService) private var computerService
     
     let format: VideoOutputFormat = .mkv

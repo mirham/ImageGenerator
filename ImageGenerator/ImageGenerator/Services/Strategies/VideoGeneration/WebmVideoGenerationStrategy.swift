@@ -5,10 +5,11 @@
 //  Created by UglyGeorge on 28.05.2026.
 //
 
-import Factory
 import Foundation
+import Factory
 
 final class WebmVideoGenerationStrategy: VideoGenerationStrategyType {
+    @Injected(\.fileService) internal var fileService
     @Injected(\.computerService) private var computerService
     
     let format: VideoOutputFormat = .webm

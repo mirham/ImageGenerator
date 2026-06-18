@@ -20,6 +20,7 @@ enum VideoGenerationError: LocalizedError {
     case largeFileExact(String)
     case retryWithReducedBitrate(String)
     case oversizedFile(actual: Int, target: Int)
+    case tsInvalidSize(Int)
     
     var errorDescription: String? {
         switch self {
@@ -47,6 +48,8 @@ enum VideoGenerationError: LocalizedError {
                 return "Failed to retry with reduced bitrate: \(error)"
             case .oversizedFile(let actual, let target):
                 return "Generated file (\(actual) bytes) exceeds target size (\(target) bytes). Try a larger target or lower quality."
+            case .tsInvalidSize(let targetBytes):
+                return "TS target size \(targetBytes) below minimum 188-byte packet size after alignment"
         }
     }
 }

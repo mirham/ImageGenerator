@@ -200,6 +200,7 @@ extension Container {
         \.mkvVideoStrategy,
         \.aviVideoStrategy,
         \.webmVideoStrategy,
+        \.tsVideoStrategy,
         \.wmvVideoStrategy
     ]
     
@@ -338,6 +339,12 @@ extension SharedContainer {
     var webmVideoStrategy: Factory<VideoGenerationStrategyType> {
         Factory(self) {
             WebmVideoGenerationStrategy()
+        }
+    }
+    
+    var tsVideoStrategy: Factory<VideoGenerationStrategyType> {
+        Factory(self) {
+            TsVideoGenerationStrategy()
         }
     }
     
