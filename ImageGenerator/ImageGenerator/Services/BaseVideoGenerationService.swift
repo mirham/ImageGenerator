@@ -10,7 +10,7 @@ import Factory
 
 class BaseVideoGenerationService {
     @Injected(\.ffmpegService) var ffmpegService
-    @Injected(\.videoTempFileService) var tempFileService
+    @Injected(\.fileService) var fileService
     
     func inputArguments(
         videoData: VideoData,

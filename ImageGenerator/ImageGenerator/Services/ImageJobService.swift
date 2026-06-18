@@ -13,6 +13,7 @@ class ImageJobService: BaseJobService, ImageJobServiceType {
     @Injected(\.chunkingStrategyFactory) private var chunkingStrategyFactory
     @Injected(\.imageCreationService) private var imageCreationService
     @Injected(\.imageWritingService) private var imageWritingService
+    @Injected(\.fileService) private var fileService
     @Injected(\.loggingService) private var loggingService
     
     var generationTask: Task<Void, Never>?
@@ -21,6 +22,8 @@ class ImageJobService: BaseJobService, ImageJobServiceType {
         let snapshot = await MainActor.run {
             StateSnapshot(appState)
         }
+        
+        try? fileService.wipeTempFolder()
         
         generationTask = Task(priority: .utility) { [weak self] in
             guard let self

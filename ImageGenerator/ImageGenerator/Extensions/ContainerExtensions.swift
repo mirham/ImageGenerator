@@ -89,13 +89,6 @@ extension Container {
         .singleton
     }
     
-    var videoTempFileService: Factory<VideoTempFileServiceType> {
-        Factory(self) {
-            VideoTempFileService()
-        }
-        .singleton
-    }
-    
     var ffmpegService: Factory<FfmpegServiceType> {
         Factory(self) {
             FfmpegService()

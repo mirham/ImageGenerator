@@ -32,13 +32,17 @@ final class SingleVideoGenerationService: BaseVideoGenerationService, SingleVide
         onOperationComplete:
             (@Sendable (_ increment: VideoProgress) async -> Void)?
     ) async throws {
-        let baseVideoUrl = try tempFileService.makeTempVideoUrl(
-            videoData: videoData,
+        let baseVideoUrl = try fileService.makeTempFileUrl(
+            number: videoData.videoNumber,
             suffix: Constants.vfSuffixBase,
-            ext: nil)
+            outputUrl: videoData.outputUrl,
+            ext: nil
+        )
         
         defer {
-            Task { try await tempFileService.deleteFileAsync(at: baseVideoUrl) }
+            Task {
+                try await fileService.deleteFileAsync(at: baseVideoUrl)
+            }
         }
         
         let baseArguments = buildDurationArguments(
@@ -106,7 +110,7 @@ final class SingleVideoGenerationService: BaseVideoGenerationService, SingleVide
         
         guard let currentVideo = doubledVideo
         else {
-            try await tempFileService.deleteFileAsync(at: baseVideo.url)
+            try await fileService.deleteFileAsync(at: baseVideo.url)
             
             return nil
         }
@@ -121,10 +125,10 @@ final class SingleVideoGenerationService: BaseVideoGenerationService, SingleVide
             onOperationComplete: onOperationComplete
         )
         
-        try await tempFileService.deleteFileAsync(at: baseVideo.url)
+        try await fileService.deleteFileAsync(at: baseVideo.url)
         
         if currentVideo.url != baseVideo.url {
-            try await tempFileService.deleteFileAsync(at: currentVideo.url)
+            try await fileService.deleteFileAsync(at: currentVideo.url)
         }
         
         return result
@@ -138,12 +142,15 @@ final class SingleVideoGenerationService: BaseVideoGenerationService, SingleVide
         highBitrate: Bool,
         isDurationTarget: Bool,
         onOperationComplete:
-            (@Sendable (_ increment: VideoProgress) async -> Void)?
+        (@Sendable (_ increment: VideoProgress) async -> Void)?
     ) async throws -> VideoGenerationResult? {
-        let baseVideoUrl = try tempFileService.makeTempVideoUrl(
-            videoData: videoData,
+        let baseVideoUrl = try fileService.makeTempFileUrl(
+            number: videoData.videoNumber,
             suffix: Constants.vfSuffixBase,
-            ext: nil)
+            outputUrl: videoData.outputUrl,
+            ext: nil
+        )
+        
         let baseArgs = inputArguments(
             videoData: videoData,
             useHighBitrate: highBitrate)
@@ -156,16 +163,13 @@ final class SingleVideoGenerationService: BaseVideoGenerationService, SingleVide
             await onOperationComplete?(.baseFile)
         }
         catch {
-            try await tempFileService.deleteFileAsync(at: baseVideoUrl)
+            try await fileService.deleteFileAsync(at: baseVideoUrl)
             throw VideoGenerationError.baseVideo(error.localizedDescription)
         }
         
         let metric: Double = isDurationTarget
             ? Constants.baseClipDuration
-            : Double(
-                try await tempFileService.getFileSizeAsync(at: baseVideoUrl)
-                ?? 0
-            )
+            : Double(fileService.getFileSize(at: baseVideoUrl) ?? 0)
         
         return VideoGenerationResult(
             url: baseVideoUrl,
@@ -184,20 +188,25 @@ final class SingleVideoGenerationService: BaseVideoGenerationService, SingleVide
         let expectedCount = Int(log2(min(targetValue, maxChunkSize) / baseVideo.metric))
         
         while current.metric * 2 <= min(targetValue, maxChunkSize) {
-            let doubledUrl = try tempFileService.makeTempVideoUrl(
-                videoData: videoData,
+            let doubledUrl = try fileService.makeTempFileUrl(
+                number: videoData.videoNumber,
                 suffix: "d\(Int(current.metric))",
-                ext: nil)
-            let concatUrl = try tempFileService.makeTempVideoUrl(
-                videoData: videoData,
+                outputUrl: videoData.outputUrl,
+                ext: nil
+            )
+            let concatUrl = try fileService.makeTempFileUrl(
+                number: videoData.videoNumber,
                 suffix: "c\(Int(current.metric))",
-                ext: Constants.vfConcatFileExtension)
+                outputUrl: videoData.outputUrl,
+                ext: Constants.vfConcatFileExtension
+            )
             let concatContent = String(
                 format: Constants.vfConcatFileContent,
                 current.url.path,
-                current.url.path)
+                current.url.path
+            )
             
-            try await tempFileService.writeConcatList(
+            try writeConcatList(
                 content: concatContent,
                 to: concatUrl)
             
@@ -211,15 +220,15 @@ final class SingleVideoGenerationService: BaseVideoGenerationService, SingleVide
             do {
                 try await ffmpegService.runAsync(arguments: concatArguments)
                 await onOperationComplete?(.doubling(expectedCount: expectedCount))
-                try await tempFileService.deleteFileAsync(at: concatUrl)
+                try await fileService.deleteFileAsync(at: concatUrl)
             }
             catch {
-                try await tempFileService.deleteFileAsync(at: doubledUrl)
+                try await fileService.deleteFileAsync(at: doubledUrl)
                 throw VideoGenerationError.doublingPhase(error.localizedDescription)
             }
             
             if current.url != baseVideo.url {
-                try await tempFileService.deleteFileAsync(at: current.url)
+                try await fileService.deleteFileAsync(at: current.url)
             }
             
             current = VideoGenerationResult(
@@ -267,24 +276,29 @@ final class SingleVideoGenerationService: BaseVideoGenerationService, SingleVide
             )
         }
         
-        let finalUrl = try tempFileService.makeTempVideoUrl(
-            videoData: videoData,
+        let finalUrl = try fileService.makeTempFileUrl(
+            number: videoData.videoNumber,
             suffix: Constants.vfSuffixFinal,
-            ext: nil)
-        let finalConcatUrl = try tempFileService.makeTempVideoUrl(
-            videoData: videoData,
+            outputUrl: videoData.outputUrl,
+            ext: nil
+        )
+        let finalConcatFileUrl = try fileService.makeTempFileUrl(
+            number: videoData.videoNumber,
             suffix: Constants.vfSuffixConcatFinal,
-            ext: Constants.vfConcatFileExtension)
-        let concatList = concatLines.joined(separator: Constants.newLine)
+            outputUrl: videoData.outputUrl,
+            ext: Constants.vfConcatFileExtension
+        )
+        let concatList = concatLines
+            .joined(separator: Constants.newLine)
             + Constants.newLine
         
-        try await tempFileService.writeConcatList(
+        try writeConcatList(
             content: concatList,
-            to: finalConcatUrl)
+            to: finalConcatFileUrl)
         
         let finalConcatArgs = [
             "-f", "concat", "-safe", "0",
-            "-i", finalConcatUrl.path,
+            "-i", finalConcatFileUrl.path,
             "-c", "copy",
             "-y", finalUrl.path
         ]
@@ -292,15 +306,15 @@ final class SingleVideoGenerationService: BaseVideoGenerationService, SingleVide
         do {
             try await ffmpegService.runAsync(arguments: finalConcatArgs)
             await onOperationComplete?(.finalMerge)
-            try await tempFileService.deleteFileAsync(at: finalConcatUrl)
+            try await fileService.deleteFileAsync(at: finalConcatFileUrl)
         }
         catch {
-            try await tempFileService.deleteFileAsync(at: finalUrl)
+            try await fileService.deleteFileAsync(at: finalUrl)
             throw VideoGenerationError.streamLoop(error.localizedDescription)
         }
         
         if let topupUrl = topupVideo?.url {
-            try await tempFileService.deleteFileAsync(at: topupUrl)
+            try await fileService.deleteFileAsync(at: topupUrl)
         }
         
         let finalDuration = isDurationTarget
@@ -325,10 +339,12 @@ final class SingleVideoGenerationService: BaseVideoGenerationService, SingleVide
         guard topupMetric > 0
         else { return nil }
         
-        let topupUrl = try tempFileService.makeTempVideoUrl(
-            videoData: videoData,
+        let topupUrl = try fileService.makeTempFileUrl(
+            number: videoData.videoNumber,
             suffix: Constants.vfSuffixTopup,
-            ext: nil)
+            outputUrl: videoData.outputUrl,
+            ext: nil
+        )
         let (topupArgs, topupDuration) = getTopupArguments(
             currentVideo: currentVideo,
             target: target,
@@ -341,7 +357,7 @@ final class SingleVideoGenerationService: BaseVideoGenerationService, SingleVide
             await onOperationComplete?(.topup)
         }
         catch {
-            try await tempFileService.deleteFileAsync(at: topupUrl)
+            try await fileService.deleteFileAsync(at: topupUrl)
             throw VideoGenerationError.topup(error.localizedDescription)
         }
         
@@ -364,6 +380,7 @@ final class SingleVideoGenerationService: BaseVideoGenerationService, SingleVide
                     "-c", "copy", "-t", "\(topupDuration)",
                     "-y", topupURL.path
                 ]
+                
                 return (args, topupDuration)
             case .fileSize:
                 let args = [
@@ -371,7 +388,16 @@ final class SingleVideoGenerationService: BaseVideoGenerationService, SingleVide
                     "-c", "copy", "-fs", "\(Int(topupMetric))",
                     "-y", topupURL.path
                 ]
+                
                 return (args, 0)
         }
+    }
+    
+    private func writeConcatList(content: String, to url: URL) throws {
+        try content.write(
+            to: url,
+            atomically: true,
+            encoding: .utf8
+        )
     }
 }

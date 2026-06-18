@@ -13,6 +13,7 @@ class VideoJobService: BaseJobService, VideoJobServiceType {
     @Injected(\.videoGenerationStrategyFactory) private var videoGenerationStrategyFactory
     @Injected(\.chunkingStrategyFactory) private var chunkingStrategyFactory
     @Injected(\.videoGenerationService) private var videoGenerationService
+    @Injected(\.fileService) private var fileService
     @Injected(\.loggingService) private var loggingService
     
     var generationTask: Task<Void, Never>?
@@ -21,6 +22,8 @@ class VideoJobService: BaseJobService, VideoJobServiceType {
         let snapshot = await MainActor.run {
             StateSnapshot(appState)
         }
+        
+        try? fileService.wipeTempFolder()
         
         generationTask = Task(priority: .utility) { [weak self] in
             guard let self

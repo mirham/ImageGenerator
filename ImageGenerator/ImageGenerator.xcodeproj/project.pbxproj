@@ -16,8 +16,6 @@
 		3518B3492FD074A9000D6341 /* VideoGenerationResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3518B3482FD074A7000D6341 /* VideoGenerationResult.swift */; };
 		3518B34B2FD075AD000D6341 /* SingleVideoGenerationServiceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3518B34A2FD075A8000D6341 /* SingleVideoGenerationServiceType.swift */; };
 		3518B34D2FD07646000D6341 /* VideoFileSizeServiceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3518B34C2FD07644000D6341 /* VideoFileSizeServiceType.swift */; };
-		3518B34F2FD077F0000D6341 /* VideoTempFileService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3518B34E2FD077E8000D6341 /* VideoTempFileService.swift */; };
-		3518B3512FD0783D000D6341 /* VideoTempFileServiceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3518B3502FD07835000D6341 /* VideoTempFileServiceType.swift */; };
 		3518B3532FD07879000D6341 /* FfmpegServiceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3518B3522FD07873000D6341 /* FfmpegServiceType.swift */; };
 		3518B3552FD078A5000D6341 /* FfmpegService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3518B3542FD078A2000D6341 /* FfmpegService.swift */; };
 		351D96D72FE1A9C0009B08D8 /* GifAnimatedWritingStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 351D96D62FE1A9B1009B08D8 /* GifAnimatedWritingStrategy.swift */; };
@@ -86,6 +84,7 @@
 		35C42ABD2FE2F26E00FF5155 /* VideoPaddingFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35C42ABC2FE2F26700FF5155 /* VideoPaddingFormat.swift */; };
 		35C42ABF2FE3D40000FF5155 /* FileSizeCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35C42ABE2FE3D3FB00FF5155 /* FileSizeCategory.swift */; };
 		35C42AC32FE433D900FF5155 /* TsVideoGenerationStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35C42AC22FE433D500FF5155 /* TsVideoGenerationStrategy.swift */; };
+		35C42AC52FE46F4800FF5155 /* FileError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35C42AC42FE46F4300FF5155 /* FileError.swift */; };
 		35CDEEEB2FC59AE400BEB092 /* CIColorExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CDEEEA2FC59ADC00BEB092 /* CIColorExtensions.swift */; };
 		35CDEEED2FC5A6FF00BEB092 /* ComputerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CDEEEC2FC5A6F700BEB092 /* ComputerService.swift */; };
 		35CDEEEF2FC5A78200BEB092 /* ComputerServiceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CDEEEE2FC5A77C00BEB092 /* ComputerServiceType.swift */; };
@@ -159,8 +158,6 @@
 		3518B3482FD074A7000D6341 /* VideoGenerationResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoGenerationResult.swift; sourceTree = "<group>"; };
 		3518B34A2FD075A8000D6341 /* SingleVideoGenerationServiceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleVideoGenerationServiceType.swift; sourceTree = "<group>"; };
 		3518B34C2FD07644000D6341 /* VideoFileSizeServiceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoFileSizeServiceType.swift; sourceTree = "<group>"; };
-		3518B34E2FD077E8000D6341 /* VideoTempFileService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoTempFileService.swift; sourceTree = "<group>"; };
-		3518B3502FD07835000D6341 /* VideoTempFileServiceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoTempFileServiceType.swift; sourceTree = "<group>"; };
 		3518B3522FD07873000D6341 /* FfmpegServiceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FfmpegServiceType.swift; sourceTree = "<group>"; };
 		3518B3542FD078A2000D6341 /* FfmpegService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FfmpegService.swift; sourceTree = "<group>"; };
 		351D96D62FE1A9B1009B08D8 /* GifAnimatedWritingStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GifAnimatedWritingStrategy.swift; sourceTree = "<group>"; };
@@ -230,6 +227,7 @@
 		35C42ABC2FE2F26700FF5155 /* VideoPaddingFormat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPaddingFormat.swift; sourceTree = "<group>"; };
 		35C42ABE2FE3D3FB00FF5155 /* FileSizeCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileSizeCategory.swift; sourceTree = "<group>"; };
 		35C42AC22FE433D500FF5155 /* TsVideoGenerationStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TsVideoGenerationStrategy.swift; sourceTree = "<group>"; };
+		35C42AC42FE46F4300FF5155 /* FileError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileError.swift; sourceTree = "<group>"; };
 		35CDEEEA2FC59ADC00BEB092 /* CIColorExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CIColorExtensions.swift; sourceTree = "<group>"; };
 		35CDEEEC2FC5A6F700BEB092 /* ComputerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComputerService.swift; sourceTree = "<group>"; };
 		35CDEEEE2FC5A77C00BEB092 /* ComputerServiceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComputerServiceType.swift; sourceTree = "<group>"; };
@@ -396,7 +394,6 @@
 				3518B3422FD071AC000D6341 /* BaseVideoGenerationService.swift */,
 				35DD842A2FC84DB6009E6D1F /* VideoGenerationService.swift */,
 				3518B3442FD0722C000D6341 /* SingleVideoGenerationService.swift */,
-				3518B34E2FD077E8000D6341 /* VideoTempFileService.swift */,
 				3518B3462FD072BE000D6341 /* VideoFileSizeService.swift */,
 				3518B3542FD078A2000D6341 /* FfmpegService.swift */,
 				3578CCB92FC9BCA8000E82A4 /* VideoJobService.swift */,
@@ -538,8 +535,9 @@
 			isa = PBXGroup;
 			children = (
 				35D2E3212FDFF9BC003A13B3 /* ImageGenerationError.swift */,
-				3570A7B22FD9B68400EA8923 /* FfmpegError.swift */,
 				3570A7B42FD9B8BA00EA8923 /* VideoGenerationError.swift */,
+				35C42AC42FE46F4300FF5155 /* FileError.swift */,
+				3570A7B22FD9B68400EA8923 /* FfmpegError.swift */,
 			);
 			path = Errors;
 			sourceTree = "<group>";
@@ -559,7 +557,6 @@
 				35CDEF0D2FC5DF5D00BEB092 /* ImageWritingServiceType.swift */,
 				3518B34A2FD075A8000D6341 /* SingleVideoGenerationServiceType.swift */,
 				3518B34C2FD07644000D6341 /* VideoFileSizeServiceType.swift */,
-				3518B3502FD07835000D6341 /* VideoTempFileServiceType.swift */,
 				3518B3522FD07873000D6341 /* FfmpegServiceType.swift */,
 				35DD842C2FC8510F009E6D1F /* VideoGenerationServiceType.swift */,
 				35B8A13C2DD65802000CFA1B /* ImageJobServiceType.swift */,
@@ -795,7 +792,6 @@
 				35D2E32C2FE14818003A13B3 /* GifWritingStrategy.swift in Sources */,
 				35DD841A2FC721FD009E6D1F /* OutputFolderView.swift in Sources */,
 				35B8A13D2DD65807000CFA1B /* ImageJobServiceType.swift in Sources */,
-				3518B34F2FD077F0000D6341 /* VideoTempFileService.swift in Sources */,
 				3562D95D2FBDFA7700A1301B /* ImageResolution.swift in Sources */,
 				35CDEF132FC5F7A100BEB092 /* TiffWritingStrategy.swift in Sources */,
 				3514C5032C66210F004523CC /* AppDelegate.swift in Sources */,
@@ -874,6 +870,7 @@
 				3518B34D2FD07646000D6341 /* VideoFileSizeServiceType.swift in Sources */,
 				3578CCB82FC9BC86000E82A4 /* VideoJobServiceType.swift in Sources */,
 				35CDEF112FC5EFA900BEB092 /* CmykWritingStrategy.swift in Sources */,
+				35C42AC52FE46F4800FF5155 /* FileError.swift in Sources */,
 				355359922C64C8A8004C172A /* Settable.swift in Sources */,
 				3570A7A22FD9AD4F00EA8923 /* LogEntryType.swift in Sources */,
 				35B8A1472DD6642C000CFA1B /* ImageGenerationStrategyFactoryType.swift in Sources */,
@@ -897,7 +894,6 @@
 				35B8A14B2DD665CE000CFA1B /* ImageGenerationServiceType.swift in Sources */,
 				35DD84512FC8ABAD009E6D1F /* NumericStepper.swift in Sources */,
 				3514C5012C661B3E004523CC /* InfoView.swift in Sources */,
-				3518B3512FD0783D000D6341 /* VideoTempFileServiceType.swift in Sources */,
 				35DD842D2FC85113009E6D1F /* VideoGenerationServiceType.swift in Sources */,
 				3570A7B32FD9B68700EA8923 /* FfmpegError.swift in Sources */,
 				355359992C64F4BA004C172A /* ImageJobService.swift in Sources */,

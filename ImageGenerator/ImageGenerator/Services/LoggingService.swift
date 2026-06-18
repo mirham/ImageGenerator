@@ -11,12 +11,11 @@ import Factory
 
 final class LoggingService: LoggingServiceType {
     @Injected(\.appState) private var appState
-    @Injected(\.fileService) private var fileService
     
     private(set) var entriesCount = 0
     
     var isWritingToFile: Bool {
-        fileService.doesFileExist(filePath: fileUrl.path)
+        FileManager.default.fileExists(atPath: fileUrl.path)
     }
     
     private var fileUrl: URL {
@@ -114,7 +113,7 @@ final class LoggingService: LoggingServiceType {
         guard let data = line.data(using: .utf8)
         else { return }
         
-        if fileService.doesFileExist(filePath: fileUrl.path) {
+        if FileManager.default.fileExists(atPath: fileUrl.path) {
             if let handle = try? FileHandle(forWritingTo: fileUrl) {
                 handle.seekToEndOfFile()
                 handle.write(data)

@@ -37,7 +37,7 @@ final class WmvVideoGenerationStrategy: VideoGenerationStrategyType {
     
     func trimFile(sourceUrl: URL, targetBytes: Int, outputUrl: URL) throws {
         if sourceUrl != outputUrl {
-            try FileManager.default.copyItem(at: sourceUrl, to: outputUrl)
+            try fileService.copy(at: sourceUrl, to: outputUrl)
         }
         
         loggingService.write(

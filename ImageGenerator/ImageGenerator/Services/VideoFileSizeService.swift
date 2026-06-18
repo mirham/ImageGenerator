@@ -64,8 +64,7 @@ final class VideoFileSizeService: BaseVideoGenerationService, VideoFileSizeServi
             throw VideoGenerationError.smallFileExact(error.localizedDescription)
         }
         
-        let currentSize = try await tempFileService.getFileSizeAsync(
-            at: videoData.outputUrl) ?? 0
+        let currentSize = fileService.getFileSize(at: videoData.outputUrl) ?? 0
         let padding = targetBytes - currentSize
         
         if padding > 0 {
@@ -104,11 +103,11 @@ final class VideoFileSizeService: BaseVideoGenerationService, VideoFileSizeServi
         
         defer {
             Task {
-                try await tempFileService.deleteFileAsync(at: base.url)
+                try await fileService.deleteFileAsync(at: base.url)
             }
         }
         
-        guard let baseSize = try await tempFileService.getFileSizeAsync(at: base.url),
+        guard let baseSize = fileService.getFileSize(at: base.url),
               baseSize > 0
         else { return }
         
@@ -129,8 +128,7 @@ final class VideoFileSizeService: BaseVideoGenerationService, VideoFileSizeServi
             throw VideoGenerationError.largeFileExact(error.localizedDescription)
         }
         
-        let currentSize = try await tempFileService
-            .getFileSizeAsync(at: videoData.outputUrl) ?? 0
+        let currentSize = fileService.getFileSize(at: videoData.outputUrl) ?? 0
         let padding = targetBytes - currentSize
         
         if padding > 0 {
@@ -174,8 +172,7 @@ final class VideoFileSizeService: BaseVideoGenerationService, VideoFileSizeServi
             throw VideoGenerationError.retryWithReducedBitrate( error.localizedDescription)
         }
         
-        let retrySize = try await tempFileService
-            .getFileSizeAsync(at: videoData.outputUrl) ?? 0
+        let retrySize = fileService.getFileSize(at: videoData.outputUrl) ?? 0
         let retryPadding = targetBytes - retrySize
         
         guard retryPadding > 0

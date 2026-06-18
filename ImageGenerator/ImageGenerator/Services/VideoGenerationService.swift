@@ -4,7 +4,7 @@ import Factory
 final class VideoGenerationService: VideoGenerationServiceType {
     @Injected(\.singleVideoGenerationService) private var singleVideoGenerationService
     @Injected(\.videoFileSizeService) private var videoFileSizeService
-    @Injected(\.videoTempFileService) private var videoTempFileService
+    @Injected(\.fileService) private var fileService
     
     func generateAsync(
         videoData: VideoData,
@@ -83,7 +83,7 @@ final class VideoGenerationService: VideoGenerationServiceType {
         
         defer {
             Task {
-                try await videoTempFileService.deleteFileAsync(at: oversized.url)
+                try await fileService.deleteFileAsync(at: oversized.url)
             }
         }
         
@@ -146,7 +146,7 @@ final class VideoGenerationService: VideoGenerationServiceType {
         
         defer {
             Task {
-                try await videoTempFileService.deleteFileAsync(at: oversized.url)
+                try await fileService.deleteFileAsync(at: oversized.url)
             }
         }
         
@@ -155,10 +155,5 @@ final class VideoGenerationService: VideoGenerationServiceType {
             targetBytes: targetBytes,
             outputUrl: videoData.outputUrl
         )
-    }
-    
-    func getFileSize(at url: URL) -> Int? {
-        let attrs = try? FileManager.default.attributesOfItem(atPath: url.path)
-        return attrs?[.size] as? Int
     }
 }

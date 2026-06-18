@@ -172,7 +172,7 @@ struct Constants {
     static let vfConcatFileExtension = "txt"
     static let vfConcatFileContent = "file '%1$@'\nfile '%2$@'"
     static let vfConcatMergeFileContent = "file '%1$@'"
-    static let vfTempVideoUrl = "temp_%1$@_%2$lld.%3$@"
+    static let vfTempFileUrl = "temp_%1$@_%2$lld.%3$@"
     
     // MARK: Hints
     static let hintWidth = "\(minWidth)..\(maxWidth)"
