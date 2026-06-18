@@ -15,7 +15,7 @@ enum VideoGenerationError: LocalizedError {
     case topup(String)
     case finalMerge(String)
     case trimToExactDuration(String)
-    case trimToUndershoot(String)
+    case trimToUndersize(String)
     case smallFileExact(String)
     case largeFileExact(String)
     case retryWithReducedBitrate(String)
@@ -37,8 +37,8 @@ enum VideoGenerationError: LocalizedError {
                 return "Final merge generation failed: \(error)"
             case .trimToExactDuration(let error):
                 return "Failed to trim to exact duration: \(error)"
-            case .trimToUndershoot(let error):
-                return "Failed to trim to undershoot target: \(error)"
+            case .trimToUndersize(let error):
+                return "Failed to trim to undersize target: \(error)"
             case .smallFileExact(let error):
                 return "Failed to generate small exact-size video: \(error)"
             case .largeFileExact(let error):

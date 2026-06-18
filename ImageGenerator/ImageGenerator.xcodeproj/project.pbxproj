@@ -84,6 +84,7 @@
 		35C42AB92FE2D91100FF5155 /* CharExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35C42AB82FE2D90600FF5155 /* CharExtensions.swift */; };
 		35C42ABB2FE2F1E400FF5155 /* VideoPaddingOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35C42ABA2FE2F1E300FF5155 /* VideoPaddingOptions.swift */; };
 		35C42ABD2FE2F26E00FF5155 /* VideoPaddingFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35C42ABC2FE2F26700FF5155 /* VideoPaddingFormat.swift */; };
+		35C42ABF2FE3D40000FF5155 /* FileSizeCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35C42ABE2FE3D3FB00FF5155 /* FileSizeCategory.swift */; };
 		35CDEEEB2FC59AE400BEB092 /* CIColorExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CDEEEA2FC59ADC00BEB092 /* CIColorExtensions.swift */; };
 		35CDEEED2FC5A6FF00BEB092 /* ComputerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CDEEEC2FC5A6F700BEB092 /* ComputerService.swift */; };
 		35CDEEEF2FC5A78200BEB092 /* ComputerServiceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35CDEEEE2FC5A77C00BEB092 /* ComputerServiceType.swift */; };
@@ -226,6 +227,7 @@
 		35C42AB82FE2D90600FF5155 /* CharExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CharExtensions.swift; sourceTree = "<group>"; };
 		35C42ABA2FE2F1E300FF5155 /* VideoPaddingOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPaddingOptions.swift; sourceTree = "<group>"; };
 		35C42ABC2FE2F26700FF5155 /* VideoPaddingFormat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPaddingFormat.swift; sourceTree = "<group>"; };
+		35C42ABE2FE3D3FB00FF5155 /* FileSizeCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileSizeCategory.swift; sourceTree = "<group>"; };
 		35CDEEEA2FC59ADC00BEB092 /* CIColorExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CIColorExtensions.swift; sourceTree = "<group>"; };
 		35CDEEEC2FC5A6F700BEB092 /* ComputerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComputerService.swift; sourceTree = "<group>"; };
 		35CDEEEE2FC5A77C00BEB092 /* ComputerServiceType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComputerServiceType.swift; sourceTree = "<group>"; };
@@ -384,17 +386,17 @@
 				3562D9602FBE07FB00A1301B /* Builders */,
 				35B8A1412DD662CB000CFA1B /* Strategies */,
 				3549AB1A2FD720BD0014EC73 /* BitrateCalculator.swift */,
+				3578CCB52FC9BC0D000E82A4 /* BaseJobService.swift */,
 				3562D9652FBF18D800A1301B /* ImageCreationService.swift */,
 				35B8A1482DD66598000CFA1B /* ImageGenerationService.swift */,
 				35CDEF092FC5D54C00BEB092 /* ImageWritingService.swift */,
-				3518B3422FD071AC000D6341 /* BaseVideoGenerationService.swift */,
-				3518B3442FD0722C000D6341 /* SingleVideoGenerationService.swift */,
-				3518B3462FD072BE000D6341 /* VideoFileSizeService.swift */,
-				3518B34E2FD077E8000D6341 /* VideoTempFileService.swift */,
-				3518B3542FD078A2000D6341 /* FfmpegService.swift */,
-				35DD842A2FC84DB6009E6D1F /* VideoGenerationService.swift */,
-				3578CCB52FC9BC0D000E82A4 /* BaseJobService.swift */,
 				355359982C64F4BA004C172A /* ImageJobService.swift */,
+				3518B3422FD071AC000D6341 /* BaseVideoGenerationService.swift */,
+				35DD842A2FC84DB6009E6D1F /* VideoGenerationService.swift */,
+				3518B3442FD0722C000D6341 /* SingleVideoGenerationService.swift */,
+				3518B34E2FD077E8000D6341 /* VideoTempFileService.swift */,
+				3518B3462FD072BE000D6341 /* VideoFileSizeService.swift */,
+				3518B3542FD078A2000D6341 /* FfmpegService.swift */,
 				3578CCB92FC9BCA8000E82A4 /* VideoJobService.swift */,
 				35CDEEEC2FC5A6F700BEB092 /* ComputerService.swift */,
 				35D2E31F2FDFF8F1003A13B3 /* FileService.swift */,
@@ -441,6 +443,7 @@
 				35C42ABC2FE2F26700FF5155 /* VideoPaddingFormat.swift */,
 				35DD84542FC8BFED009E6D1F /* FileSizeUnit.swift */,
 				3549AB122FD6ACA80014EC73 /* FileSizeBase.swift */,
+				35C42ABE2FE3D3FB00FF5155 /* FileSizeCategory.swift */,
 				3549AB1C2FD8530A0014EC73 /* VideoProgress.swift */,
 				3570A7A12FD9AD4F00EA8923 /* LogEntryType.swift */,
 			);
@@ -784,6 +787,7 @@
 				35DD84252FC84289009E6D1F /* VideoResolution.swift in Sources */,
 				35C42ABB2FE2F1E400FF5155 /* VideoPaddingOptions.swift in Sources */,
 				3549AB132FD6ACAD0014EC73 /* FileSizeBase.swift in Sources */,
+				35C42ABF2FE3D40000FF5155 /* FileSizeCategory.swift in Sources */,
 				35D2E32C2FE14818003A13B3 /* GifWritingStrategy.swift in Sources */,
 				35DD841A2FC721FD009E6D1F /* OutputFolderView.swift in Sources */,
 				35B8A13D2DD65807000CFA1B /* ImageJobServiceType.swift in Sources */,

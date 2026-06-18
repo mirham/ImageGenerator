@@ -99,32 +99,31 @@ final class VideoGenerationService: VideoGenerationServiceType {
         strategy: VideoGenerationStrategyType,
         targetBytes: Int,
         onOperationComplete:
-            (@Sendable (_ increment: VideoProgress) async -> Void)?
+        (@Sendable (_ increment: VideoProgress) async -> Void)?
     ) async throws {
-        if targetBytes < Constants.minDoublingBytes {
-            try await videoFileSizeService.generateSmallFileExactAsync(
-                videoData: videoData,
-                strategy: strategy,
-                targetBytes: targetBytes,
-                onOperationComplete: onOperationComplete
-            )
+        switch FileSizeCategory(bytes: targetBytes) {
+            case .small:
+                try await videoFileSizeService.generateSmallFileExactAsync(
+                    videoData: videoData,
+                    strategy: strategy,
+                    targetBytes: targetBytes,
+                    onOperationComplete: onOperationComplete
+                )
+            case .large:
+                try await videoFileSizeService.generateLargeFileExactAsync(
+                    videoData: videoData,
+                    strategy: strategy,
+                    targetBytes: targetBytes,
+                    onOperationComplete: onOperationComplete
+                )
+            case .medium:
+                try await generateWithDoublingThenPadAsync(
+                    videoData: videoData,
+                    strategy: strategy,
+                    targetBytes: targetBytes,
+                    onOperationComplete: onOperationComplete
+                )
         }
-        
-        if targetBytes >= Constants.largeFileThreshold {
-            try await videoFileSizeService.generateLargeFileExactAsync(
-                videoData: videoData,
-                strategy: strategy,
-                targetBytes: targetBytes,
-                onOperationComplete: onOperationComplete
-            )
-        }
-        
-        try await generateWithDoublingThenPadAsync(
-            videoData: videoData,
-            strategy: strategy,
-            targetBytes: targetBytes,
-            onOperationComplete: onOperationComplete
-        )
     }
     
     private func generateWithDoublingThenPadAsync(
@@ -134,12 +133,12 @@ final class VideoGenerationService: VideoGenerationServiceType {
         onOperationComplete:
             (@Sendable (_ increment: VideoProgress) async -> Void)?
     ) async throws {
-        let undershootTarget = Int(Double(targetBytes) * Constants.undershootFactor)
+        let undersizedTarget = Int(Double(targetBytes) * Constants.undersizedFactor)
         
         guard let oversized = try await singleVideoGenerationService.withDoublingAsync(
             videoData: videoData,
             strategy: strategy,
-            target: VideoGenerationMode.fileSize(undershootTarget),
+            target: VideoGenerationMode.fileSize(undersizedTarget),
             useHighBitrate: true,
             onOperationComplete: onOperationComplete)
         else { return }
@@ -155,10 +154,10 @@ final class VideoGenerationService: VideoGenerationServiceType {
             targetBytes: targetBytes,
             outputUrl: videoData.outputUrl)
         
-       try await videoFileSizeService.trimToUndershootThenPadAsync(
+       try await videoFileSizeService.trimToUndersizedThenPadAsync(
             oversizedURL: oversized.url,
             videoData: videoData,
-            undershootTarget: undershootTarget,
+            undersizedTarget: undersizedTarget,
             targetBytes: targetBytes,
             strategy: strategy,
             onOperationComplete: onOperationComplete

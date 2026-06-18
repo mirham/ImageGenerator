@@ -16,10 +16,10 @@ protocol VideoFileSizeServiceType {
             (@Sendable (_ increment: VideoProgress) async -> Void)?
     ) async throws
     
-    func trimToUndershootThenPadAsync(
+    func trimToUndersizedThenPadAsync(
         oversizedURL: URL,
         videoData: VideoData,
-        undershootTarget: Int,
+        undersizedTarget: Int,
         targetBytes: Int,
         strategy: VideoGenerationStrategyType,
         onOperationComplete:

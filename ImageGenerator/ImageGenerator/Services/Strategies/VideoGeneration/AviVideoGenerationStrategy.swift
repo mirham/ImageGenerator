@@ -75,7 +75,7 @@ final class AviVideoGenerationStrategy: VideoGenerationStrategyType {
         guard let sourceSize = getFileSize(at: sourceUrl)
         else { return }
         
-        let undershoot = Int(Double(targetBytes) * Constants.undershootFactor)
+        let undershoot = Int(Double(targetBytes) * Constants.undersizedFactor)
         
         try FileManager.default.copyItem(at: sourceUrl, to: outputUrl)
         

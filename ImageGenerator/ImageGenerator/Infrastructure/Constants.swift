@@ -67,7 +67,7 @@ struct Constants {
     static let defaultOvershootMultiplier = 1.2
     static let minStreamLoopDuration: TimeInterval = 30
     static let minDoublingBytes: Int = Int(50 * kibi * kibi)
-    static let undershootFactor: Double = 0.95
+    static let undersizedFactor: Double = 0.95
     static let largeFileThreshold: Int = Int(10 * kibi * kibi * kibi)
     static let minBitrate: Int = 100_000
     static let defaultStartAt: Int = 1
@@ -261,6 +261,7 @@ struct Constants {
     static let lmPhotoGenerationFailed = "Failed to generate photo %lld: %@"
     static let lmVideoGenerationFailed = "Failed to generate video %lld: %@"
     static let lmVideoWmvSizeWarning = "WMV cannot be padded exactly, accept approximate size"
+    static let lmVideoSizeTooSmallToExactSize = "Cannot achieve a target file size of %d bytes, the minimum file size with current settings is %d bytes"
     
     // MARK: About
     static let aboutSupportMail = "bWlyaGFtQGFidi5iZw=="

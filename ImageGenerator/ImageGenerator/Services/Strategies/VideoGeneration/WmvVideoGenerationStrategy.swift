@@ -5,10 +5,12 @@
 //  Created by UglyGeorge on 28.05.2026.
 //
 
-import Factory
 import Foundation
+import Factory
 
 final class WmvVideoGenerationStrategy: VideoGenerationStrategyType {
+    @Injected(\.loggingService) var loggingService
+    
     let format: VideoOutputFormat = .wmv
     let isSupportsStreamLoop: Bool = false
     
@@ -24,7 +26,10 @@ final class WmvVideoGenerationStrategy: VideoGenerationStrategyType {
     }
     
     func padFile(to url: URL, padding: Int) {
-        // WMV cannot be padded exactly, accept approximate
+        loggingService.write(
+            message: Constants.lmVideoWmvSizeWarning,
+            type: .warning
+        )
     }
     
     func trimFile(

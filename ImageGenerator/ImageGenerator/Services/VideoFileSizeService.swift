@@ -10,6 +10,7 @@ import Factory
 
 final class VideoFileSizeService: BaseVideoGenerationService, VideoFileSizeServiceType {
     @Injected(\.singleVideoGenerationService) private var singleVideoGenerationService
+    @Injected(\.loggingService) private var loggingService
         
     func trimToExactDurationAsync(
         sourceUrl: URL,
@@ -37,10 +38,10 @@ final class VideoFileSizeService: BaseVideoGenerationService, VideoFileSizeServi
         }
     }
     
-    func trimToUndershootThenPadAsync(
+    func trimToUndersizedThenPadAsync(
         oversizedURL: URL,
         videoData: VideoData,
-        undershootTarget: Int,
+        undersizedTarget: Int,
         targetBytes: Int,
         strategy: VideoGenerationStrategyType,
         onOperationComplete:
@@ -51,17 +52,16 @@ final class VideoFileSizeService: BaseVideoGenerationService, VideoFileSizeServi
             "-i", oversizedURL.path,
             "-map", "0",
             "-c", "copy",
-            "-fs", "\(undershootTarget)",
+            "-fs", "\(undersizedTarget)",
             "-avoid_negative_ts", "make_zero",
             "-y", videoData.outputUrl.path
         ]
         
         do {
             try await ffmpegService.runAsync(arguments: trimArgs)
-            await onOperationComplete?(.trimToUndershootThenPad)
         }
         catch {
-            throw VideoGenerationError.trimToUndershoot(error.localizedDescription)
+            throw VideoGenerationError.trimToUndersize(error.localizedDescription)
         }
         
         let currentSize = try await tempFileService
@@ -71,6 +71,8 @@ final class VideoFileSizeService: BaseVideoGenerationService, VideoFileSizeServi
         if padding > 0 {
             try strategy.padFile(to: videoData.outputUrl, padding: padding)
         }
+        
+        await onOperationComplete?(.trimToUndershootThenPad)
     }
     
     func generateSmallFileExactAsync(
@@ -85,7 +87,7 @@ final class VideoFileSizeService: BaseVideoGenerationService, VideoFileSizeServi
             targetBytes: targetBytes,
             duration: duration)
         
-        let args = buildFileSizeArguments(
+        let arguments = buildFileSizeArguments(
             videoData: videoData,
             strategy: strategy,
             bitrate: bitrate,
@@ -93,8 +95,7 @@ final class VideoFileSizeService: BaseVideoGenerationService, VideoFileSizeServi
         )
         
         do {
-            try await ffmpegService.runAsync(arguments: args)
-            await onOperationComplete?(.generateSmallFileExact)
+            try await ffmpegService.runAsync(arguments: arguments)
         }
         catch {
             throw VideoGenerationError.smallFileExact(error.localizedDescription)
@@ -117,6 +118,8 @@ final class VideoFileSizeService: BaseVideoGenerationService, VideoFileSizeServi
             duration: duration,
             onOperationComplete: onOperationComplete
         )
+        
+        await onOperationComplete?(.generateSmallFileExact)
     }
     
     func generateLargeFileExactAsync(
@@ -126,7 +129,7 @@ final class VideoFileSizeService: BaseVideoGenerationService, VideoFileSizeServi
         onOperationComplete:
             (@Sendable (_ increment: VideoProgress) async -> Void)?
     ) async throws {
-        let undershootTarget = Int(Double(targetBytes) * Constants.undershootFactor)
+        let undershootTarget = Int(Double(targetBytes) * Constants.undersizedFactor)
         guard let base = try await singleVideoGenerationService.withDoublingAsync(
             videoData: videoData,
             strategy: strategy,
@@ -158,7 +161,6 @@ final class VideoFileSizeService: BaseVideoGenerationService, VideoFileSizeServi
         
         do {
             try await ffmpegService.runAsync(arguments: loopArguments)
-            await onOperationComplete?(.streamLoopLargeFile)
         }
         catch {
             throw VideoGenerationError.largeFileExact(error.localizedDescription)
@@ -171,6 +173,8 @@ final class VideoFileSizeService: BaseVideoGenerationService, VideoFileSizeServi
         if padding > 0 {
             try strategy.padFile(to: videoData.outputUrl, padding: padding)
         }
+        
+        await onOperationComplete?(.streamLoopLargeFile)
     }
     
     // MARK: Private functions
@@ -212,7 +216,17 @@ final class VideoFileSizeService: BaseVideoGenerationService, VideoFileSizeServi
         let retryPadding = targetBytes - retrySize
         
         guard retryPadding > 0
-        else { return }
+        else {
+            loggingService.write(
+                message: String(
+                    format: Constants.lmVideoSizeTooSmallToExactSize,
+                    targetBytes,
+                    retrySize
+                ),
+            type: .warning)
+            
+            return
+        }
         
         try strategy.padFile(to: videoData.outputUrl, padding: retryPadding)
     }
