@@ -18,12 +18,13 @@ class BaseVideoGenerationService {
         let colorSource = "color=c=#\(randomBackgroundColor()):size=\(Int(videoData.size.width))x\(Int(videoData.size.height)):rate=\(Constants.defaultFrameRate)"
         
         if useHighBitrate {
+            let noiseSource = "nullsrc=size=\(Int(videoData.size.width))x\(Int(videoData.size.height)):rate=\(Constants.defaultFrameRate),format=yuv420p,noise=alls=100:allf=t+u"
             return [
                 "-f", "lavfi", "-i", colorSource,
-                "-f", "lavfi", "-i", "nullsrc=size=\(Int(videoData.size.width))x\(Int(videoData.size.height)):rate=\(Constants.defaultFrameRate),geq=random(1)*255:128:128",
+                "-f", "lavfi", "-i", noiseSource,
                 "-filter_complex",
                 "[0:v][1:v]blend=all_mode=overlay:all_opacity=0.5,\(drawNumberOverlay(videoData: videoData))",
-                "-an", 
+                "-an",
                 "-sn"
             ]
         } else {

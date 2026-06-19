@@ -67,19 +67,6 @@ final class TsVideoGenerationStrategy: VideoGenerationStrategyType {
         ]
     }
     
-    private func intelDurationArguments() -> [String] {
-        [
-            "-c:v", "libx264",
-            "-preset", "ultrafast",
-            "-crf", "28",
-            "-g", "600",
-            "-bf", "0",
-            "-tune", "fastdecode",
-            "-pix_fmt", "yuv420p",
-            "-f", "mpegts"
-        ]
-    }
-    
     private func appleSiliconFileSizeArguments(bitrate: Int) -> [String] {
         [
             "-c:v", "h264_videotoolbox",
@@ -91,6 +78,19 @@ final class TsVideoGenerationStrategy: VideoGenerationStrategyType {
             "-pix_fmt", "yuv420p",
             "-f", "mpegts",
             "-muxrate", "\(bitrate + 2_000_000)"
+        ]
+    }
+    
+    private func intelDurationArguments() -> [String] {
+        [
+            "-c:v", "libx264",
+            "-preset", "ultrafast",
+            "-crf", "28",
+            "-g", "600",
+            "-bf", "0",
+            "-tune", "fastdecode",
+            "-pix_fmt", "yuv420p",
+            "-f", "mpegts"
         ]
     }
     

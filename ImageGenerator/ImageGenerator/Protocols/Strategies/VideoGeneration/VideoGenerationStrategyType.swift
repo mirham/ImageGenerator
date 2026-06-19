@@ -19,7 +19,7 @@ protocol VideoGenerationStrategyType {
 
 extension VideoGenerationStrategyType {
     func writeZeros(fileHandle: FileHandle, count: Int) throws {
-        let chunkSize = 1024 * 1024
+        let chunkSize = Int(Constants.kibi * Constants.kibi)
         let fullChunk = Data(count: chunkSize)
         var remaining = count
         
