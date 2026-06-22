@@ -19,50 +19,22 @@ final class HeicWritingStrategy: ImageWritingStrategyType {
         try validateColorSpace(options.colorSpace)
         
         let destinationUrl = folder.appendingPathComponent(options.fileName)
-        let data = try generateHeicData(from: image, options: options)
         
-        if options.ppi == Constants.defaultPpi {
-            try data.write(to: destinationUrl, options: .atomic)
-            
-            return
-        }
-        
-        try writeWithCustomPpi(
-            data: data,
-            to: destinationUrl,
-            ppi: options.ppi
-        )
+        try writeHeic(image: image, options: options, to: destinationUrl)
     }
     
     // MARK: Private functions
     
-    private func generateHeicData(
-        from image: CIImage,
-        options: ImageOutputOptions) throws -> Data {
-        let representationOptions: [CIImageRepresentationOption: Any] = [
-            .init(rawValue: kCGImageDestinationLossyCompressionQuality as String): Constants.defaultJpegQuality,
-            .init(rawValue: kCGImagePropertyOrientation as String): 1
-        ]
-        
-        guard let result = options.context.heifRepresentation(
-            of: image,
+    private func writeHeic(
+        image: CIImage,
+        options: ImageOutputOptions,
+        to url: URL) throws {
+        guard let cgImage = options.context.createCGImage(
+            image,
+            from: image.extent,
             format: .RGBA8,
-            colorSpace: options.colorSpace.cgColorSpace,
-            options: representationOptions
-        ) else {
-            throw ImageGenerationError.generationFailed
-        }
-        
-        return result
-    }
-    
-    private func writeWithCustomPpi(
-        data: Data,
-        to url: URL,
-        ppi: Double) throws {
-        guard let source = CGImageSourceCreateWithData(data as CFData, nil),
-              let cgImage = CGImageSourceCreateImageAtIndex(source, 0, nil)
-        else { throw ImageGenerationError.imageSourceCreationFailed }
+            colorSpace: options.colorSpace.cgColorSpace)
+        else { throw ImageGenerationError.generationFailed }
         
         guard let destination = CGImageDestinationCreateWithURL(
             url as CFURL,
@@ -73,15 +45,14 @@ final class HeicWritingStrategy: ImageWritingStrategyType {
         
         let properties: [CFString: Any] = [
             kCGImageDestinationLossyCompressionQuality: Constants.defaultHeicQuality,
-            kCGImagePropertyDPIWidth: ppi,
-            kCGImagePropertyDPIHeight: ppi
+            kCGImagePropertyDPIWidth: options.ppi,
+            kCGImagePropertyDPIHeight: options.ppi,
+            kCGImagePropertyTIFFDictionary: [
+                kCGImagePropertyTIFFOrientation: 1
+            ]
         ]
         
-        CGImageDestinationAddImage(
-            destination,
-            cgImage,
-            properties as CFDictionary
-        )
+        CGImageDestinationAddImage(destination, cgImage, properties as CFDictionary)
         
         try finalize(destination: destination)
     }

@@ -32,19 +32,16 @@ final class ImageWritingStrategyFactory: ImageWritingStrategyFactoryType {
         let isAnimated: Bool
         
         func matches(_ strategy: any ImageWritingStrategyType) -> Bool {
-            if colorSpace == .cmyk {
-                return strategy.colorSpace == .cmyk
+            switch (colorSpace, outputFormat, isAnimated) {
+                case (.cmyk, _, _):
+                    return strategy.colorSpace == .cmyk
+                case (_, .gif, true):
+                    return strategy.outputFormat == .gif && strategy.isAnimated
+                case (_, .jpg, _):
+                    return strategy.outputFormat == .jpeg
+                default:
+                    return strategy.outputFormat == outputFormat
             }
-            
-            if outputFormat == .gif && isAnimated {
-                return strategy.outputFormat == .gif && strategy.isAnimated
-            }
-            
-            if outputFormat == .jpg {
-                return strategy.outputFormat == .jpeg
-            }
-            
-            return strategy.outputFormat == outputFormat
         }
     }
 }

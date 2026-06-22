@@ -56,16 +56,14 @@ final class DuplicateImageStrategy: ImageGenerationStrategyType {
         imageData.originalImagePath = path
         loadOriginalImage(imageData: imageData)
         
-        if let image = imageData.originalImage {
-            await cacheActor.set(
-                ImageCache(
-                    path: path,
-                    image: image,
-                    isAnimated: imageData.isAnimated,
-                    outputFormat: imageData.outputFormat
-                )
+        await cacheActor.set(
+            ImageCache(
+                path: path,
+                image: imageData.originalImage,
+                isAnimated: imageData.isAnimated,
+                outputFormat: imageData.outputFormat
             )
-        }
+        )
         
         await cacheActor.setLoading(false)
         await cacheActor.resumeWaiters()
@@ -123,7 +121,7 @@ final class DuplicateImageStrategy: ImageGenerationStrategyType {
     
     private struct ImageCache {
         let path: URL
-        let image: CIImage
+        let image: CIImage?
         let isAnimated: Bool
         let outputFormat: ImageOutputFormat
     }
