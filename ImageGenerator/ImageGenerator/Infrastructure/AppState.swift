@@ -11,6 +11,7 @@ import Foundation
 class AppState : ObservableObject {
     @Published var userData = UserData() { didSet { setGenerationTotalCount() } }
     @Published var generation = Generation()
+    @Published var system = System()
     @Published var log = [LogEntry]()
     
     static let shared = AppState()
@@ -99,6 +100,29 @@ class AppState : ObservableObject {
 }
 
 extension AppState {
+    struct System:  Settable, Equatable {
+        var ffmpegPath : String = String() {
+            didSet {
+                writeSetting(
+                    newValue: ffmpegPath,
+                    key: Constants.settingsKeyFfmpegPath)
+            }
+        }
+        
+        init() {
+            ffmpegPath = readSetting(key: Constants.settingsKeyFfmpegPath)
+                ?? String()
+        }
+        
+        static func == (lhs: System, rhs: System) -> Bool {
+            let result = lhs.ffmpegPath == rhs.ffmpegPath
+            
+            return result
+        }
+    }
+}
+
+extension AppState {
     struct Generation {
         var inProgress : Bool = false
         var isCancelRequested: Bool = false
@@ -112,7 +136,7 @@ extension AppState {
 }
 
 extension AppState {
-    struct UserData : Settable, Equatable {
+    struct UserData: Settable, Equatable {
         var mode: GenerationMode = GenerationMode.generateImages {
             didSet {
                 writeSetting(

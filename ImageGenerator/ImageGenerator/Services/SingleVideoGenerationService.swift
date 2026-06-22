@@ -185,7 +185,8 @@ final class SingleVideoGenerationService: BaseVideoGenerationService, SingleVide
         onOperationComplete: (@Sendable (_ increment: VideoProgress) async -> Void)?
     ) async throws -> VideoGenerationResult? {
         var current = baseVideo
-        let expectedCount = Int(log2(min(targetValue, maxChunkSize) / baseVideo.metric))
+        let divider = max(baseVideo.metric, 1)
+        let expectedCount = Int(log2(min(targetValue, maxChunkSize) / divider))
         
         while current.metric * 2 <= min(targetValue, maxChunkSize) {
             let doubledUrl = try fileService.makeTempFileUrl(

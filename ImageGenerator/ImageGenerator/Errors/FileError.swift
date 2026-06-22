@@ -16,6 +16,7 @@ enum FileError: LocalizedError {
     case directoryCreationFailed(String)
     case deletionFailed(String)
     case wipeFailed(String)
+    case quarantineRemovalFailed(String)
     
     var errorDescription: String? {
         switch self {
@@ -35,6 +36,8 @@ enum FileError: LocalizedError {
                 return "Failed to delete file at: '\(path)'"
             case .wipeFailed(let path):
                 return "Failed to wipe folder at: '\(path)'"
+            case .quarantineRemovalFailed(let path):
+                return "Failed to remove quarantine attribute from: \(path)"
         }
     }
 }

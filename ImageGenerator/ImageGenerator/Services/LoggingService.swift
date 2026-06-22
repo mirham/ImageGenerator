@@ -11,18 +11,20 @@ import Factory
 
 final class LoggingService: LoggingServiceType {
     @Injected(\.appState) private var appState
+    @Injected(\.fileService) private var fileService
     
     private(set) var entriesCount = 0
     
     var isWritingToFile: Bool {
-        FileManager.default.fileExists(atPath: fileUrl.path)
+        fileService.doesFileExist(filePath: fileUrl.path)
     }
     
     private var fileUrl: URL {
         let dateString = fileDateFormatter.string(from: .now)
-        return logsDir.appendingPathComponent("\(dateString).\(Constants.logExtension)")
+        return logsFolder.appendingPathComponent("\(dateString).\(Constants.logExtension)")
     }
-    private let logsDir: URL
+    
+    private lazy var logsFolder: URL = { getOrCreateLogsFolder() }()
     
     private let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -37,16 +39,7 @@ final class LoggingService: LoggingServiceType {
         return formatter
     }()
     
-    init() {
-        let appSupport = FileManager.default.urls(
-            for: .applicationSupportDirectory,
-            in: .userDomainMask).first!
-        logsDir = appSupport.appendingPathComponent(Constants.logPath)
-        
-        try? FileManager.default.createDirectory(
-            at: logsDir,
-            withIntermediateDirectories: true)
-        
+    deinit {
         cleanOldLogs()
     }
     
@@ -95,17 +88,45 @@ final class LoggingService: LoggingServiceType {
     }
     
     func openCurrentLog() {
-        guard FileManager.default.fileExists(atPath: fileUrl.path)
+        guard fileService.doesFileExist(filePath: fileUrl.path)
         else { return }
         
         NSWorkspace.shared.open(fileUrl)
     }
     
     func openLogsFolder() {
-        NSWorkspace.shared.open(logsDir)
+        NSWorkspace.shared.open(logsFolder)
     }
     
     // MARK: Private functions
+    
+    private func getOrCreateLogsFolder() -> URL {
+        do {
+            let appSupport = try fileService.getAppSupportFolder()
+            let logsFolder = appSupport.appendingPathComponent(Constants.logPath)
+            
+            if !fileService.doesFolderExist(folderPath: logsFolder.path) {
+                try fileService.fileManager.createDirectory(
+                    at: logsFolder,
+                    withIntermediateDirectories: true
+                )
+            }
+            
+            return logsFolder
+        }
+        catch {
+            write(
+                message: String(
+                    format: Constants.lmLogFilesFolderCreationFailed,
+                    error.localizedDescription),
+                type: .error
+            )
+            
+            return fileService.fileManager
+                .temporaryDirectory
+                .appendingPathComponent(Constants.logPath)
+        }
+    }
     
     private func writeToFile(_ entry: LogEntry) {
         let line = "\(dateFormatter.string(from: entry.date)) [\(entry.type.description.uppercased())] \(entry.message)\(Constants.newline)"
@@ -113,7 +134,7 @@ final class LoggingService: LoggingServiceType {
         guard let data = line.data(using: .utf8)
         else { return }
         
-        if FileManager.default.fileExists(atPath: fileUrl.path) {
+        if fileService.doesFileExist(filePath: fileUrl.path) {
             if let handle = try? FileHandle(forWritingTo: fileUrl) {
                 handle.seekToEndOfFile()
                 handle.write(data)
@@ -125,7 +146,10 @@ final class LoggingService: LoggingServiceType {
     }
     
     private func cleanOldLogs() {
-        guard let files = try? FileManager.default.contentsOfDirectory(at: logsDir, includingPropertiesForKeys: [.creationDateKey]) else { return }
+        guard let files = try? fileService.fileManager.contentsOfDirectory(
+            at: logsFolder,
+            includingPropertiesForKeys: [.creationDateKey])
+        else { return }
         
         let cutoffDate = Calendar.current.date(
             byAdding: .day,
@@ -138,7 +162,9 @@ final class LoggingService: LoggingServiceType {
                   fileDate < cutoffDate
             else { continue }
             
-            try? FileManager.default.removeItem(at: file)
+            Task {
+                try? await fileService.deleteFileAsync(at: file)
+            }
         }
     }
 }

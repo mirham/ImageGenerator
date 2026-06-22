@@ -13,6 +13,7 @@ struct ActionsView: MediaGeneratorView, LogDependentView {
     
     @Injected(\.imageJobService) private var imageJobService
     @Injected(\.videoJobService) private var videoJobService
+    @Injected(\.computerService) private var computerService
     @Injected(\.fileService) private var fileService
     @Injected(\.loggingService) private var loggingService
     
@@ -184,6 +185,7 @@ struct ActionsView: MediaGeneratorView, LogDependentView {
         appState.generation.isCancelRequested = true
         imageJobService.generationTask?.cancel()
         videoJobService.generationTask?.cancel()
+        computerService.terminateAppProcesses()
     }
     
     private func resetProgress() {

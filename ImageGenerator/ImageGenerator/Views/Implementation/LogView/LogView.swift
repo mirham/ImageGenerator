@@ -37,6 +37,7 @@ struct LogView: View {
                 logRecordsView
             }
         }
+        .safeGlassEffect()
     }
     
     // MARK: View sections

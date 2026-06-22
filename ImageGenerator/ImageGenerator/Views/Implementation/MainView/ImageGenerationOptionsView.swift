@@ -18,10 +18,13 @@ struct ImageGenerationOptionsView: MediaGeneratorView {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
+            Spacer()
             CountView()
             formatPicker
             colorSpacePicker
             resolutionPicker
+            NamingView()
+            OutputFolderView()
         }
         .onAppear(perform: initValues)
     }

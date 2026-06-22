@@ -17,7 +17,10 @@ struct MainView: MediaGeneratorView {
     var body: some View {
         VStack {
             tabsSection
-            controlsSection
+                .disabled(appState.generation.inProgress)
+            ActionsView()
+            LogSummaryView()
+            Spacer()
         }
         .safeGlassEffect()
         .onAppear(perform: initValues)
@@ -33,7 +36,6 @@ struct MainView: MediaGeneratorView {
             generateVideosTab
         }
         .tabViewStyle(.automatic)
-        .disabled(appState.generation.inProgress)
         .safeToolbarGlassEffect()
         .onAppear() { setupWindow(for: selectedTab) }
         .onChange(of: selectedTab) { _, newTab in setupWindow(for: newTab) }
@@ -42,39 +44,29 @@ struct MainView: MediaGeneratorView {
     @ViewBuilder
     private var generateImagesTab: some View {
         ImageGenerationOptionsView()
-            .tabItem {
-                Text(Constants.tabGenerateImages)
-            }
-            .tag(Constants.tabIdGenerateImages)
+        .tabItem {
+            Text(Constants.tabGenerateImages)
+        }
+        .tag(Constants.tabIdGenerateImages)
     }
     
     @ViewBuilder
     private var duplicateImagesTab: some View {
         ImageDuplicationOptionsView()
-            .tabItem {
-                Text(Constants.tabDuplicateImages)
-            }
-            .tag(Constants.tabIdDuplicateImage)
+        .tabItem {
+            Text(Constants.tabDuplicateImages)
+        }
+        .tag(Constants.tabIdDuplicateImage)
     }
     
     @ViewBuilder
     private var generateVideosTab: some View {
         VideoGenerationOptionsView()
-            .tabItem {
-                Text(Constants.tabGenerateVideos)
-            }
-            .tag(Constants.tabIdGenerateVideos)
-    }
-    
-    @ViewBuilder
-    private var controlsSection: some View {
-        VStack(alignment: .leading) {
-            NamingView()
-            OutputFolderView()
-            ActionsView()
-            LogSummaryView()
-            Spacer()
+        .tabItem {
+            Text(Constants.tabGenerateVideos)
         }
+        .tag(Constants.tabIdGenerateVideos)
+        .requiresFfmpeg()
     }
     
     // MARK: Private functions
@@ -115,14 +107,12 @@ struct MainView: MediaGeneratorView {
     
     private func getWindowSize(for tab: Int) -> CGSize {
         switch tab {
-            case Constants.tabIdGenerateImages:
-                return CGSize(width: 570, height: 620)
             case Constants.tabIdDuplicateImage:
-                return CGSize(width: 570, height: 340)
+                return CGSize(width: 570, height: 370)
             case Constants.tabIdGenerateVideos:
-                return CGSize(width: 570, height: 680)
+                return CGSize(width: 570, height: 710)
             default:
-                return CGSize(width: 570, height: 600)
+                return CGSize(width: 570, height: 650)
         }
     }
 }

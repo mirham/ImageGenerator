@@ -32,8 +32,11 @@ struct ImageDuplicationOptionsView: MediaGeneratorView {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
+            Spacer()
             CountView()
             duplicatingImageControls
+            NamingView()
+            OutputFolderView()
         }
         .onAppear(perform: initValues)
     }

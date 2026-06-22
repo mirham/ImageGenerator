@@ -74,6 +74,8 @@ struct Constants {
     static let tempFolder = "Image_Generator_Tmp_Video"
     static let defaultVideoChunkSize: Int = Int(kibi * kibi)
     static let jpeg2000: CFString = "public.jpeg-2000" as CFString
+    static let appSupportFolder = "\(Bundle.main.bundleIdentifier ?? appName)"
+    static let downloadBaseUrl = "\(aboutGitHubLink)/releases/latest/download/"
     
     // MARK: Settings key names
     static let settingsKeyMode = "mode"
@@ -95,6 +97,7 @@ struct Constants {
     static let settingsKeyInputImage = "image"
     static let settingsPrefix = "prefix"
     static let settingsPostfix = "postfix"
+    static let settingsKeyFfmpegPath = "ffmpeg-path"
     
     // MARK: Icons
     static let iconImages = "photo.stack"
@@ -110,6 +113,8 @@ struct Constants {
     static let iconSummaryError = "xmark.octagon.fill"
     static let iconSummaryWarning = "exclamationmark.triangle.fill"
     static let iconSummaryShowLog = "chevron.right"
+    static let iconOk = "checkmark.circle.fill"
+    static let iconWarning = "exclamationmark.triangle"
     
     // MARK: Tab tags
     static let tabIdGenerateImages = 0
@@ -125,9 +130,25 @@ struct Constants {
     static let sysctlbynamePhysicalCores = "hw.physicalcpu"
     static let sysctlbynameCpuType = "hw.cputype"
     
+    // MARK: Shell
+    static let shellPath = "/bin/zsh"
+    static let shellLoginFlag = "-l"
+    static let shellCommandFlag = "-c"
+    static let shellCommand = "command -v ffmpeg"
+    
     // MARK: ffmpeg
-    static let ffmpegAppleSilicon = "ffmpeg-arm64"
-    static let ffmpegIntel = "ffmpeg-x86_64"
+    static let ffmpegAppleSilicon = "ffmpeg-apple-silicon"
+    static let ffmpegIntel = "ffmpeg-intel"
+    static let ffmpegBinaryName = "ffmpeg"
+    static let ffmpegInternalPath = "/ffmpeg"
+    static let ffmpegVersionFlag = "-version"
+    static let ffmpegVersionPrefix = "ffmpeg version"
+    static let ffmpegFound = "FFMPEG found at: %@, version: %@, source: %@"
+    static let ffmpegKnownInstallPaths = [
+        "/opt/homebrew/bin/ffmpeg", // Homebrew, Apple Silicon
+        "/usr/local/bin/ffmpeg",    // Homebrew, Intel (or under Rosetta)
+        "/opt/local/bin/ffmpeg"     // MacPorts
+    ]
     static let ffmpegNoisePatterns = [
         "ffmpeg version", "built with", "configuration:",
         "libav", "libsw", "libpostproc", "sized interval",
@@ -207,6 +228,8 @@ struct Constants {
     static let fileSize = "File size:"
     static let duration = "Duration:"
     static let unknown = "unknown"
+    static let checkingFfmpeg = "Checking for FFmpeg…"
+    static let foundFfmpeg = "FFmpeg found"
     
     // MARK: Tab names
     static let tabGenerateImages = "Generate Images"
@@ -227,6 +250,13 @@ struct Constants {
     static let dialogBodyMissingInputFile = "Please select a valid input image file."
     static let dialogHeaderMissingOutputFolder = "Output Folder Not Found"
     static let dialogBodyMissingOutputFolder = "Please select a valid output folder."
+    static let dialogHeaderFfmpegNotInstalled = "FFmpeg isn't installed"
+    static let dialogDescriptionFfmpegNotInstalled = "Video processing requires FFmpeg. Download it automatically, or point to a binary you already have."
+    static let dialogButtonDownloadFfmpeg = "Download FFmpeg"
+    static let dialogButtonSelectFfmpeg = "Select Binary…"
+    static let dialogProgressBarDownloadingFfmpeg = "Downloading FFmpeg… %d%%"
+    static let dialogInstallingFfmpeg = "Installing…"
+    static let dialogInvalidFfmpegBinary = "That file doesn't look like a valid FFmpeg binary."
     
     // MARK: Symbols
     static let slash = "/"
@@ -247,7 +277,7 @@ struct Constants {
     
     // MARK: Log
     static let logExtension = "log"
-    static let logPath = "\(appName)/Logs"
+    static let logPath = "/Logs"
     static let logMaxInMemoryEntries = 500
     static let logMaxLogAgeDays = 30
     static let logSummaryErrors = "%d errors "
@@ -263,6 +293,7 @@ struct Constants {
     static let lmVideoWmvPadSizeWarning = "WMV cannot be padded exactly, accept approximate size"
     static let lmVideoWmvTrimSizeWarning = "WMV cannot be trimmed exactly, accept approximate size"
     static let lmVideoSizeTooSmallToExactSize = "Cannot achieve a target file size of %d bytes, the minimum file size with current settings is %d bytes"
+    static let lmLogFilesFolderCreationFailed = "Failed to create a folder for log files: %@"
     
     // MARK: About
     static let aboutSupportMail = "bWlyaGFtQGFidi5iZw=="
