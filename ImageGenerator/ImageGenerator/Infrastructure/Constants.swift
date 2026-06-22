@@ -167,7 +167,8 @@ struct Constants {
         "->",
         "compatible_brands",
         "Side data",
-        "cpb"
+        "cpb",
+        "Last message repeated"
     ]
     static let ffmpegErrorPatterns = [
         "error", "invalid", "failed", "no such file",

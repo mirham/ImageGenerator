@@ -50,7 +50,7 @@ enum ImageOutputFormat : Int, CaseIterable, Identifiable, Codable, Equatable, De
             case .jpg, .jpeg, .png:
                 return [.sRGB, .p3, .adobeRGB, .cmyk, .greyscale]
             case .bmp:
-                return [.sRGB, .cmyk]
+                return [.rgb, .sRGB, .cmyk]
             case .tiff:
                 return [.rgb, .sRGB, .p3, .adobeRGB, .cmyk, .greyscale]
             case .heic:
