@@ -29,7 +29,7 @@ struct Constants {
     static let maxHeight: Int = 16384
     static let defaultCount: Int = 100
     static let minCount: Int = 1
-    static let maxCount: Int = 1000000
+    static let maxCount: Int = 100000
     static let step: Int = 1
     static let minPercentage: Double = 0
     static let maxPercentage: Double = 100
