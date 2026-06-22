@@ -14,14 +14,14 @@ final class ImageWritingStrategyFactory: ImageWritingStrategyFactoryType {
         colorSpace: ImageColorSpace,
         isAnimated: Bool) -> (any ImageWritingStrategyType)? {
             let strategies = Container.shared.imageWritingStrategies()
-            
             let matcher = StrategyMatcher(
                 outputFormat: outputFormat,
                 colorSpace: colorSpace,
                 isAnimated: isAnimated
             )
+            let result = strategies.first(where: matcher.matches)
             
-            return strategies.first(where: matcher.matches)
+            return result
     }
     
     // MARK: Inner types
@@ -38,6 +38,10 @@ final class ImageWritingStrategyFactory: ImageWritingStrategyFactoryType {
             
             if outputFormat == .gif && isAnimated {
                 return strategy.outputFormat == .gif && strategy.isAnimated
+            }
+            
+            if outputFormat == .jpg {
+                return strategy.outputFormat == .jpeg
             }
             
             return strategy.outputFormat == outputFormat
