@@ -36,7 +36,7 @@ final class MkvVideoGenerationStrategy: VideoGenerationStrategyType {
         try padFile(
             to: url,
             padding: padding,
-            format: .isoBmff(type: "free")
+            format: .isoBmff(type: Constants.vfDataFree)
         )
     }
     
@@ -45,7 +45,7 @@ final class MkvVideoGenerationStrategy: VideoGenerationStrategyType {
             sourceUrl: sourceUrl,
             targetBytes: targetBytes,
             outputUrl: outputUrl,
-            padFormat: .isoBmff(type: "free")
+            padFormat: .isoBmff(type: Constants.vfDataFree)
         )
     }
     

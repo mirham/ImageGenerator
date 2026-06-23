@@ -40,8 +40,8 @@ final class Jp2WritingStrategy: ImageWritingStrategyType {
             url as CFURL,
             Constants.jpeg2000,
             1,
-            nil
-        ) else { throw ImageGenerationError.destinationCreationFailed }
+            nil)
+        else { throw ImageGenerationError.destinationCreationFailed }
         
         let properties: [CFString: Any] = [
             kCGImageDestinationLossyCompressionQuality: Constants.defaultJpegQuality,

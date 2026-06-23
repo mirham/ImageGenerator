@@ -54,8 +54,8 @@ final class JpegWritingStrategy: ImageWritingStrategyType {
         guard let result = options.context.jpegRepresentation(
             of: image,
             colorSpace: options.colorSpace.cgColorSpace,
-            options: representationOptions
-        ) else { throw ImageGenerationError.jpegRepresentationFailed }
+            options: representationOptions)
+        else { throw ImageGenerationError.jpegRepresentationFailed }
         
         return result
     }
@@ -74,8 +74,8 @@ final class JpegWritingStrategy: ImageWritingStrategyType {
             url as CFURL,
             UTType.jpeg.identifier as CFString,
             1,
-            nil
-        ) else { throw ImageGenerationError.destinationCreationFailed }
+            nil)
+        else { throw ImageGenerationError.destinationCreationFailed }
         
         let properties: [CFString: Any] = [
             kCGImageDestinationLossyCompressionQuality: quality,

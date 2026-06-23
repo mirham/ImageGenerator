@@ -14,4 +14,6 @@ protocol LoggingServiceType {
     func clear()
     func openCurrentLog()
     func openLogsFolder()
+    func suspend()
+    func resume()
 }

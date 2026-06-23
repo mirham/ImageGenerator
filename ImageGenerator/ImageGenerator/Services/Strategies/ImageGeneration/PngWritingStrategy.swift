@@ -92,8 +92,8 @@ final class PngWritingStrategy: ImageWritingStrategyType {
             image,
             from: image.extent,
             format: format,
-            colorSpace: options.colorSpace.cgColorSpace
-        ) else { throw ImageGenerationError.cgImageCreationFailed }
+            colorSpace: options.colorSpace.cgColorSpace)
+        else { throw ImageGenerationError.cgImageCreationFailed }
         
         return result
     }
@@ -103,8 +103,8 @@ final class PngWritingStrategy: ImageWritingStrategyType {
             url as CFURL,
             UTType.png.identifier as CFString,
             1,
-            nil
-        ) else { throw ImageGenerationError.destinationCreationFailed }
+            nil)
+        else { throw ImageGenerationError.destinationCreationFailed }
         
         return result
     }

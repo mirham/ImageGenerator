@@ -14,6 +14,7 @@ final class LoggingService: LoggingServiceType {
     @Injected(\.fileService) private var fileService
     
     private(set) var entriesCount = 0
+    private var isSuspended: Bool = false
     
     var isWritingToFile: Bool {
         fileService.doesFileExist(filePath: fileUrl.path)
@@ -44,6 +45,9 @@ final class LoggingService: LoggingServiceType {
     }
     
     func write(message: String, type: LogEntryType = .info) {
+        guard !isSuspended
+        else { return }
+        
         let logEntry = LogEntry(message: message, type: type)
         
         entriesCount += 1
@@ -83,7 +87,6 @@ final class LoggingService: LoggingServiceType {
             else { return }
             
             appState.log.removeAll()
-            try? Data().write(to: fileUrl, options: .atomic)
         }
     }
     
@@ -96,6 +99,14 @@ final class LoggingService: LoggingServiceType {
     
     func openLogsFolder() {
         NSWorkspace.shared.open(logsFolder)
+    }
+    
+    func suspend() {
+        isSuspended = true
+    }
+    
+    func resume() {
+        isSuspended = false
     }
     
     // MARK: Private functions

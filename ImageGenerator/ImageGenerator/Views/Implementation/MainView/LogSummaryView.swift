@@ -75,8 +75,6 @@ struct LogSummaryView: LogDependentView {
         } label: {
             HStack(spacing: 3) {
                 Text(Constants.logSummaryViewLog)
-                Image(systemName: Constants.iconSummaryShowLog)
-                    .font(.system(size: 9, weight: .semibold))
             }
         }
         .buttonStyle(.plain)

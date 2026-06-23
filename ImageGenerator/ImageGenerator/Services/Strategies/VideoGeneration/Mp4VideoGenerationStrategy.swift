@@ -19,8 +19,8 @@ final class Mp4VideoGenerationStrategy: VideoGenerationStrategyType {
         switch videoData.mode {
             case .duration:
                 return computerService.isAppleSilicon()
-                ? appleSiliconDurationArguments()
-                : intelDurationArguments()
+                    ? appleSiliconDurationArguments()
+                    : intelDurationArguments()
             case .fileSize(let bytes):
                 let bitrate = calculateBitrate(
                     for: bytes,
@@ -36,7 +36,7 @@ final class Mp4VideoGenerationStrategy: VideoGenerationStrategyType {
         try padFile(
             to: url,
             padding: padding,
-            format: .isoBmff(type: "free")
+            format: .isoBmff(type: Constants.vfDataFree)
         )
     }
     
@@ -45,7 +45,7 @@ final class Mp4VideoGenerationStrategy: VideoGenerationStrategyType {
             sourceUrl: sourceUrl,
             targetBytes: targetBytes,
             outputUrl: outputUrl,
-            padFormat: .isoBmff(type: "free")
+            padFormat: .isoBmff(type: Constants.vfDataFree)
         )
     }
     

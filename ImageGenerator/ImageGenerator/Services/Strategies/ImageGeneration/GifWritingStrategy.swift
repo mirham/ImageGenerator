@@ -33,8 +33,8 @@ final class GifWritingStrategy: ImageWritingStrategyType {
             image,
             from: image.extent,
             format: .RGBA8,
-            colorSpace: options.colorSpace.cgColorSpace
-        ) else { throw ImageGenerationError.cgImageCreationFailed }
+            colorSpace: options.colorSpace.cgColorSpace)
+        else { throw ImageGenerationError.cgImageCreationFailed }
         
         return result
     }
@@ -44,8 +44,8 @@ final class GifWritingStrategy: ImageWritingStrategyType {
             url as CFURL,
             UTType.gif.identifier as CFString,
             1,
-            nil
-        ) else { throw ImageGenerationError.destinationCreationFailed }
+            nil)
+        else { throw ImageGenerationError.destinationCreationFailed }
         
         let gifProperties: [CFString: Any] = [
             kCGImagePropertyGIFDictionary: [

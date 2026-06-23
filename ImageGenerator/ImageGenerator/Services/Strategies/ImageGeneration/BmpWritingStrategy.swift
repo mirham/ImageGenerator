@@ -41,8 +41,8 @@ final class BmpWritingStrategy: ImageWritingStrategyType {
             image,
             from: image.extent,
             format: .RGBA8,
-            colorSpace: options.colorSpace.cgColorSpace
-        ) else { throw ImageGenerationError.cgImageCreationFailed }
+            colorSpace: options.colorSpace.cgColorSpace)
+        else { throw ImageGenerationError.cgImageCreationFailed }
         
         return result
     }
@@ -52,8 +52,8 @@ final class BmpWritingStrategy: ImageWritingStrategyType {
             url as CFURL,
             UTType.bmp.identifier as CFString,
             1,
-            nil
-        ) else { throw ImageGenerationError.destinationCreationFailed }
+            nil)
+        else { throw ImageGenerationError.destinationCreationFailed }
         
         return result
     }

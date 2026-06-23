@@ -23,8 +23,7 @@ extension String {
         var keepSeparator = true
         
         return self.filter { char in
-            if !char.isDecimalSeparator
-            { return true }
+            if !char.isDecimalSeparator { return true }
             
             defer { keepSeparator = false }
             

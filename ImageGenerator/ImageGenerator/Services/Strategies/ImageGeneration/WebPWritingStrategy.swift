@@ -34,8 +34,8 @@ final class WebPWritingStrategy: ImageWritingStrategyType {
             image,
             from: image.extent,
             format: .RGBA8,
-            colorSpace: options.colorSpace.cgColorSpace
-        ) else { throw ImageGenerationError.cgImageCreationFailed }
+            colorSpace: options.colorSpace.cgColorSpace)
+        else { throw ImageGenerationError.cgImageCreationFailed }
         
         return result
     }

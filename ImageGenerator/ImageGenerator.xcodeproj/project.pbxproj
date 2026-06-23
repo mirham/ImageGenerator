@@ -120,6 +120,7 @@
 		35D2E32C2FE14818003A13B3 /* GifWritingStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35D2E32B2FE14815003A13B3 /* GifWritingStrategy.swift */; };
 		35D2E32E2FE14864003A13B3 /* Jp2WritingStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35D2E32D2FE14861003A13B3 /* Jp2WritingStrategy.swift */; };
 		35D2E3312FE152D7003A13B3 /* WebP in Frameworks */ = {isa = PBXBuildFile; productRef = 35D2E3302FE152D7003A13B3 /* WebP */; };
+		35DBA41D2FEA8019008CE197 /* DurationApproach.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35DBA41C2FEA800D008CE197 /* DurationApproach.swift */; };
 		35DD84122FC622B7009E6D1F /* DescriptableEnum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35DD84112FC622B3009E6D1F /* DescriptableEnum.swift */; };
 		35DD84162FC71E26009E6D1F /* NamingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35DD84152FC71E1A009E6D1F /* NamingView.swift */; };
 		35DD84182FC71E3B009E6D1F /* ActionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35DD84172FC71E31009E6D1F /* ActionsView.swift */; };
@@ -266,6 +267,7 @@
 		35D2E3292FE147F0003A13B3 /* WebPWritingStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebPWritingStrategy.swift; sourceTree = "<group>"; };
 		35D2E32B2FE14815003A13B3 /* GifWritingStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GifWritingStrategy.swift; sourceTree = "<group>"; };
 		35D2E32D2FE14861003A13B3 /* Jp2WritingStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Jp2WritingStrategy.swift; sourceTree = "<group>"; };
+		35DBA41C2FEA800D008CE197 /* DurationApproach.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DurationApproach.swift; sourceTree = "<group>"; };
 		35DD84112FC622B3009E6D1F /* DescriptableEnum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DescriptableEnum.swift; sourceTree = "<group>"; };
 		35DD84152FC71E1A009E6D1F /* NamingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NamingView.swift; sourceTree = "<group>"; };
 		35DD84172FC71E31009E6D1F /* ActionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionsView.swift; sourceTree = "<group>"; };
@@ -451,6 +453,7 @@
 				35DD84542FC8BFED009E6D1F /* FileSizeUnit.swift */,
 				3549AB122FD6ACA80014EC73 /* FileSizeBase.swift */,
 				35C42ABE2FE3D3FB00FF5155 /* FileSizeCategory.swift */,
+				35DBA41C2FEA800D008CE197 /* DurationApproach.swift */,
 				3549AB1C2FD8530A0014EC73 /* VideoProgress.swift */,
 				351B969B2FE9550800545B59 /* FfmpegSource.swift */,
 				35C42AD02FE58F7800FF5155 /* FfmpegInstallPhase.swift */,
@@ -856,6 +859,7 @@
 				3578CCBA2FC9BCAC000E82A4 /* VideoJobService.swift in Sources */,
 				35DD84232FC84245009E6D1F /* VideoOutputFormat.swift in Sources */,
 				3549AB242FD865C10014EC73 /* ButtonType.swift in Sources */,
+				35DBA41D2FEA8019008CE197 /* DurationApproach.swift in Sources */,
 				3549AB252FD865C10014EC73 /* WindowType.swift in Sources */,
 				3549AB262FD865C10014EC73 /* WindowController.swift in Sources */,
 				35C42ACD2FE579BC00FF5155 /* FfmpegMissingModifier.swift in Sources */,

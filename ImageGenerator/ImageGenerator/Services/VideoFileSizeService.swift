@@ -92,13 +92,13 @@ final class VideoFileSizeService: BaseVideoGenerationService, VideoFileSizeServi
         (@Sendable (_ increment: VideoProgress) async -> Void)?
     ) async throws {
         let undershootTarget = Int(Double(targetBytes) * Constants.undersizedFactor)
+        
         guard let base = try await singleVideoGenerationService.withDoublingAsync(
             videoData: videoData,
             strategy: strategy,
             target: VideoGenerationMode.fileSize(Constants.largeFileThreshold),
             useHighBitrate: true,
-            onOperationComplete: onOperationComplete
-        )
+            onOperationComplete: onOperationComplete)
         else { return }
         
         defer {
@@ -112,7 +112,6 @@ final class VideoFileSizeService: BaseVideoGenerationService, VideoFileSizeServi
         else { return }
         
         let loopCount = max(1, Int(Double(undershootTarget) / Double(baseSize)))
-        
         let loopArguments = [
             "-stream_loop", "\(loopCount - 1)",
             "-i", base.url.path,
@@ -156,7 +155,6 @@ final class VideoFileSizeService: BaseVideoGenerationService, VideoFileSizeServi
                 * Double(targetBytes)
                 / Double(currentSize))
         )
-        
         let retryArguments = buildFileSizeArguments(
             videoData: videoData,
             strategy: strategy,

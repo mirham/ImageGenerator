@@ -6,9 +6,16 @@
 //
 
 import Foundation
+import Factory
 
 final class FileService: FileServiceType {
+    @Injected(\.computerService) private var computerService
+    
     private var currentTempFolder: URL?
+    
+    deinit {
+        try? wipeTempFolder()
+    }
     
     var fileManager: FileManager {
         get {
@@ -160,15 +167,17 @@ final class FileService: FileServiceType {
             ofItemAtPath: url.path)
     }
     
-    func removeQuarantineAttribute(from url: URL) throws {
-        let process = Process()
-        process.executableURL = URL(fileURLWithPath: "/usr/bin/xattr")
-        process.arguments = ["-d", "com.apple.quarantine", url.path]
+    func removeQuarantineAttributeAsync(from url: URL) async throws {
+        let result = await computerService.runProcessAsync(
+            executable: URL(fileURLWithPath: Constants.xattrPath),
+            arguments: [
+                Constants.xattrDeleteFlag,
+                Constants.xattrQuarantineAttribute,
+                url.path
+            ]
+        )
         
-        do {
-            try process.run()
-            process.waitUntilExit()
-        } catch {
+        guard result.success else {
             throw FileError.quarantineRemovalFailed(url.path)
         }
     }

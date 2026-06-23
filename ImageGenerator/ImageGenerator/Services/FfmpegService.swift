@@ -54,7 +54,7 @@ final class FfmpegService: FfmpegServiceType {
         let remoteUrl = getDownloadUrl(forAppleSilicon: computerService.isAppleSilicon())
         let downloader = ProgressDownloader()
         
-        let tempUrl = try await downloader.download(from: remoteUrl) { progress in
+        let tempUrl = try await downloader.downloadAsync(from: remoteUrl) { progress in
             onPhaseChange(.downloading(progress: progress))
         }
         
@@ -69,7 +69,7 @@ final class FfmpegService: FfmpegServiceType {
             withNewName: Constants.ffmpegBinaryName)
         try await fileService.deleteFileAsync(at: tempUrl)
         try fileService.ensureExecutable(url: destinationUrl)
-        try fileService.removeQuarantineAttribute(from: destinationUrl)
+        try await fileService.removeQuarantineAttributeAsync(from: destinationUrl)
         
         return destinationUrl
     }
@@ -77,8 +77,7 @@ final class FfmpegService: FfmpegServiceType {
     // MARK: Private functions
     
     private func resolveFfmpegUrl() async throws -> URL {
-        if let url = currentUrl
-        { return url }
+        if let url = currentUrl { return url }
         
         let url = try await resolveExecutableAsync()
         currentUrl = url

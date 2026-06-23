@@ -38,30 +38,27 @@ final class VideoGenerationService: VideoGenerationServiceType {
         onOperationComplete:
         (@Sendable (_ increment: VideoProgress) async -> Void)?
     ) async throws {
-        if strategy.isSupportsStreamLoop
-            && duration > Constants.minStreamLoopDuration {
-            return try await singleVideoGenerationService.withStreamLoopAsync(
-                videoData: videoData,
-                strategy: strategy,
-                duration: duration,
-                onOperationComplete: onOperationComplete
-            )
+        switch DurationApproach(
+            supportsStreamLoop: strategy.isSupportsStreamLoop,
+            duration: duration) {
+            case .streamLoop:
+                return try await singleVideoGenerationService.withStreamLoopAsync(
+                    videoData: videoData,
+                    strategy: strategy,
+                    duration: duration,
+                    onOperationComplete: onOperationComplete)
+            case .singlePass:
+                return try await singleVideoGenerationService.withSinglePassAsync(
+                    videoData: videoData,
+                    strategy: strategy,
+                    duration: duration)
+            case .doublingThenTrim:
+                try await generateWithDoublingThenTrimAsync(
+                    videoData: videoData,
+                    strategy: strategy,
+                    targetDuration: duration,
+                    onOperationComplete: onOperationComplete)
         }
-        
-        if duration <= Constants.baseClipDuration {
-            return try await singleVideoGenerationService.withSinglePassAsync(
-                videoData: videoData,
-                strategy: strategy,
-                duration: duration
-            )
-        }
-        
-        try await generateWithDoublingThenTrimAsync(
-            videoData: videoData,
-            strategy: strategy,
-            targetDuration: duration,
-            onOperationComplete: onOperationComplete
-        )
     }
     
     private func generateWithDoublingThenTrimAsync(
@@ -71,15 +68,15 @@ final class VideoGenerationService: VideoGenerationServiceType {
         onOperationComplete:
         (@Sendable (_ increment: VideoProgress) async -> Void)?
     ) async throws {
-        let overshootTarget = targetDuration * Constants.defaultOvershootMultiplier
+        let overshootTarget = targetDuration * Constants.defaultOversizedMultiplier
         
         guard let oversized = try await singleVideoGenerationService.withDoublingAsync(
             videoData: videoData,
             strategy: strategy,
             target: VideoGenerationMode.duration(overshootTarget),
             useHighBitrate: false,
-            onOperationComplete: onOperationComplete
-        ) else { return }
+            onOperationComplete: onOperationComplete)
+        else { return }
         
         defer {
             Task {
@@ -140,8 +137,7 @@ final class VideoGenerationService: VideoGenerationServiceType {
             strategy: strategy,
             target: VideoGenerationMode.fileSize(undersizedTarget),
             useHighBitrate: true,
-            onOperationComplete: onOperationComplete
-        )
+            onOperationComplete: onOperationComplete)
         else { return }
         
         defer {

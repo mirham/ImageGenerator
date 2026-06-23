@@ -44,7 +44,7 @@ struct ActionsView: MediaGeneratorView, LogDependentView {
     
     @ViewBuilder
     private var generateButton: some View {
-        Button(action: generate) {
+        Button(action: { Task { await runGenerationAsync() } }) {
             Text(Constants.generate)
         }
         .buttonStyle(GenerateButtonStyle())
@@ -84,7 +84,7 @@ struct ActionsView: MediaGeneratorView, LogDependentView {
     
     @ViewBuilder
     private var cancelButton: some View {
-        Button(action: cancelGeneration) {
+        Button(action: { Task { await cancelGenerationAsync() } }) {
             Image(systemName: Constants.iconStop)
                 .resizable()
                 .scaledToFit()
@@ -158,19 +158,12 @@ struct ActionsView: MediaGeneratorView, LogDependentView {
         return true
     }
     
-    private func generate() {
-        Task { await runGenerationAsync() }
-    }
-    
     private func runGenerationAsync() async {
-        resetProgress()
-        
         guard isFilesystemReady
-        else {
-            cancelGeneration()
-            
-            return
-        }
+        else { return }
+        
+        await resetProgressAsync()
+        await initProgress()
         
         switch appState.userData.mode {
             case .generateImages, .duplicateImages:
@@ -180,22 +173,35 @@ struct ActionsView: MediaGeneratorView, LogDependentView {
         }
     }
     
-    private func cancelGeneration() {
-        appState.generation.inProgress = false
-        appState.generation.isCancelRequested = true
+    private func cancelGenerationAsync() async {
+        await MainActor.run {
+            appState.cancelProgress()
+        }
+        
+        loggingService.write(
+            message: Constants.lmLogOperationCanceled,
+            type: .success)
+        
+        loggingService.suspend()
+        
         imageJobService.generationTask?.cancel()
         videoJobService.generationTask?.cancel()
         computerService.terminateAppProcesses()
+        try? fileService.wipeTempFolder()
     }
     
-    private func resetProgress() {
-        appState.generation.inProgress = true
-        appState.generation.progress = 0
-        appState.generation.processedCount = 0
-        appState.generation.completedVideosCount = 0
-        appState.generation.failedVideosCount = 0
-        appState.generation.operationProgress = 0
-        appState.generation.isCancelRequested = false
+    private func initProgress() async {
+        loggingService.resume()
+        
+        await MainActor.run {
+            appState.initProgress()
+        }
+    }
+    
+    private func resetProgressAsync() async {
+        await MainActor.run {
+            appState.resetProgress()
+        }
         
         loggingService.clear()
     }

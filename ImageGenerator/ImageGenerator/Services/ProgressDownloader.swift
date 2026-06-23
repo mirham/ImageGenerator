@@ -19,7 +19,7 @@ final class ProgressDownloader: NSObject, URLSessionDownloadDelegate {
         delegate: self,
         delegateQueue: nil)
     
-    func download(
+    func downloadAsync(
         from url: URL,
         onProgress:
         @escaping (Double) -> Void) async throws -> URL {

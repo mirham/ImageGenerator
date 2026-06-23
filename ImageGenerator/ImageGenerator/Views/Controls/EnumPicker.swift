@@ -114,7 +114,7 @@ struct EnumPicker<T: RawRepresentable & CaseIterable & DescriptableEnum & Hashab
         }
     }
     
-    // MARK: Private
+    // MARK: Private functions
     
     private func isAvailable(_ item: T) -> Bool {
         guard let availableCases else { return true }

@@ -9,7 +9,7 @@ import Foundation
 
 @MainActor
 class AppState : ObservableObject {
-    @Published var userData = UserData() { didSet { setGenerationTotalCount() } }
+    @Published var userData = UserData()
     @Published var generation = Generation()
     @Published var system = System()
     @Published var log = [LogEntry]()
@@ -28,8 +28,6 @@ class AppState : ObservableObject {
         }
         
         updatedGeneration.progress = calculateProgress(updatedGeneration)
-        
-        print("Prog: \(updatedGeneration.progress), total: \(updatedGeneration.totalCount)")
         
         if updatedGeneration.progress >= Constants.maxPercentage
             || Int(updatedGeneration.processedCount) >= updatedGeneration.totalCount {
@@ -81,11 +79,21 @@ class AppState : ObservableObject {
         generation = updatedGeneration
     }
     
-    // MARK: Private functions
-    
-    private func setGenerationTotalCount() {
+    func initProgress() {
         generation.totalCount = userData.count
+        generation.inProgress = true
     }
+    
+    func cancelProgress() {
+        resetProgress()
+        generation.isCancelRequested = true
+    }
+    
+    func resetProgress() {
+        generation = Generation()
+    }
+    
+    // MARK: Private functions
     
     private func calculateProgress(_ generation: Generation) -> Double {
         guard generation.totalCount > 0

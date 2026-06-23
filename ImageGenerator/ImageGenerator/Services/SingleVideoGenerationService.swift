@@ -30,7 +30,7 @@ final class SingleVideoGenerationService: BaseVideoGenerationService, SingleVide
         strategy: VideoGenerationStrategyType,
         duration: TimeInterval,
         onOperationComplete:
-            (@Sendable (_ increment: VideoProgress) async -> Void)?
+        (@Sendable (_ increment: VideoProgress) async -> Void)?
     ) async throws {
         let baseVideoUrl = try fileService.makeTempFileUrl(
             number: videoData.videoNumber,
@@ -48,7 +48,7 @@ final class SingleVideoGenerationService: BaseVideoGenerationService, SingleVide
         let baseArguments = buildDurationArguments(
             videoData: videoData,
             strategy: strategy,
-            duration: Constants.baseClipDuration,
+            duration: Constants.baseVideoDuration,
             outputURL: baseVideoUrl
         )
         
@@ -57,7 +57,7 @@ final class SingleVideoGenerationService: BaseVideoGenerationService, SingleVide
         
         await onOperationComplete?(.baseFile)
         
-        let loopCount = Int(ceil(duration / Constants.baseClipDuration)) - 1
+        let loopCount = Int(ceil(duration / Constants.baseVideoDuration)) - 1
         let loopArguments = [
             "-stream_loop", "\(loopCount)",
             "-i", baseVideoUrl.path,
@@ -79,7 +79,7 @@ final class SingleVideoGenerationService: BaseVideoGenerationService, SingleVide
         target: VideoGenerationMode,
         useHighBitrate: Bool = false,
         onOperationComplete:
-            (@Sendable (_ increment: VideoProgress) async -> Void)?
+        (@Sendable (_ increment: VideoProgress) async -> Void)?
     ) async throws -> VideoGenerationResult? {
         let maxChunkSize = Double(Constants.largeFileThreshold)
         let targetValue = target.targetValue
@@ -90,8 +90,8 @@ final class SingleVideoGenerationService: BaseVideoGenerationService, SingleVide
             strategy: strategy,
             highBitrate: useHighBitrate,
             isDurationTarget: isDurationTarget,
-            onOperationComplete: onOperationComplete
-        ) else { return nil }
+            onOperationComplete: onOperationComplete)
+        else { return nil }
         
         if baseVideo.metric >= targetValue {
             return VideoGenerationResult(
@@ -168,13 +168,13 @@ final class SingleVideoGenerationService: BaseVideoGenerationService, SingleVide
         }
         
         let metric: Double = isDurationTarget
-            ? Constants.baseClipDuration
+            ? Constants.baseVideoDuration
             : Double(fileService.getFileSize(at: baseVideoUrl) ?? 0)
         
         return VideoGenerationResult(
             url: baseVideoUrl,
             metric: metric,
-            duration: Constants.baseClipDuration)
+            duration: Constants.baseVideoDuration)
     }
     
     private func runDoublingPhaseAsync(
@@ -182,7 +182,8 @@ final class SingleVideoGenerationService: BaseVideoGenerationService, SingleVide
         videoData: VideoData,
         targetValue: Double,
         maxChunkSize: Double,
-        onOperationComplete: (@Sendable (_ increment: VideoProgress) async -> Void)?
+        onOperationComplete:
+        (@Sendable (_ increment: VideoProgress) async -> Void)?
     ) async throws -> VideoGenerationResult? {
         var current = baseVideo
         let divider = max(baseVideo.metric, 1)

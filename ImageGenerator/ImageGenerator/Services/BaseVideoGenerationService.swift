@@ -66,22 +66,24 @@ class BaseVideoGenerationService {
             + ["-b:v", "\(bitrate)", "-t", "\(duration)", "-y", videoData.outputUrl.path]
     }
     
-    func drawNumberOverlay(videoData: VideoData) -> String {
+    // MARK: Private functions
+    
+    private func drawNumberOverlay(videoData: VideoData) -> String {
         let fontSize = max(48, Int(videoData.size.height) / 5)
         let number = String(videoData.videoNumber)
         let margin = fontSize * 2
         let width = Int(videoData.size.width) - margin
         let height = Int(videoData.size.height) - margin
         let offset = margin / 2
-        let xExpression = "(\(width) * (0.5 + 0.5 * sin(2*PI*t/\(Constants.baseClipDuration))) + \(offset))"
-        let yExpression = "(\(height) * (0.5 + 0.5 * cos(2*PI*t/\(Constants.baseClipDuration))) + \(offset))"
+        let xExpression = "(\(width) * (0.5 + 0.5 * sin(2*PI*t/\(Constants.baseVideoDuration))) + \(offset))"
+        let yExpression = "(\(height) * (0.5 + 0.5 * cos(2*PI*t/\(Constants.baseVideoDuration))) + \(offset))"
         let fontPath = Bundle.main.path(forResource: "Inter-Regular", ofType: "ttf")
             ?? "/System/Library/Fonts/Helvetica.ttc"
         
         return "drawtext=fontfile='\(fontPath)':text='\(number)':fontsize=\(fontSize):fontcolor=white:borderw=3:bordercolor=black:x='\(xExpression)':y='\(yExpression)'"
     }
     
-    func randomBackgroundColor() -> String {
+    private func randomBackgroundColor() -> String {
         let r = Int.random(in: 0...255)
         let g = Int.random(in: 0...255)
         let b = Int.random(in: 0...255)

@@ -35,7 +35,7 @@ enum ImageGenerationError: LocalizedError {
             case .destinationCreationFailed:
                 return "Failed to create image destination at specified URL"
             case .destinationFinalizationFailed:
-                return "Failed to finalize image destination — the file may be incomplete or corrupted"
+                return "Failed to finalize image destination, the file may be incomplete or corrupted"
             case .cgImageCreationFailed:
                 return "Failed to create CGImage from CIImage for encoding"
         }

@@ -24,7 +24,7 @@ protocol FileServiceType {
     func copy(at source: URL,toFolder folder: URL, withNewName name: String) throws
     func copy(at source: URL, to destination: URL) throws
     func ensureExecutable(url: URL) throws
-    func removeQuarantineAttribute(from url: URL) throws
+    func removeQuarantineAttributeAsync(from url: URL) async throws
     func deleteFileAsync(at url: URL) async throws
     func wipeTempFolder() throws
 }

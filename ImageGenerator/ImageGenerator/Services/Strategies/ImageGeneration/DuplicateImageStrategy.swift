@@ -42,7 +42,7 @@ final class DuplicateImageStrategy: ImageGenerationStrategyType {
         }
         
         if await cacheActor.isLoading {
-            await cacheActor.waitForLoading()
+            await cacheActor.waitForLoadingAsync()
             
             if let cached = await cacheActor.get(for: path) {
                 applyCache(cached, to: imageData)
@@ -147,7 +147,7 @@ final class DuplicateImageStrategy: ImageGenerationStrategyType {
             isLoading = value
         }
         
-        func waitForLoading() async {
+        func waitForLoadingAsync() async {
             await withCheckedContinuation { continuation in
                 continuations.append(continuation)
             }

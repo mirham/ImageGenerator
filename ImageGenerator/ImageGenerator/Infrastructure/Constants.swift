@@ -10,7 +10,6 @@ import Foundation
 struct Constants {
     // MARK: Default values
     static let appName = "MirHam Image Generator"
-    static let defaultNumberSizePercentage = 0.5
     static let defaultNumberSizePadding = 0.9
     static let defaultPpi: CGFloat = 72
     static let targetChunksPerWorker = 10
@@ -18,9 +17,6 @@ struct Constants {
     static let minChunkSize = 1
     static let minCountFactor: Double = 1.0
     static let centimetersPerInch = 2.54
-    static let gopSize = 30
-    static let gopsPerWorkerDivisor = 2
-    static let maxChunkFrames = 300
     static let defaultWidth: Int = 500
     static let minWidth: Int = 5
     static let maxWidth: Int = 16384
@@ -29,12 +25,9 @@ struct Constants {
     static let maxHeight: Int = 16384
     static let defaultCount: Int = 100
     static let minCount: Int = 1
-    static let maxCount: Int = 100000
+    static let maxCount: Int = 1000000
     static let step: Int = 1
-    static let minPercentage: Double = 0
     static let maxPercentage: Double = 100
-    static let defaultScaleFactor: CGFloat = 1.0
-    static let maxConcurrencyLimit: Int = 16
     static let defaultJpegQualityThreshold: Double = 4000.0
     static let defaultJpegQuality: Double = 0.85
     static let defaultHeicQuality: Double = 0.85
@@ -42,9 +35,7 @@ struct Constants {
     static let sizedContextKey = "CGContext_%1$@x%2$@"
     static let contextKey = "CIContext"
     static let defaultAppleSiliconLimitMultiplier = 3
-    static let bypesPerPixel = 4
     static let bitsPerComponent: UInt32 = 8
-    static let alignmentTo64 = 64
     static let defaultFrameRate = 30
     static let defaultVideoDuration: TimeInterval = 30
     static let secondsPerMinute = 60
@@ -56,15 +47,15 @@ struct Constants {
     static let maxDurationHours = 10
     static let kibi: Double = 1024
     static let smallVideoDuration = 1.0
-    static let baseClipDuration: Double = 3.0
+    static let baseVideoDuration: Double = 3.0
     static let minFileSizeBytesBase2: Double = kibi // 1 KiB
     static let minFileSizeBytesBase10: Double = 1000 // 1 KB
     static let defaultFileSizeBytes: Double = 100 * kibi * kibi // 100 MB
     static let maxFileSizeBytes: Double = maxFileSizeGb * kibi * kibi * kibi // 200 GB
-    static let minFileSizeKb = 1.0
+    static let minFileSizeKb = 50.0
     static let maxFileSizeGb = 200.0
     static let fileSizeStepRoundingFactor: Double = 100
-    static let defaultOvershootMultiplier = 1.2
+    static let defaultOversizedMultiplier = 1.2
     static let minStreamLoopDuration: TimeInterval = 30
     static let minDoublingBytes: Int = Int(50 * kibi * kibi)
     static let undersizedFactor: Double = 0.95
@@ -72,7 +63,6 @@ struct Constants {
     static let minBitrate: Int = 100_000
     static let defaultStartAt: Int = 1
     static let tempFolder = "Image_Generator_Tmp_Video"
-    static let defaultVideoChunkSize: Int = Int(kibi * kibi)
     static let jpeg2000: CFString = "public.jpeg-2000" as CFString
     static let appSupportFolder = "\(Bundle.main.bundleIdentifier ?? appName)"
     static let downloadBaseUrl = "\(aboutGitHubLink)/releases/latest/download/"
@@ -100,7 +90,6 @@ struct Constants {
     static let settingsKeyFfmpegPath = "ffmpeg-path"
     
     // MARK: Icons
-    static let iconImages = "photo.stack"
     static let iconStop = "stop.circle"
     static let iconPlus = "plus"
     static let iconMinus = "minus"
@@ -112,7 +101,6 @@ struct Constants {
     static let iconEmptyLog = "text.alignleft"
     static let iconSummaryError = "xmark.octagon.fill"
     static let iconSummaryWarning = "exclamationmark.triangle.fill"
-    static let iconSummaryShowLog = "chevron.right"
     static let iconOk = "checkmark.circle.fill"
     static let iconWarning = "exclamationmark.triangle"
     
@@ -136,13 +124,18 @@ struct Constants {
     static let shellCommandFlag = "-c"
     static let shellCommand = "command -v ffmpeg"
     
+    // MARK: xattr
+    static let xattrPath = "/usr/bin/xattr"
+    static let xattrDeleteFlag = "-d"
+    static let xattrQuarantineAttribute = "com.apple.quarantine"
+    
     // MARK: ffmpeg
     static let ffmpegAppleSilicon = "ffmpeg-apple-silicon"
     static let ffmpegIntel = "ffmpeg-intel"
     static let ffmpegBinaryName = "ffmpeg"
-    static let ffmpegInternalPath = "/ffmpeg"
+    static let ffmpegInternalPath = "/\(ffmpegBinaryName)"
     static let ffmpegVersionFlag = "-version"
-    static let ffmpegVersionPrefix = "ffmpeg version"
+    static let ffmpegVersionPrefix = "\(ffmpegBinaryName) version"
     static let ffmpegFound = "FFMPEG found at: %@, version: %@, source: %@"
     static let ffmpegKnownInstallPaths = [
         "/opt/homebrew/bin/ffmpeg", // Homebrew, Apple Silicon
@@ -186,7 +179,6 @@ struct Constants {
     
     // MARK: Video files
     static let vfDataFree = "free"
-    static let vfVoidId: UInt8 = 0xEC
     static let vfSuffixBase = "base"
     static let vfSuffixFinal = "final"
     static let vfSuffixConcatFinal = "cfinal"
@@ -295,6 +287,7 @@ struct Constants {
     static let lmVideoWmvTrimSizeWarning = "WMV cannot be trimmed exactly, accept approximate size"
     static let lmVideoSizeTooSmallToExactSize = "Cannot achieve a target file size of %d bytes, the minimum file size with current settings is %d bytes"
     static let lmLogFilesFolderCreationFailed = "Failed to create a folder for log files: %@"
+    static let lmLogOperationCanceled = "Operation canceled."
     
     // MARK: About
     static let aboutSupportMail = "bWlyaGFtQGFidi5iZw=="

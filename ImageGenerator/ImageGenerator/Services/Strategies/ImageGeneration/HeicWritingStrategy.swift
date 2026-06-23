@@ -40,8 +40,8 @@ final class HeicWritingStrategy: ImageWritingStrategyType {
             url as CFURL,
             UTType.heic.identifier as CFString,
             1,
-            nil
-        ) else { throw ImageGenerationError.destinationCreationFailed }
+            nil)
+        else { throw ImageGenerationError.destinationCreationFailed }
         
         let properties: [CFString: Any] = [
             kCGImageDestinationLossyCompressionQuality: Constants.defaultHeicQuality,

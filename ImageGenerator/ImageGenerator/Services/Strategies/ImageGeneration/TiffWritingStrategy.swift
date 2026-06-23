@@ -51,8 +51,8 @@ final class TiffWritingStrategy: ImageWritingStrategyType {
             image,
             from: image.extent,
             format: format,
-            colorSpace: options.colorSpace.cgColorSpace
-        ) else { throw ImageGenerationError.cgImageCreationFailed }
+            colorSpace: options.colorSpace.cgColorSpace)
+        else { throw ImageGenerationError.cgImageCreationFailed }
         
         return result
     }
@@ -62,8 +62,8 @@ final class TiffWritingStrategy: ImageWritingStrategyType {
             url as CFURL,
             UTType.tiff.identifier as CFString,
             1,
-            nil
-        ) else { throw ImageGenerationError.destinationCreationFailed }
+            nil)
+        else { throw ImageGenerationError.destinationCreationFailed }
         
         return result
     }
