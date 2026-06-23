@@ -127,11 +127,10 @@ final class FileService: FileServiceType {
         let destination = folder.appending(
             path: name,
             directoryHint: .notDirectory)
-            
+        
         try ensureFolderExists(at: folder)
-        try fileManager.copyItem(
-            atPath: source.path,
-            toPath: destination.path)
+        try ensureWritable(url: destination)
+        try fileManager.copyItem(at: source, to: destination)
     }
     
     func copy(at source: URL, to destination: URL) throws {
@@ -140,16 +139,10 @@ final class FileService: FileServiceType {
         }
         
         let parentFolder = destination.deletingLastPathComponent()
-        try ensureFolderExists(at: parentFolder)
         
-        do {
-            try fileManager.copyItem(at: source, to: destination)
-        }
-        catch {
-            print(source.path)
-            print(destination.path)
-            print(error.localizedDescription)
-        }
+        try ensureFolderExists(at: parentFolder)
+        try ensureWritable(url: destination)
+        try fileManager.copyItem(at: source, to: destination)
     }
     
     func ensureExecutable(url: URL) throws {
@@ -165,6 +158,12 @@ final class FileService: FileServiceType {
         try fileManager.setAttributes(
             [.posixPermissions: permissions | executableBits],
             ofItemAtPath: url.path)
+    }
+    
+    func ensureWritable(url: URL) throws {
+        if doesFileExist(filePath: url.path) {
+            try fileManager.removeItem(at: url)
+        }
     }
     
     func removeQuarantineAttributeAsync(from url: URL) async throws {

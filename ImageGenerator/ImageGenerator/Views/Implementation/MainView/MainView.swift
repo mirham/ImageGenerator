@@ -108,7 +108,7 @@ struct MainView: MediaGeneratorView {
     private func getWindowSize(for tab: Int) -> CGSize {
         switch tab {
             case Constants.tabIdDuplicateImage:
-                return CGSize(width: 570, height: 370)
+                return CGSize(width: 570, height: 400)
             case Constants.tabIdGenerateVideos:
                 return CGSize(width: 570, height: 710)
             default:

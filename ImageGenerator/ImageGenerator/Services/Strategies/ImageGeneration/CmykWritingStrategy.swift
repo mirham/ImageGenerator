@@ -8,8 +8,11 @@
 import CoreImage
 import Accelerate
 import UniformTypeIdentifiers
+import Factory
 
 final class CmykWritingStrategy: ImageWritingStrategyType {
+    @Injected(\.fileService) private var fileService
+    
     let outputFormat: ImageOutputFormat = .notSupported
     let colorSpace: ImageColorSpace = .cmyk
     let isAnimated = false
@@ -88,6 +91,8 @@ final class CmykWritingStrategy: ImageWritingStrategyType {
         else { return }
         
         let destination = folder.appendingPathComponent(options.fileName)
+        
+        try fileService.ensureWritable(url: destination)
         
         guard let destination = CGImageDestinationCreateWithURL(
             destination as CFURL,

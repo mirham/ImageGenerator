@@ -7,8 +7,11 @@
 
 import CoreImage
 import UniformTypeIdentifiers
+import Factory
 
 final class JpegWritingStrategy: ImageWritingStrategyType {
+    @Injected(\.fileService) private var fileService
+    
     let colorSpace: ImageColorSpace = .any
     let outputFormat: ImageOutputFormat = .jpeg
     let isAnimated = false
@@ -69,6 +72,8 @@ final class JpegWritingStrategy: ImageWritingStrategyType {
         guard let source = CGImageSourceCreateWithData(data as CFData, nil),
               let cgImage = CGImageSourceCreateImageAtIndex(source, 0, nil)
         else { throw ImageGenerationError.imageSourceCreationFailed }
+        
+        try fileService.ensureWritable(url: url)
         
         guard let destination = CGImageDestinationCreateWithURL(
             url as CFURL,

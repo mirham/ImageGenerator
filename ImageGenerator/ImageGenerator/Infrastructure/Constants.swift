@@ -52,7 +52,7 @@ struct Constants {
     static let minFileSizeBytesBase10: Double = 1000 // 1 KB
     static let defaultFileSizeBytes: Double = 100 * kibi * kibi // 100 MB
     static let maxFileSizeBytes: Double = maxFileSizeGb * kibi * kibi * kibi // 200 GB
-    static let minFileSizeKb = 50.0
+    static let minFileSizeKb = 1.0
     static let maxFileSizeGb = 200.0
     static let fileSizeStepRoundingFactor: Double = 100
     static let defaultOversizedMultiplier = 1.2
@@ -88,6 +88,7 @@ struct Constants {
     static let settingsPrefix = "prefix"
     static let settingsPostfix = "postfix"
     static let settingsKeyFfmpegPath = "ffmpeg-path"
+    static let settingsKeyApplyOverlay = "apply-overlay"
     
     // MARK: Icons
     static let iconStop = "stop.circle"
@@ -161,7 +162,8 @@ struct Constants {
         "compatible_brands",
         "Side data",
         "cpb",
-        "Last message repeated"
+        "Last message repeated",
+        "Side data"
     ]
     static let ffmpegErrorPatterns = [
         "error", "invalid", "failed", "no such file",
@@ -220,6 +222,7 @@ struct Constants {
     static let mode = "Mode:"
     static let fileSize = "File size:"
     static let duration = "Duration:"
+    static let applyOverlay = "Number overlay:"
     static let unknown = "unknown"
     static let checkingFfmpeg = "Checking for FFmpeg…"
     static let foundFfmpeg = "FFmpeg found"

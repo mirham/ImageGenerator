@@ -7,8 +7,11 @@
 
 import CoreImage
 import UniformTypeIdentifiers
+import Factory
 
 final class GifWritingStrategy: ImageWritingStrategyType {
+    @Injected(\.fileService) private var fileService
+    
     let colorSpace: ImageColorSpace = .any
     let outputFormat: ImageOutputFormat = .gif
     let isAnimated = false
@@ -40,6 +43,8 @@ final class GifWritingStrategy: ImageWritingStrategyType {
     }
     
     private func writeGif(cgImage: CGImage, to url: URL, ppi: Double) throws {
+        try fileService.ensureWritable(url: url)
+        
         guard let destination = CGImageDestinationCreateWithURL(
             url as CFURL,
             UTType.gif.identifier as CFString,

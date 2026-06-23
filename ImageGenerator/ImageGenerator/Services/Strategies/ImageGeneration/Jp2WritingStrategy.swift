@@ -7,8 +7,11 @@
 
 import CoreImage
 import UniformTypeIdentifiers
+import Factory
 
 final class Jp2WritingStrategy: ImageWritingStrategyType {
+    @Injected(\.fileService) private var fileService
+    
     let colorSpace: ImageColorSpace = .any
     let outputFormat: ImageOutputFormat = .jp2
     let isAnimated = false
@@ -36,6 +39,8 @@ final class Jp2WritingStrategy: ImageWritingStrategyType {
     }
     
     private func writeJp2(cgImage: CGImage, to url: URL, ppi: Double) throws {
+        try fileService.ensureWritable(url: url)
+        
         guard let destination = CGImageDestinationCreateWithURL(
             url as CFURL,
             Constants.jpeg2000,

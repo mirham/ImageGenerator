@@ -23,7 +23,7 @@ enum ImageGenerationError: LocalizedError {
             case .originalFileNotFound(let path):
                 return "Original file not found at path: '\(path)'"
             case .nonWritableFile:
-                return "Original file is not writable, the digit overlay cannot be added"
+                return "Original file is not writable, the number overlay cannot be added"
             case .unsupportedColorSpace(let colorSpace, let format):
                 return "\(format.description.uppercased()) does not support the \(colorSpace.description) color space"
             case .generationFailed:

@@ -24,7 +24,9 @@ final class DuplicateImageStrategy: ImageGenerationStrategyType {
             URL(fileURLWithPath: appState.userData.inputImage)
         }
         
-        await resolveImageData(imageData: imageData, path: path)
+        await resolveImageDataAsync(
+            imageData: imageData,
+            path: path)
         
         let result = await imageGenerationService
             .duplicateAsync(imageData: imageData)
@@ -34,7 +36,9 @@ final class DuplicateImageStrategy: ImageGenerationStrategyType {
     
     // MARK: Private functions
     
-    private func resolveImageData(imageData: ImageData, path: URL) async {
+    private func resolveImageDataAsync(
+        imageData: ImageData,
+        path: URL) async {
         if let cached = await cacheActor.get(for: path) {
             applyCache(cached, to: imageData)
             
@@ -42,19 +46,46 @@ final class DuplicateImageStrategy: ImageGenerationStrategyType {
         }
         
         if await cacheActor.isLoading {
-            await cacheActor.waitForLoadingAsync()
+            await waitForCacheAndApplyAsync(
+                to: imageData,
+                path: path)
             
-            if let cached = await cacheActor.get(for: path) {
-                applyCache(cached, to: imageData)
-            }
             return
         }
         
+        await loadAndCacheAsync(
+            imageData: imageData,
+            path: path)
+    }
+    
+    private func waitForCacheAndApplyAsync(
+        to imageData: ImageData,
+        path: URL) async {
+        await cacheActor.waitForLoadingAsync()
+        
+        if let cached = await cacheActor.get(for: path) {
+            applyCache(cached, to: imageData)
+        }
+    }
+    
+    private func applyCache(
+        _ cached: ImageCache,
+        to imageData: ImageData) {
+        imageData.originalImage = cached.image
+        imageData.isAnimated = cached.isAnimated
+        imageData.originalImagePath = cached.path
+        imageData.outputFormat = cached.outputFormat
+    }
+    
+    private func loadAndCacheAsync(
+        imageData: ImageData,
+        path: URL) async {
         await cacheActor.setLoading(true)
         
         imageData.isAnimated = isAnimated(path)
         imageData.originalImagePath = path
-        loadOriginalImage(imageData: imageData)
+        
+        await loadOriginalImageAsync(imageData: imageData)
         
         await cacheActor.set(
             ImageCache(
@@ -69,45 +100,30 @@ final class DuplicateImageStrategy: ImageGenerationStrategyType {
         await cacheActor.resumeWaiters()
     }
     
-    private func applyCache(_ cached: ImageCache, to imageData: ImageData) {
-        imageData.originalImage = cached.image
-        imageData.isAnimated = cached.isAnimated
-        imageData.originalImagePath = cached.path
-        imageData.outputFormat = cached.outputFormat
-    }
-    
-    private func loadOriginalImage(imageData: ImageData) {
+    private func loadOriginalImageAsync(imageData: ImageData) async {
         guard let url = imageData.originalImagePath,
               fileService.doesFileExist(filePath: url.path(percentEncoded: false))
         else {
-            let path = imageData.originalImagePath?.path(percentEncoded: false)
-                ?? String()
-            
-            loggingService.write(
-                message: ImageGenerationError
-                    .originalFileNotFound(path).localizedDescription,
-                type: .error
-            )
-            
+            logMissingImage(imageData.originalImagePath)
             return
         }
+        
+        guard await shouldAddOverlayAsync()
+        else { return }
         
         imageData.outputFormat = ImageOutputFormat.from(url: url)
         
         guard imageData.outputFormat != .notSupported
         else {
-            loggingService.write(
-                message: ImageGenerationError.nonWritableFile.localizedDescription,
-                type: .warning
-            )
+            logUnsupportedFormat()
             
             return
         }
         
-        let ciOptions: [CIImageOption: Any] = [.applyOrientationProperty: true]
-        let image = CIImage(contentsOf: url, options: ciOptions)
-        
-        imageData.originalImage = image
+        imageData.originalImage = CIImage(
+            contentsOf: url,
+            options: [.applyOrientationProperty: true]
+        )
     }
     
     private func isAnimated(_ url: URL) -> Bool {
@@ -115,6 +131,28 @@ final class DuplicateImageStrategy: ImageGenerationStrategyType {
         else { return false }
         
         return CGImageSourceGetCount(source) > 1
+    }
+    
+    private func shouldAddOverlayAsync() async -> Bool {
+        await MainActor.run {
+            appState.userData.applyOverlay
+        }
+    }
+    
+    private func logMissingImage(_ path: URL?) {
+        loggingService.write(
+            message: ImageGenerationError
+                .originalFileNotFound(path?.path ?? String())
+                .localizedDescription,
+            type: .error
+        )
+    }
+    
+    private func logUnsupportedFormat() {
+        loggingService.write(
+            message: ImageGenerationError.nonWritableFile.localizedDescription,
+            type: .warning
+        )
     }
     
     // MARK: Inner types

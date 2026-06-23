@@ -7,8 +7,11 @@
 
 import CoreImage
 import UniformTypeIdentifiers
+import Factory
 
 final class BmpWritingStrategy: ImageWritingStrategyType {
+    @Injected(\.fileService) private var fileService
+    
     let colorSpace: ImageColorSpace = .any
     let outputFormat: ImageOutputFormat = .bmp
     let isAnimated = false
@@ -48,6 +51,8 @@ final class BmpWritingStrategy: ImageWritingStrategyType {
     }
     
     private func createDestination(at url: URL) throws -> CGImageDestination {
+        try fileService.ensureWritable(url: url)
+        
         guard let result = CGImageDestinationCreateWithURL(
             url as CFURL,
             UTType.bmp.identifier as CFString,

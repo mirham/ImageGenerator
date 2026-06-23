@@ -7,8 +7,11 @@
 
 import CoreImage
 import UniformTypeIdentifiers
+import Factory
 
 final class PngWritingStrategy: ImageWritingStrategyType {
+    @Injected(\.fileService) private var fileService
+    
     let colorSpace: ImageColorSpace = .any
     let outputFormat: ImageOutputFormat = .png
     let isAnimated = false
@@ -99,6 +102,8 @@ final class PngWritingStrategy: ImageWritingStrategyType {
     }
     
     private func createDestination(at url: URL) throws -> CGImageDestination {
+        try fileService.ensureWritable(url: url)
+        
         guard let result = CGImageDestinationCreateWithURL(
             url as CFURL,
             UTType.png.identifier as CFString,

@@ -297,6 +297,14 @@ extension AppState {
             }
         }
         
+        var applyOverlay: Bool = true {
+            didSet {
+                writeSetting(
+                    newValue: applyOverlay,
+                    key: Constants.settingsKeyApplyOverlay)
+            }
+        }
+        
         static func == (lhs: UserData, rhs: UserData) -> Bool {
             let result = lhs.mode == rhs.mode
             && lhs.width == rhs.width
@@ -309,6 +317,7 @@ extension AppState {
             && lhs.prefix == rhs.prefix
             && lhs.postfix == rhs.postfix
             && lhs.inputImage == rhs.inputImage
+            && lhs.applyOverlay == rhs.applyOverlay
             && lhs.videoOutputFormat == rhs.videoOutputFormat
             && lhs.videoResolution == rhs.videoResolution
             && lhs.videoMode == rhs.videoMode
@@ -359,6 +368,8 @@ extension AppState {
                 ?? String()
             inputImage = readSetting(key: Constants.settingsKeyInputImage)
                 ?? String()
+            applyOverlay = readSetting(key: Constants.settingsKeyApplyOverlay)
+                ?? true
         }
     }
 }

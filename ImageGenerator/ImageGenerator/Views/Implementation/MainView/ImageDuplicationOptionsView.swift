@@ -14,6 +14,7 @@ struct ImageDuplicationOptionsView: MediaGeneratorView {
     @Injected(\.fileService) private var fileService
     
     @State private var inputImage: String = .init()
+    @State private var applyOverlay = false
     @State private var showFileImporter = false
     @State private var showError = false
     @State private var errorMessage: String = .init()
@@ -35,6 +36,7 @@ struct ImageDuplicationOptionsView: MediaGeneratorView {
             Spacer()
             CountView()
             duplicatingImageControls
+            applyOverlayToggle
             NamingView()
             OutputFolderView()
         }
@@ -58,6 +60,17 @@ struct ImageDuplicationOptionsView: MediaGeneratorView {
         .fileDialogDefaultDirectory(defaultImportDirectory)
         .alert(isPresented: $showError) {
             errorAlert
+        }
+    }
+    
+    @ViewBuilder
+    private var applyOverlayToggle: some View {
+        LabeledRow(title: Constants.applyOverlay) {
+            Toggle(String(), isOn: $applyOverlay)
+                .toggleStyle(.checkbox)
+                .onChange(of: applyOverlay) {
+                    appState.userData.applyOverlay = applyOverlay
+                }
         }
     }
     
@@ -93,6 +106,7 @@ struct ImageDuplicationOptionsView: MediaGeneratorView {
     
     private func initValues() {
         self.inputImage = appState.userData.inputImage
+        self.applyOverlay = appState.userData.applyOverlay
         
         appState.userData.mode = .duplicateImages
     }

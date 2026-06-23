@@ -7,8 +7,11 @@
 
 import CoreImage
 import UniformTypeIdentifiers
+import Factory
 
 final class HeicWritingStrategy: ImageWritingStrategyType {
+    @Injected(\.fileService) private var fileService
+    
     let colorSpace: ImageColorSpace = .any
     let outputFormat: ImageOutputFormat = .heic
     let isAnimated = false
@@ -35,6 +38,8 @@ final class HeicWritingStrategy: ImageWritingStrategyType {
             format: .RGBA8,
             colorSpace: options.colorSpace.cgColorSpace)
         else { throw ImageGenerationError.generationFailed }
+            
+        try fileService.ensureWritable(url: url)
         
         guard let destination = CGImageDestinationCreateWithURL(
             url as CFURL,

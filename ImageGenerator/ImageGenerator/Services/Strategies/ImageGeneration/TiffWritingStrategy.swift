@@ -7,8 +7,11 @@
 
 import CoreImage
 import UniformTypeIdentifiers
+import Factory
 
 final class TiffWritingStrategy: ImageWritingStrategyType {
+    @Injected(\.fileService) private var fileService
+    
     let colorSpace: ImageColorSpace = .any
     let outputFormat: ImageOutputFormat = .tiff
     let isAnimated = false
@@ -58,6 +61,8 @@ final class TiffWritingStrategy: ImageWritingStrategyType {
     }
     
     private func createDestination(at url: URL) throws -> CGImageDestination {
+        try fileService.ensureWritable(url: url)
+        
         guard let result = CGImageDestinationCreateWithURL(
             url as CFURL,
             UTType.tiff.identifier as CFString,
