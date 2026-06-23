@@ -8,19 +8,19 @@
 import CoreImage
 import Accelerate
 import UniformTypeIdentifiers
+import Factory
 
 final class CmykWritingStrategy: ImageWritingStrategyType {
+    @Injected(\.fileService) private var fileService
+    
     let outputFormat: ImageOutputFormat = .notSupported
     let colorSpace: ImageColorSpace = .cmyk
+    let isAnimated = false
     
-    func write(_ image: CIImage,
-               to url: URL,
-               colorSpace: CGColorSpace,
-               quality: CGFloat,
-               ppi: CGFloat,
-               context: CIContext) throws {
-        
-        guard let cgImage = context.createCGImage(image, from: image.extent)
+    func write(image: CIImage,
+               options: ImageOutputOptions,
+               to folder: URL) throws {
+        guard let cgImage = options.context.createCGImage(image, from: image.extent)
         else { return }
         
         var rgbFormat = vImage_CGImageFormat(
@@ -42,6 +42,7 @@ final class CmykWritingStrategy: ImageWritingStrategyType {
             renderingIntent: .defaultIntent)
         
         var rgbBuffer = vImage_Buffer()
+        
         guard vImageBuffer_InitWithCGImage(
             &rgbBuffer,
             &rgbFormat,
@@ -89,17 +90,21 @@ final class CmykWritingStrategy: ImageWritingStrategyType {
             nil)
         else { return }
         
+        let destination = folder.appendingPathComponent(options.fileName)
+        
+        try fileService.ensureWritable(url: destination)
+        
         guard let destination = CGImageDestinationCreateWithURL(
-            url as CFURL,
+            destination as CFURL,
             UTType.tiff.identifier as CFString,
             1,
             nil)
         else { return }
         
         let properties: [CFString: Any] = [
-            kCGImageDestinationLossyCompressionQuality: quality,
-            kCGImagePropertyDPIWidth: ppi,
-            kCGImagePropertyDPIHeight: ppi
+            kCGImageDestinationLossyCompressionQuality: 1.0,
+            kCGImagePropertyDPIWidth: options.ppi,
+            kCGImagePropertyDPIHeight: options.ppi
         ]
         
         CGImageDestinationAddImage(

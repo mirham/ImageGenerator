@@ -6,22 +6,14 @@
 //
 
 import SwiftUI
+import Factory
 
+@MainActor
 class AppDelegate: NSObject, NSApplicationDelegate {
-    private var infoBoxWindowController: NSWindowController?
+    @Injected(\.windowManager) private var windowManager
     
-    func showInfoWindow() {
-        if infoBoxWindowController == nil {
-            let styleMask: NSWindow.StyleMask = [.closable, .miniaturizable, .titled]
-            let window = NSWindow()
-            window.styleMask = styleMask
-            window.title = Constants.info
-            window.contentView = NSHostingView(rootView: InfoView())
-            window.center()
-            infoBoxWindowController = NSWindowController(window: window)
-        }
-        
-        infoBoxWindowController?.showWindow(infoBoxWindowController?.window)
+    func orderFrontStandardAboutPanel(_ sender: Any?) {
+        windowManager.open(name: .info)
     }
     
     func applicationDidFinishLaunching(_ notification: Notification) {
@@ -31,5 +23,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         window.styleMask.remove(.resizable)
         window.standardWindowButton(.zoomButton)?.isHidden = true
         window.collectionBehavior = [.managed]
+    }
+    
+    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
+        return false
     }
 }

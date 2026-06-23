@@ -16,6 +16,25 @@ extension Container {
     var appState: Factory<AppState> {
         Factory(self) {
             MainActor.assumeIsolated { AppState.shared }
+        }
+        .singleton
+    }
+    
+    // MARK: Windows management
+    
+    var windowManager: Factory<WindowManager> {
+        Factory(self) {
+            MainActor.assumeIsolated {
+                WindowManager()
+            }
+        }.singleton
+    }
+    
+    var windowRegistry: Factory<WindowRegistry> {
+        Factory(self) {
+            MainActor.assumeIsolated {
+                WindowRegistry(manager: Container.shared.windowManager())
+            }
         }.singleton
     }
     
@@ -31,13 +50,15 @@ extension Container {
     var imageCreationService: Factory<ImageCreationServiceType> {
         Factory(self) {
             ImageCreationService()
-        }.singleton
+        }
+        .singleton
     }
     
     var imageWritingService: Factory<ImageWritingServiceType> {
         Factory(self) {
             ImageWritingService()
-        }.singleton
+        }
+        .singleton
     }
     
     var imageJobService: Factory<ImageJobServiceType> {
@@ -68,13 +89,6 @@ extension Container {
         .singleton
     }
     
-    var videoTempFileService: Factory<VideoTempFileServiceType> {
-        Factory(self) {
-            VideoTempFileService()
-        }
-        .singleton
-    }
-    
     var ffmpegService: Factory<FfmpegServiceType> {
         Factory(self) {
             FfmpegService()
@@ -95,6 +109,20 @@ extension Container {
         }.singleton
     }
     
+    var fileService: Factory<FileServiceType> {
+        Factory(self) {
+            FileService()
+        }
+        .singleton
+    }
+    
+    var loggingService: Factory<LoggingServiceType> {
+        Factory(self) {
+            LoggingService()
+        }
+        .singleton
+    }
+    
     // MARK: Image generation strategies registration
     
     static var imageGenerationStrategies: [KeyPath<Container, Factory<ImageGenerationStrategyType>>] = [
@@ -109,7 +137,8 @@ extension Container {
     var imageGenerationStrategyFactory: Factory<ImageGenerationStrategyFactoryType> {
         Factory(self) {
             ImageGenerationStrategyFactory()
-        }.singleton
+        }
+        .singleton
     }
     
     // MARK: Chunking strategies registration
@@ -126,7 +155,8 @@ extension Container {
     var chunkingStrategyFactory: Factory<ChunkingStrategyFactoryType> {
         Factory(self) {
             ChunkingStrategyFactory()
-        }.singleton
+        }
+        .singleton
     }
     
     // MARK: Image writing strategies registration
@@ -136,7 +166,12 @@ extension Container {
          \.jpegWritingStrategy,
          \.pngWritingStrategy,
          \.bmpWritingStrategy,
-         \.tiffWritingStrategy
+         \.tiffWritingStrategy,
+         \.heicWritingStrategy,
+         \.webPWritingStrategy,
+         \.gifWritingStrategy,
+         \.gifAnimatedWritingStrategy,
+         \.jp2WritingStrategy
     ]
     
     func imageWritingStrategies() -> [ImageWritingStrategyType] {
@@ -146,18 +181,20 @@ extension Container {
     var imageWritingStrategyFactory: Factory<ImageWritingStrategyFactoryType> {
         Factory(self) {
             ImageWritingStrategyFactory()
-        }.singleton
+        }
+        .singleton
     }
     
     // MARK: Video generation strategies registration
     
     static var videoGenerationStrategies: [KeyPath<Container, Factory<VideoGenerationStrategyType>>] = [
         \.mp4VideoStrategy,
-         \.movVideoStrategy,
-         \.mkvVideoStrategy,
-         \.aviVideoStrategy,
-         \.webmVideoStrategy,
-         \.wmvVideoStrategy
+        \.movVideoStrategy,
+        \.mkvVideoStrategy,
+        \.aviVideoStrategy,
+        \.webmVideoStrategy,
+        \.tsVideoStrategy,
+        \.wmvVideoStrategy
     ]
     
     func videoGenerationStrategies() -> [VideoGenerationStrategyType] {
@@ -167,7 +204,8 @@ extension Container {
     var videoGenerationStrategyFactory: Factory<VideoGenerationStrategyFactoryType> {
         Factory(self) {
             VideoGenerationStrategyFactory()
-        }.singleton
+        }
+        .singleton
     }
 }
 
@@ -192,13 +230,15 @@ extension SharedContainer {
     var imageChunkingStrategy: Factory<ChunkingStrategyType> {
         Factory(self) {
             ImageChunkingStrategy()
-        }.singleton
+        }
+        .singleton
     }
     
     var videoChunkingStrategy: Factory<ChunkingStrategyType> {
         Factory(self) {
             VideoChunkingStrategy()
-        }.singleton
+        }
+        .singleton
     }
     
     // MARK: Image writing strategies registration
@@ -233,6 +273,36 @@ extension SharedContainer {
         }
     }
     
+    var heicWritingStrategy: Factory<ImageWritingStrategyType> {
+        Factory(self) {
+            HeicWritingStrategy()
+        }
+    }
+    
+    var webPWritingStrategy: Factory<ImageWritingStrategyType> {
+        Factory(self) {
+            WebPWritingStrategy()
+        }
+    }
+    
+    var gifWritingStrategy: Factory<ImageWritingStrategyType> {
+        Factory(self) {
+            GifWritingStrategy()
+        }
+    }
+    
+    var gifAnimatedWritingStrategy: Factory<ImageWritingStrategyType> {
+        Factory(self) {
+            GifAnimatedWritingStrategy()
+        }
+    }
+    
+    var jp2WritingStrategy: Factory<ImageWritingStrategyType> {
+        Factory(self) {
+            Jp2WritingStrategy()
+        }
+    }
+    
     // MARK: Video generation strategies registration
     
     var mp4VideoStrategy:  Factory<VideoGenerationStrategyType> {
@@ -262,6 +332,12 @@ extension SharedContainer {
     var webmVideoStrategy: Factory<VideoGenerationStrategyType> {
         Factory(self) {
             WebmVideoGenerationStrategy()
+        }
+    }
+    
+    var tsVideoStrategy: Factory<VideoGenerationStrategyType> {
+        Factory(self) {
+            TsVideoGenerationStrategy()
         }
     }
     

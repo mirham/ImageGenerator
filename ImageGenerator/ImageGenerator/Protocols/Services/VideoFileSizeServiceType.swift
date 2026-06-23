@@ -8,29 +8,27 @@
 import Foundation
 
 protocol VideoFileSizeServiceType {
-    func trimToExactDurationAsync(
+    func trimToDurationExactAsync(
         sourceUrl: URL,
         duration: TimeInterval,
-        outputUrl: URL
-    ) async -> Bool
-    
-    func trimToUndershootThenPadAsync(
-        oversizedURL: URL,
-        videoData: VideoData,
-        undershootTarget: Int,
-        targetBytes: Int,
-        strategy: VideoGenerationStrategyType
-    ) async -> Bool
+        outputUrl: URL,
+        onOperationComplete:
+            (@Sendable (_ increment: VideoProgress) async -> Void)?
+    ) async throws
     
     func generateSmallFileExactAsync(
         videoData: VideoData,
         strategy: VideoGenerationStrategyType,
-        targetBytes: Int
-    ) async -> Bool
+        targetBytes: Int,
+        onOperationComplete:
+            (@Sendable (_ increment: VideoProgress) async -> Void)?
+    ) async throws
     
-    func buildLargeFile(
+    func generateLargeFileExactAsync(
         videoData: VideoData,
         strategy: VideoGenerationStrategyType,
-        targetBytes: Int
-    ) async -> Bool
+        targetBytes: Int,
+        onOperationComplete:
+            (@Sendable (_ increment: VideoProgress) async -> Void)?
+    ) async throws
 }

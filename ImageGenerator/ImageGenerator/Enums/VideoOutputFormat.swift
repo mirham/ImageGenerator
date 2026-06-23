@@ -14,7 +14,8 @@ enum VideoOutputFormat: Int, CaseIterable, Identifiable, Codable, Equatable, Des
     case mkv = 2
     case avi = 3
     case webm = 4
-    case wmv = 5
+    case ts = 5
+    case wmv = 6
     
     var description: String {
         switch self {
@@ -24,6 +25,7 @@ enum VideoOutputFormat: Int, CaseIterable, Identifiable, Codable, Equatable, Des
             case .mkv: return "mkv"
             case .avi: return "avi"
             case .webm: return "webm"
+            case .ts: return "ts"
             case .wmv: return "wmv"
         }
     }

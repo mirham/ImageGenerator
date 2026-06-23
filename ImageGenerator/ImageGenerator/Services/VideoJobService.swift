@@ -5,6 +5,7 @@
 //  Created by UglyGeorge on 29.05.2026.
 //
 
+import os
 import SwiftUI
 import Factory
 
@@ -12,6 +13,8 @@ class VideoJobService: BaseJobService, VideoJobServiceType {
     @Injected(\.videoGenerationStrategyFactory) private var videoGenerationStrategyFactory
     @Injected(\.chunkingStrategyFactory) private var chunkingStrategyFactory
     @Injected(\.videoGenerationService) private var videoGenerationService
+    @Injected(\.fileService) private var fileService
+    @Injected(\.loggingService) private var loggingService
     
     var generationTask: Task<Void, Never>?
     
@@ -19,6 +22,8 @@ class VideoJobService: BaseJobService, VideoJobServiceType {
         let snapshot = await MainActor.run {
             StateSnapshot(appState)
         }
+        
+        try? fileService.wipeTempFolder()
         
         generationTask = Task(priority: .utility) { [weak self] in
             guard let self
@@ -40,10 +45,11 @@ class VideoJobService: BaseJobService, VideoJobServiceType {
             size: snapshot.videoSize,
             duration: snapshot.duration,
             format: snapshot.videoOutputFormat)
+        let endAt = snapshot.count + snapshot.startAt - Constants.step
         
         for chunkStart in stride(
-            from: Constants.step,
-            through: snapshot.count,
+            from: snapshot.startAt,
+            through: endAt,
             by: chunkSize) {
             
             if Task.isCancelled { break }
@@ -51,7 +57,7 @@ class VideoJobService: BaseJobService, VideoJobServiceType {
             
             let chunkEnd = min(
                 chunkStart + chunkSize - Constants.step,
-                snapshot.count)
+                endAt)
             
             await processVideoChunkAsync(
                 chunkStart: chunkStart,
@@ -92,33 +98,75 @@ class VideoJobService: BaseJobService, VideoJobServiceType {
     
     private func processVideoAsync(
         element: Int,
-        snapshot: StateSnapshot) async {
-            guard !Task.isCancelled
-            else { return }
+        snapshot: StateSnapshot
+    ) async {
+        guard !Task.isCancelled
+        else { return }
+        
+        let videoData = VideoData(
+            videoNumber: element,
+            size: snapshot.videoSize,
+            mode: snapshot.videoMode,
+            format: snapshot.videoOutputFormat,
+            outputUrl: makeVideoUrl(number: element, snapshot: snapshot))
+        
+        guard let strategy = videoGenerationStrategyFactory
+            .getStrategy(format: videoData.format)
+        else { return }
+        
+        guard !Task.isCancelled
+        else { return }
+        
+        await updateStatusAsync {
+            $0.withInProgress(true)
+        }
+        
+        let fileContribution = OSAllocatedUnfairLock(initialState: 0.0)
+        let onOperationComplete = { @Sendable (increment: VideoProgress) in
+            fileContribution.withLock { $0 += increment.value }
             
-            let videoData = VideoData(
-                videoNumber: element,
-                size: snapshot.videoSize,
-                mode: snapshot.videoMode,
-                format: snapshot.videoOutputFormat,
-                outputUrl: makeVideoUrl(number: element, snapshot: snapshot))
-            
-            guard let strategy = videoGenerationStrategyFactory
-                .getStrategy(format: videoData.format)
-            else { return }
-            
-            guard !Task.isCancelled
-            else { return }
-            
-            guard await videoGenerationService.generateAsync(
-                videoData: videoData,
-                strategy: strategy)
-            else { return }
-            
-            await updateStatusAsync {
-                $0.withGeneratedCount(Constants.step)
+            await self.updateStatusAsync {
+                $0.withOperationIncrement(increment.value)
             }
         }
+        
+        var contribution = 0.0
+        
+        do {
+            try await videoGenerationService.generateAsync(
+                videoData: videoData,
+                strategy: strategy,
+                onOperationComplete: onOperationComplete)
+            
+            contribution = fileContribution.withLock { $0 }
+            
+            await updateStatusAsync {
+                $0.withVideoCompleted(operationContribution: contribution)
+            }
+            
+            loggingService.write(
+                message: String(
+                    format: Constants.lmSuccessfullyGeneratedVideo,
+                    element
+                ),
+                type: .success)
+        }
+        catch {
+            contribution = fileContribution.withLock { $0 }
+            
+            await updateStatusAsync {
+                $0.withVideoFailed(operationContribution: contribution)
+            }
+            
+            loggingService.write(
+                message: String(
+                    format: Constants.lmVideoGenerationFailed,
+                    element,
+                    error.localizedDescription
+                ),
+                type: .error)
+        }
+    }
     
     private func makeVideoUrl(number: Int, snapshot: StateSnapshot) -> URL {
         return URL(fileURLWithPath: "\(snapshot.outputFolder)\(snapshot.prefix)\(number)\(snapshot.postfix).\(snapshot.videoOutputFormat.description)")
@@ -128,6 +176,7 @@ class VideoJobService: BaseJobService, VideoJobServiceType {
     
     private struct StateSnapshot {
         let count: Int
+        let startAt: Int
         let videoOutputFormat: VideoOutputFormat
         let videoMode: VideoGenerationMode
         let videoSize: CGSize
@@ -139,6 +188,7 @@ class VideoJobService: BaseJobService, VideoJobServiceType {
         @MainActor
         init(_ appState: AppState) {
             self.count = appState.userData.count
+            self.startAt = appState.userData.startAt
             self.videoOutputFormat = appState.userData.videoOutputFormat
             self.videoMode = appState.userData.videoMode
             self.duration = appState.userData.videoDurationSeconds

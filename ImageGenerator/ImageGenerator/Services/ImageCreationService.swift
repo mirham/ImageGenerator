@@ -12,6 +12,16 @@ import Factory
 
 final class ImageCreationService: ImageCreationServiceType {
     private let colorSpace = CGColorSpaceCreateDeviceRGB()
+    private let grayColor: CGColor = CGColor(gray: 1.0, alpha: 1.0)
+    private let boldSystemFontName: CFString = {
+        NSFont.boldSystemFont(ofSize: 12).fontName as CFString
+    }()
+    private let renderCache: NSCache<NSString, CIImage> = {
+        let cache = NSCache<NSString, CIImage>()
+        cache.countLimit = 50
+        
+        return cache
+    }()
     
     func generate(
         number: Int,
@@ -20,25 +30,25 @@ final class ImageCreationService: ImageCreationServiceType {
         let color = CIColor.random()
         let background = CIImage(color: color)
             .cropped(to: CGRect(x: 0, y: 0, width: size.width, height: size.height))
-        
-        let numberImage = renderNumberOverlay(
+        let overlay = renderNumberOverlay(
             number: number,
             size: size,
             ppi: ppi)
         
-        return numberImage.composited(over: background)
+        return overlay.composited(over: background)
     }
     
-    func duplicate(number: Int, source: CGImage) -> CIImage {
-        let background = CIImage(cgImage: source)
-        let size = CGSize(width: source.width, height: source.height)
-        let number = renderNumberOverlay(
+    func duplicate(number: Int, source: CIImage) -> CIImage {
+        let size = CGSize(
+            width: source.extent.width,
+            height: source.extent.height)
+        let overlay = renderNumberOverlay(
             number: number,
             size: size)
         
-        return number.applyingFilter(
-            Constants.defaultBlendMode,
-            parameters: [ kCIInputBackgroundImageKey: background ])
+        return overlay.applyingFilter(
+            Constants.blendModeDefault,
+            parameters: [ kCIInputBackgroundImageKey: source ])
     }
     
     // MARK: Private functions
@@ -47,37 +57,40 @@ final class ImageCreationService: ImageCreationServiceType {
         number: Int,
         size: CGSize,
         ppi: CGFloat = Constants.defaultPpi) -> CIImage {
+        let cacheKey = "\(number)_\(size.width)x\(size.height)_\(ppi)" as NSString
+        
+        if let cached = renderCache.object(forKey: cacheKey) {
+            return cached
+        }
+        
         let scale = ppi / Constants.defaultPpi
         let scaledSize = CGSize(
             width: size.width * scale,
-            height: size.height * scale)
+            height: size.height * scale
+        )
         
-        let padding: CGFloat = Constants.defaultNumberSizePadding
-        let maxTextWidth = scaledSize.width * padding
-        let maxTextHeight = scaledSize.height * padding
-        var fontSize = min(scaledSize.width, scaledSize.height) * Constants.defaultNumberSizePercentage
-        var line: CTLine
+        let maxTextWidth = scaledSize.width * Constants.defaultNumberSizePadding
+        let maxTextHeight = scaledSize.height * Constants.defaultNumberSizePadding
+        
+        let referenceSize: CGFloat = 256
+        var refAscent: CGFloat = 0
+        var refDescent: CGFloat = 0
+        let refLine = makeLine(number: number, fontSize: referenceSize)
+        let refWidth = CTLineGetTypographicBounds(
+            refLine,
+            &refAscent,
+            &refDescent,
+            nil)
+        let refHeight = refAscent + refDescent
+        
+        let fontSize = referenceSize
+            * min(maxTextWidth / refWidth, maxTextHeight / refHeight)
+        
         var ascent: CGFloat = 0
         var descent: CGFloat = 0
-        var textWidth: CGFloat = 0
-        var textHeight: CGFloat = 0
-        
-        repeat {
-            let font = font(size: fontSize)
-            let attributes: [CFString: Any] = [
-                kCTFontAttributeName: font,
-                kCTForegroundColorAttributeName: CGColor(gray: 1.0, alpha: 1.0)
-            ]
-            let attributed = CFAttributedStringCreate(
-                nil, "\(number)" as CFString,
-                attributes as CFDictionary)!
-            line = CTLineCreateWithAttributedString(attributed)
-            textWidth = CTLineGetTypographicBounds(line, &ascent, &descent, nil)
-            textHeight = ascent + descent
-            
-            if textWidth <= maxTextWidth && textHeight <= maxTextHeight { break }
-            fontSize *= 0.9
-        } while fontSize > 1
+        let line = makeLine(number: number, fontSize: fontSize)
+        let textWidth = CTLineGetTypographicBounds(line, &ascent, &descent, nil)
+        let textHeight = ascent + descent
         
         guard let context = CGContext(
             data: nil,
@@ -98,9 +111,28 @@ final class ImageCreationService: ImageCreationServiceType {
         guard let cgImage = context.makeImage()
         else { return CIImage.empty() }
         
-        // Scale back down to original size so compositing works correctly
-        let scaleDown = CGAffineTransform(scaleX: 1/scale, y: 1/scale)
-        return CIImage(cgImage: cgImage).transformed(by: scaleDown)
+        let scaleDown = CGAffineTransform(scaleX: 1 / scale, y: 1 / scale)
+        let result = CIImage(cgImage: cgImage).transformed(by: scaleDown)
+        
+        renderCache.setObject(result, forKey: cacheKey)
+        
+        return result
+    }
+
+    private func makeLine(number: Int, fontSize: CGFloat) -> CTLine {
+        let attributes: [CFString: Any] = [
+            kCTFontAttributeName: CTFontCreateWithName(
+                boldSystemFontName,
+                fontSize,
+                nil),
+            kCTForegroundColorAttributeName: grayColor
+        ]
+        let attributed = CFAttributedStringCreate(
+            nil,
+            "\(number)" as CFString,
+            attributes as CFDictionary)!
+        
+        return CTLineCreateWithAttributedString(attributed)
     }
     
     private func font(size: CGFloat) -> CTFont {

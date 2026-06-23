@@ -13,6 +13,8 @@ class ImageJobService: BaseJobService, ImageJobServiceType {
     @Injected(\.chunkingStrategyFactory) private var chunkingStrategyFactory
     @Injected(\.imageCreationService) private var imageCreationService
     @Injected(\.imageWritingService) private var imageWritingService
+    @Injected(\.fileService) private var fileService
+    @Injected(\.loggingService) private var loggingService
     
     var generationTask: Task<Void, Never>?
     
@@ -20,6 +22,8 @@ class ImageJobService: BaseJobService, ImageJobServiceType {
         let snapshot = await MainActor.run {
             StateSnapshot(appState)
         }
+        
+        try? fileService.wipeTempFolder()
         
         generationTask = Task(priority: .utility) { [weak self] in
             guard let self
@@ -32,19 +36,19 @@ class ImageJobService: BaseJobService, ImageJobServiceType {
     // MARK: Private functions
     
     private func runImageGenerationJobAsync(snapshot: StateSnapshot) async {
-        let loadedImage = await loadInputImageAsync(snapshot: snapshot)
-        
-        if snapshot.mode == .duplicateImages && loadedImage == nil { return }
-        
-        guard let chunkingStrategy = chunkingStrategyFactory.getStrategy(for: .image)
+        guard let generationStrategy = imageGenerationStrategyFactory
+                .getStrategy(mode: snapshot.mode),
+              let chunkingStrategy = chunkingStrategyFactory
+                .getStrategy(for: .image)
         else { return }
         
         let concurrencyLimit = getConcurrencyLimit()
         let chunkSize = chunkingStrategy.calculateChunkSize(count: snapshot.count)
+        let endAt = snapshot.count + snapshot.startAt - Constants.step
         
         for chunkStart in stride(
-            from: Constants.step,
-            through: snapshot.count,
+            from: snapshot.startAt,
+            through: endAt,
             by: chunkSize) {
             
             if Task.isCancelled { break }
@@ -52,13 +56,13 @@ class ImageJobService: BaseJobService, ImageJobServiceType {
             
             let chunkEnd = min(
                 chunkStart + chunkSize - Constants.step,
-                snapshot.count)
+                endAt)
             
             await processImageChunkAsync(
                 chunkStart: chunkStart,
                 chunkEnd: chunkEnd,
                 snapshot: snapshot,
-                loadedImage: loadedImage,
+                generationStrategy: generationStrategy,
                 concurrencyLimit: concurrencyLimit)
         }
     }
@@ -67,7 +71,7 @@ class ImageJobService: BaseJobService, ImageJobServiceType {
         chunkStart: Int,
         chunkEnd: Int,
         snapshot: StateSnapshot,
-        loadedImage: LoadedImage?,
+        generationStrategy: ImageGenerationStrategyType,
         concurrencyLimit: Int) async {
         await withTaskGroup(of: Void.self) { group in
             var inFlight = 0
@@ -86,7 +90,7 @@ class ImageJobService: BaseJobService, ImageJobServiceType {
                     await processImageAsync(
                         element: element,
                         snapshot: snapshot,
-                        loadedImage: loadedImage)
+                        generationStrategy: generationStrategy)
                 }
             }
             
@@ -97,109 +101,70 @@ class ImageJobService: BaseJobService, ImageJobServiceType {
     private func processImageAsync(
         element: Int,
         snapshot: StateSnapshot,
-        loadedImage: LoadedImage?) async {
+        generationStrategy: ImageGenerationStrategyType) async {
         guard !Task.isCancelled
         else { return }
         
         let imageData = ImageData(
             imageNumber: element,
-            mode: snapshot.mode,
-            image: loadedImage?.image,
-            size: loadedImage?.size)
-            
-        guard let strategy = imageGenerationStrategyFactory
-            .getStrategy(mode: imageData.mode)
-        else { return }
+            prefix: snapshot.prefix,
+            postfix: snapshot.postfix)
         
-        guard let image = await strategy
-            .generateImageAsync(imageData: imageData)
-        else { return }
+        let image = await generationStrategy.generateImageAsync(
+            imageData: imageData)
         
         guard !Task.isCancelled
         else { return }
         
-        let url = makeImageUrl(imageData: imageData, snapshot: snapshot)
-        
-        imageWritingService.writeImage(
-            image,
-            to: url,
-            format: snapshot.outputFormat,
-            colorSpace: snapshot.colorSpace,
-            ppi: snapshot.ppi
-        )
+        do {
+            try imageWritingService.writeImage(
+                image: image,
+                originalImagePath: imageData.originalImagePath,
+                options: imageData.asOutputOptions(),
+                to: URL(fileURLWithPath: snapshot.outputFolder,
+                        isDirectory: true)
+            )
             
-        await updateStatusAsync {
-            $0.withGeneratedCount(Constants.step)
+            loggingService.write(
+                message: String(
+                    format: Constants.lmSuccessfullyGeneratedPhoto,
+                    element),
+                type: .success)
         }
-    }
-    
-    private func loadInputImageAsync(snapshot: StateSnapshot) async -> LoadedImage? {
-        guard snapshot.mode == .duplicateImages
-        else { return nil }
+        catch {
+            loggingService.write(
+                message: String(
+                    format: Constants.lmPhotoGenerationFailed,
+                    element,
+                    error.localizedDescription),
+                type: .error)
+        }
         
-        let nsImage = NSImage(byReferencingFile: snapshot.inputImage)
-        
-        guard let nsImage
-        else { return nil }
-        
-        guard let cgImage = nsImage.cgImage(
-            forProposedRect: nil,
-            context: nil,
-            hints: nil)
-        else { return nil }
-        
-        let size = nsImage.pixelSize ?? nsImage.size
-        
-        return LoadedImage(image: cgImage, size: size)
-    }
-    
-    private func makeImageUrl(imageData: ImageData, snapshot: StateSnapshot) -> URL {
-        let imageUrl = URL(string: snapshot.inputImage)
-        let imageName = imageUrl!.deletingPathExtension().lastPathComponent
-        let imageExtension = imageUrl!.pathExtension
-        
-        return imageData.mode == .generateImages
-        ? URL(fileURLWithPath: "\(snapshot.outputFolder)\(snapshot.prefix)\(imageData.imageNumber)\(snapshot.postfix).\(snapshot.outputFormat.description)")
-        : URL(fileURLWithPath: "\(snapshot.outputFolder)\(snapshot.prefix)\(imageName) \(imageData.imageNumber)\(snapshot.postfix).\(imageExtension)")
+        await updateStatusAsync { $0.withGeneratedCount(Constants.step) }
     }
     
     // MARK: Inner types
     
     private struct StateSnapshot {
-        let count: Int
         let mode: GenerationMode
-        let colorSpace: ImageColorSpace
-        let outputFormat: ImageOutputFormat
-        let inputImage: String
-        let outputFolder: String
+        let count: Int
+        let startAt: Int
         let prefix: String
         let postfix: String
-        let width: Int
-        let height: Int
-        let ppi: CGFloat
+        let outputFolder: String
         
         @MainActor
         init(_ appState: AppState) {
             self.count = appState.userData.count
+            self.startAt = appState.userData.startAt
             self.mode = appState.userData.mode
-            self.colorSpace = appState.userData.imageColorSpace
-            self.outputFormat = appState.userData.imageOutputFormat
-            self.inputImage = appState.userData.inputImage
-            self.outputFolder = appState.userData.outputFolder
             self.prefix = appState.userData.prefix.replacingOccurrences(
                 of: Constants.slash,
                 with: String())
             self.postfix = appState.userData.postfix.replacingOccurrences(
                 of: Constants.slash,
                 with: String())
-            self.width = appState.userData.width
-            self.height = appState.userData.height
-            self.ppi = appState.userData.imageResolution.ppi
+            self.outputFolder = appState.userData.outputFolder
         }
-    }
-    
-    private struct LoadedImage {
-        let image: CGImage
-        let size: NSSize
     }
 }

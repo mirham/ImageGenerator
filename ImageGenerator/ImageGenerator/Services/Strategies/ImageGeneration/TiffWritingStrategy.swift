@@ -7,44 +7,83 @@
 
 import CoreImage
 import UniformTypeIdentifiers
+import Factory
 
 final class TiffWritingStrategy: ImageWritingStrategyType {
+    @Injected(\.fileService) private var fileService
+    
     let colorSpace: ImageColorSpace = .any
     let outputFormat: ImageOutputFormat = .tiff
+    let isAnimated = false
     
-    func write(_ image: CIImage,
-               to url: URL,
-               colorSpace: CGColorSpace,
-               quality: CGFloat,
-               ppi: CGFloat,
-               context: CIContext) throws {
+    func write(image: CIImage,
+               options: ImageOutputOptions,
+               to folder: URL) throws {
+        try validateColorSpace(options.colorSpace)
         
-        let format: CIFormat = colorSpace.model == .monochrome ? .L8 : .RGBA8
-        
-        guard let cgImage = context.createCGImage(
-            image,
-            from: image.extent,
+        let destinationUrl = folder.appendingPathComponent(options.fileName)
+        let format = tiffFormat(for: options.colorSpace)
+        let cgImage = try createCgImage(
+            from: image,
             format: format,
-            colorSpace: colorSpace)
-        else { return }
-        
-        guard let destination = CGImageDestinationCreateWithURL(
-            url as CFURL,
-            UTType.tiff.identifier as CFString,
-            1,
-            nil)
-        else { return }
-        
-        let properties: [CFString: Any] = [
-            kCGImageDestinationLossyCompressionQuality: quality,
-            kCGImagePropertyDPIWidth: ppi,
-            kCGImagePropertyDPIHeight: ppi
-        ]
+            options: options)
+        let destination = try createDestination(at: destinationUrl)
+        let properties = tiffProperties(ppi: options.ppi)
         
         CGImageDestinationAddImage(
             destination,
             cgImage,
-            properties as CFDictionary)
-        CGImageDestinationFinalize(destination)
+            properties as CFDictionary
+        )
+        
+        try finalize(destination: destination)
+    }
+    
+    // MARK: Private functions
+    
+    private func tiffFormat(for colorSpace: ImageColorSpace) -> CIFormat {
+        colorSpace == .greyscale ? .L8 : .RGBA8
+    }
+    
+    private func createCgImage(
+        from image: CIImage,
+        format: CIFormat,
+        options: ImageOutputOptions
+    ) throws -> CGImage {
+        guard let result = options.context.createCGImage(
+            image,
+            from: image.extent,
+            format: format,
+            colorSpace: options.colorSpace.cgColorSpace)
+        else { throw ImageGenerationError.cgImageCreationFailed }
+        
+        return result
+    }
+    
+    private func createDestination(at url: URL) throws -> CGImageDestination {
+        try fileService.ensureWritable(url: url)
+        
+        guard let result = CGImageDestinationCreateWithURL(
+            url as CFURL,
+            UTType.tiff.identifier as CFString,
+            1,
+            nil)
+        else { throw ImageGenerationError.destinationCreationFailed }
+        
+        return result
+    }
+    
+    private func tiffProperties(ppi: Double) -> [CFString: Any] {
+        [
+            kCGImageDestinationLossyCompressionQuality: 1.0,
+            kCGImagePropertyDPIWidth: ppi,
+            kCGImagePropertyDPIHeight: ppi
+        ]
+    }
+    
+    private func finalize(destination: CGImageDestination) throws {
+        guard CGImageDestinationFinalize(destination) else {
+            throw ImageGenerationError.destinationFinalizationFailed
+        }
     }
 }

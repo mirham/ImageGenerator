@@ -4,23 +4,27 @@ import Factory
 final class VideoGenerationService: VideoGenerationServiceType {
     @Injected(\.singleVideoGenerationService) private var singleVideoGenerationService
     @Injected(\.videoFileSizeService) private var videoFileSizeService
-    @Injected(\.videoTempFileService) private var videoTempFileService
+    @Injected(\.fileService) private var fileService
     
     func generateAsync(
         videoData: VideoData,
-        strategy: VideoGenerationStrategyType) async -> Bool {
+        strategy: VideoGenerationStrategyType,
+        onOperationComplete:
+        (@Sendable (_ increment: VideoProgress) async -> Void)?) async throws {
         switch videoData.mode {
             case .duration(let seconds):
-                return await generateByDurationAsync(
+                 try await generateByDurationAsync(
                     videoData: videoData,
                     strategy: strategy,
-                    duration: seconds
+                    duration: seconds,
+                    onOperationComplete: onOperationComplete
                 )
             case .fileSize(let bytes):
-                return await generateByFileSizeAsync(
+                try await generateByFileSizeAsync(
                     videoData: videoData,
                     strategy: strategy,
-                    targetBytes: bytes
+                    targetBytes: bytes,
+                    onOperationComplete: onOperationComplete
                 )
         }
     }
@@ -30,120 +34,122 @@ final class VideoGenerationService: VideoGenerationServiceType {
     private func generateByDurationAsync(
         videoData: VideoData,
         strategy: VideoGenerationStrategyType,
-        duration: TimeInterval
-    ) async -> Bool {
-        if strategy.isSupportsStreamLoop
-            && duration > Constants.streamLoopMinDuration {
-            return await singleVideoGenerationService.withStreamLoopAsync(
-                videoData: videoData,
-                strategy: strategy,
-                duration: duration
-            )
+        duration: TimeInterval,
+        onOperationComplete:
+        (@Sendable (_ increment: VideoProgress) async -> Void)?
+    ) async throws {
+        switch DurationApproach(
+            supportsStreamLoop: strategy.isSupportsStreamLoop,
+            duration: duration) {
+            case .streamLoop:
+                return try await singleVideoGenerationService.withStreamLoopAsync(
+                    videoData: videoData,
+                    strategy: strategy,
+                    duration: duration,
+                    onOperationComplete: onOperationComplete)
+            case .singlePass:
+                return try await singleVideoGenerationService.withSinglePassAsync(
+                    videoData: videoData,
+                    strategy: strategy,
+                    duration: duration)
+            case .doublingThenTrim:
+                try await generateWithDoublingThenTrimAsync(
+                    videoData: videoData,
+                    strategy: strategy,
+                    targetDuration: duration,
+                    onOperationComplete: onOperationComplete)
         }
-        
-        if duration <= Constants.baseClipDuration {
-            return await singleVideoGenerationService.withSinglePassAsync(
-                videoData: videoData,
-                strategy: strategy,
-                duration: duration
-            )
-        }
-        
-        return await generateWithDoublingThenTrimAsync(
-            videoData: videoData,
-            strategy: strategy,
-            targetDuration: duration
-        )
     }
     
     private func generateWithDoublingThenTrimAsync(
         videoData: VideoData,
         strategy: VideoGenerationStrategyType,
-        targetDuration: TimeInterval
-    ) async -> Bool {
-        let overshootTarget = targetDuration * Constants.defaultOvershootMultiplier
+        targetDuration: TimeInterval,
+        onOperationComplete:
+        (@Sendable (_ increment: VideoProgress) async -> Void)?
+    ) async throws {
+        let overshootTarget = targetDuration * Constants.defaultOversizedMultiplier
         
-        guard let oversized = await singleVideoGenerationService.withDoublingAsync(
+        guard let oversized = try await singleVideoGenerationService.withDoublingAsync(
             videoData: videoData,
             strategy: strategy,
             target: VideoGenerationMode.duration(overshootTarget),
-            useHighBitrate: false
-        ) else { return false }
+            useHighBitrate: false,
+            onOperationComplete: onOperationComplete)
+        else { return }
         
         defer {
             Task {
-                await videoTempFileService.deleteFileAsync(at: oversized.url)
+                try await fileService.deleteFileAsync(at: oversized.url)
             }
         }
         
-        return await videoFileSizeService.trimToExactDurationAsync(
+        try await videoFileSizeService.trimToDurationExactAsync(
             sourceUrl: oversized.url,
             duration: targetDuration,
-            outputUrl: videoData.outputUrl
-        )
+            outputUrl: videoData.outputUrl,
+            onOperationComplete: onOperationComplete)
     }
     
     private func generateByFileSizeAsync(
         videoData: VideoData,
         strategy: VideoGenerationStrategyType,
-        targetBytes: Int
-    ) async -> Bool {
-        if targetBytes < Constants.doublingMinBytes {
-            return await videoFileSizeService.generateSmallFileExactAsync(
-                videoData: videoData,
-                strategy: strategy,
-                targetBytes: targetBytes
-            )
+        targetBytes: Int,
+        onOperationComplete:
+        (@Sendable (_ increment: VideoProgress) async -> Void)?
+    ) async throws {
+        switch FileSizeCategory(bytes: targetBytes) {
+            case .small:
+                try await videoFileSizeService.generateSmallFileExactAsync(
+                    videoData: videoData,
+                    strategy: strategy,
+                    targetBytes: targetBytes,
+                    onOperationComplete: onOperationComplete
+                )
+            case .large:
+                try await videoFileSizeService.generateLargeFileExactAsync(
+                    videoData: videoData,
+                    strategy: strategy,
+                    targetBytes: targetBytes,
+                    onOperationComplete: onOperationComplete
+                )
+            case .medium:
+                try await generateWithDoublingThenPadAsync(
+                    videoData: videoData,
+                    strategy: strategy,
+                    targetBytes: targetBytes,
+                    onOperationComplete: onOperationComplete
+                )
         }
-        
-        if targetBytes >= Constants.largeFileThreshold {
-            return await videoFileSizeService.buildLargeFile(
-                videoData: videoData,
-                strategy: strategy,
-                targetBytes: targetBytes
-            )
-        }
-        
-        return await generateWithDoublingThenPadAsync(
-            videoData: videoData,
-            strategy: strategy,
-            targetBytes: targetBytes
-        )
     }
     
     private func generateWithDoublingThenPadAsync(
         videoData: VideoData,
         strategy: VideoGenerationStrategyType,
-        targetBytes: Int
-    ) async -> Bool {
-        let undershootTarget = Int(Double(targetBytes) * Constants.undershootFactor)
+        targetBytes: Int,
+        onOperationComplete:
+        (@Sendable (_ increment: VideoProgress) async -> Void)?
+    ) async throws {
+        let undersizedTarget = Int(Double(targetBytes) * Constants.undersizedFactor)
         
-        guard let oversized = await singleVideoGenerationService.withDoublingAsync(
+        guard let oversized = try await singleVideoGenerationService.withDoublingAsync(
             videoData: videoData,
             strategy: strategy,
-            target: VideoGenerationMode.fileSize(undershootTarget),
-            useHighBitrate: true)
-        else { return false }
+            target: VideoGenerationMode.fileSize(undersizedTarget),
+            useHighBitrate: true,
+            onOperationComplete: onOperationComplete)
+        else { return }
         
         defer {
             Task {
-                await videoTempFileService.deleteFileAsync(at: oversized.url)
+                try await fileService.deleteFileAsync(at: oversized.url)
             }
         }
         
-        if strategy.trimFile(
+        try strategy.trimFile(
             sourceUrl: oversized.url,
             targetBytes: targetBytes,
-            outputUrl: videoData.outputUrl) {
-            return true
-        }
-        
-        return await videoFileSizeService.trimToUndershootThenPadAsync(
-            oversizedURL: oversized.url,
-            videoData: videoData,
-            undershootTarget: undershootTarget,
-            targetBytes: targetBytes,
-            strategy: strategy
+            outputUrl: videoData.outputUrl
         )
     }
 }

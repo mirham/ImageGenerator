@@ -11,12 +11,14 @@ final class ImageGenerationStateUpdateBuilder {
     @discardableResult
     func withGeneratedCount(_ count: Int) -> Self {
         update.generatedCount = count
+        
         return self
     }
     
     @discardableResult
     func withIsCancelRequested(_ isCancelRequested: Bool) -> Self {
         update.isCancelRequested = isCancelRequested
+        
         return self
     }
     

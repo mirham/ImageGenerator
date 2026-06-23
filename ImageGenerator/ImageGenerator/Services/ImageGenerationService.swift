@@ -21,16 +21,27 @@ class ImageGenerationService : ImageGenerationServiceType {
             StateSnapshot(appState)
         }
         
+        imageData.outputFormat = snapshot.format
+        imageData.outputColorSpace = snapshot.colorSpace
+        imageData.outputPpi = snapshot.ppi
+        imageData.resetOriginalImageData()
+        
+        let size = snapshot.predefinedSize
+            ?? CGSize(width: snapshot.width,
+                      height: snapshot.height)
+        
         return imageCreationService.generate(
             number: imageData.imageNumber,
-            size: snapshot.predefinedSize ?? CGSize(
-                width: snapshot.width, height: snapshot.height),
+            size: size,
             ppi: snapshot.ppi
         )
     }
     
     func duplicateAsync(imageData: ImageData) async -> CIImage? {
-        guard let source = imageData.image
+        guard !Task.isCancelled
+        else { return nil }
+        
+        guard let source = imageData.originalImage
         else { return nil }
         
         return imageCreationService.duplicate(
@@ -45,6 +56,8 @@ class ImageGenerationService : ImageGenerationServiceType {
         let width: Int
         let height: Int
         let predefinedSize: CGSize?
+        let format: ImageOutputFormat
+        let colorSpace: ImageColorSpace
         let ppi: CGFloat
         
         @MainActor
@@ -52,6 +65,8 @@ class ImageGenerationService : ImageGenerationServiceType {
             self.width = appState.userData.width
             self.height = appState.userData.height
             self.predefinedSize = appState.userData.imageResolution.predefinedSize
+            self.format = appState.userData.imageOutputFormat
+            self.colorSpace = appState.userData.imageColorSpace
             self.ppi = appState.userData.imageResolution.ppi
         }
     }

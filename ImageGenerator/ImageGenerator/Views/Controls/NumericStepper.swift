@@ -23,9 +23,9 @@ struct NumericStepper<Value: Strideable & LosslessStringConvertible>: View {
     var body: some View {
         HStack(spacing: 0) {
             HStack(spacing: 2) {
-                stepperButton(direction: -1, icon: "minus")
+                stepperButton(direction: -1, icon: Constants.iconMinus)
                 inputField
-                stepperButton(direction: 1, icon: "plus")
+                stepperButton(direction: 1, icon: Constants.iconPlus)
                     .padding(.trailing, 4)
             }
             .frame(width: fieldWidth, height: 28)
@@ -47,6 +47,7 @@ struct NumericStepper<Value: Strideable & LosslessStringConvertible>: View {
     
     // MARK: View sections
     
+    @ViewBuilder
     private func stepperButton(direction: Int, icon: String) -> some View {
         Rectangle()
             .fill(Color.clear)
@@ -55,14 +56,19 @@ struct NumericStepper<Value: Strideable & LosslessStringConvertible>: View {
             .overlay(
                 Image(systemName: icon)
                     .font(.system(size: 12, weight: .semibold))
-                    .foregroundStyle(atBound(direction) ? .tertiary : .secondary)
+                    .foregroundStyle(
+                        atBound(direction)
+                            ? .tertiary
+                            : .secondary)
             )
             .onTapGesture {
-                guard !atBound(direction) else { return }
+                guard !atBound(direction)
+                else { return }
+                
                 adjustValue(by: direction)()
             }
             .opacity(atBound(direction) ? 0.3 : 1)
-            .help(direction == 1 ? "Increase" : "Decrease")
+            .help(direction == 1 ? Constants.hintIncrease : Constants.hintDecrease)
     }
     
     @ViewBuilder
@@ -72,8 +78,24 @@ struct NumericStepper<Value: Strideable & LosslessStringConvertible>: View {
             .textFieldStyle(.plain)
             .focused($isFocused)
             .onAppear { syncTextFromValue() }
-            .onChange(of: value) {
-                syncTextFromValue()
+            .onChange(of: value) {syncTextFromValue() }
+            .onChange(of: text) { _, newText in
+                let filtered = newText.filteringNumericInput(allowDecimal: true)
+                
+                if filtered != newText {
+                    text = filtered
+                
+                    return
+                }
+                
+                if let parsed = Value(newText) {
+                    let clamped = parsed.clamped(to: range)
+                    
+                    if clamped != value {
+                        value = clamped
+                        onChanged()
+                    }
+                }
             }
             .onChange(of: isFocused) {
                 if !isFocused { commitText() }
@@ -85,8 +107,11 @@ struct NumericStepper<Value: Strideable & LosslessStringConvertible>: View {
     
     private func adjustValue(by direction: Int) -> () -> Void {
         {
-            let multiplier: Value.Stride = direction == 1 ? step : negate(step)
+            let multiplier: Value.Stride = direction == 1
+                ? step
+                : negate(step)
             let newValue = value.advanced(by: multiplier)
+            
             value = newValue.clamped(to: range)
             syncTextFromValue()
             onChanged()
@@ -94,7 +119,9 @@ struct NumericStepper<Value: Strideable & LosslessStringConvertible>: View {
     }
     
     private func atBound(_ direction: Int) -> Bool {
-        direction == 1 ? atUpperBound : atLowerBound
+        direction == 1
+            ? atUpperBound
+            : atLowerBound
     }
     
     private var atLowerBound: Bool {
@@ -118,15 +145,30 @@ struct NumericStepper<Value: Strideable & LosslessStringConvertible>: View {
     }
     
     private func syncTextFromValue() {
-        text = String(value)
+        let valueAsString = String(value)
+        
+        text = valueAsString.hasSuffix(Constants.intSuffix)
+            ? String(valueAsString.dropLast(2))
+            : valueAsString
     }
     
     private func commitText() {
+        if let parsed = Value(text),
+           parsed.clamped(to: range) == parsed {
+            if parsed != value {
+                value = parsed
+                onChanged()
+            }
+            
+            return
+        }
+        
         if let parsed = Value(text) {
             value = parsed.clamped(to: range)
         } else {
             value = range.lowerBound
         }
+        
         syncTextFromValue()
         onChanged()
     }

@@ -8,20 +8,40 @@
 import Foundation
 import Factory
 
-final class ImageWritingStrategyFactory : ImageWritingStrategyFactoryType {
+final class ImageWritingStrategyFactory: ImageWritingStrategyFactoryType {
     func getStrategy(
         for outputFormat: ImageOutputFormat,
-        colorSpace: ImageColorSpace) -> (any ImageWritingStrategyType)? {
-        let strategies = Container.shared.imageWritingStrategies()
+        colorSpace: ImageColorSpace,
+        isAnimated: Bool) -> (any ImageWritingStrategyType)? {
+            let strategies = Container.shared.imageWritingStrategies()
+            let matcher = StrategyMatcher(
+                outputFormat: outputFormat,
+                colorSpace: colorSpace,
+                isAnimated: isAnimated
+            )
+            let result = strategies.first(where: matcher.matches)
             
-        if colorSpace == .cmyk {
-            return strategies.first( where: { $0.colorSpace == .cmyk })
-        }
+            return result
+    }
+    
+    // MARK: Inner types
+    
+    private struct StrategyMatcher {
+        let outputFormat: ImageOutputFormat
+        let colorSpace: ImageColorSpace
+        let isAnimated: Bool
         
-        if outputFormat == .jpeg || outputFormat == .jpg {
-            return strategies.first(where: { $0.outputFormat == .jpeg })
+        func matches(_ strategy: any ImageWritingStrategyType) -> Bool {
+            switch (colorSpace, outputFormat, isAnimated) {
+                case (.cmyk, _, _):
+                    return strategy.colorSpace == .cmyk
+                case (_, .gif, true):
+                    return strategy.outputFormat == .gif && strategy.isAnimated
+                case (_, .jpg, _):
+                    return strategy.outputFormat == .jpeg
+                default:
+                    return strategy.outputFormat == outputFormat
+            }
         }
-        
-        return strategies.first(where: { $0.outputFormat == outputFormat })
     }
 }

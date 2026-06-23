@@ -5,10 +5,9 @@
 //  Created by UglyGeorge on 21.05.2026.
 //
 
-import CoreGraphics
 import CoreImage
 
 protocol ImageCreationServiceType {
     func generate(number: Int, size: CGSize, ppi: CGFloat) -> CIImage?
-    func duplicate(number: Int, source: CGImage) -> CIImage
+    func duplicate(number: Int, source: CIImage) -> CIImage
 }

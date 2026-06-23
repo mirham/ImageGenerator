@@ -1,5 +1,5 @@
 //
-//  FileSizeService.swift
+//  VideoFileSizeService.swift
 //  ImageGenerator
 //
 //  Created by UglyGeorge on 03.06.2026.
@@ -10,12 +10,15 @@ import Factory
 
 final class VideoFileSizeService: BaseVideoGenerationService, VideoFileSizeServiceType {
     @Injected(\.singleVideoGenerationService) private var singleVideoGenerationService
+    @Injected(\.loggingService) private var loggingService
         
-    func trimToExactDurationAsync(
+    func trimToDurationExactAsync(
         sourceUrl: URL,
         duration: TimeInterval,
-        outputUrl: URL
-    ) async -> Bool {
+        outputUrl: URL,
+        onOperationComplete:
+        (@Sendable (_ increment: VideoProgress) async -> Void)?
+    ) async throws {
         let args = [
             "-ss", "0",
             "-i", sourceUrl.path,
@@ -26,151 +29,89 @@ final class VideoFileSizeService: BaseVideoGenerationService, VideoFileSizeServi
             "-y", outputUrl.path
         ]
         
-        return await ffmpegService.runAsync(arguments: args)
-    }
-    
-    func trimToUndershootThenPadAsync(
-        oversizedURL: URL,
-        videoData: VideoData,
-        undershootTarget: Int,
-        targetBytes: Int,
-        strategy: VideoGenerationStrategyType
-    ) async -> Bool {
-        let trimArgs = [
-            "-ss", "0",
-            "-i", oversizedURL.path,
-            "-map", "0",
-            "-c", "copy",
-            "-fs", "\(undershootTarget)",
-            "-avoid_negative_ts", "make_zero",
-            "-y", videoData.outputUrl.path
-        ]
-        
-        guard await ffmpegService.runAsync(arguments: trimArgs)
-        else { return false }
-        
-        let currentSize = await tempFileService.getFileSizeAsync(at: videoData.outputUrl)
-            ?? 0
-        let padding = targetBytes - currentSize
-        
-        if padding > 0 {
-            strategy.padFile(to: videoData.outputUrl, padding: padding)
+        do {
+            try await ffmpegService.runAsync(arguments: args)
+            await onOperationComplete?(.trimToExact)
         }
-        
-        return true
+        catch {
+            throw VideoGenerationError.trimToExactDuration(error.localizedDescription)
+        }
     }
     
     func generateSmallFileExactAsync(
         videoData: VideoData,
         strategy: VideoGenerationStrategyType,
-        targetBytes: Int
-    ) async -> Bool {
-        let duration = Constants.smallFileDuration
-        let bitrate = calculateBitrate(
+        targetBytes: Int,
+        onOperationComplete:
+        (@Sendable (_ increment: VideoProgress) async -> Void)?
+    ) async throws {
+        let duration = Constants.smallVideoDuration
+        let bitrate = BitrateCalculator.calculateBitrate(
             targetBytes: targetBytes,
             duration: duration)
         
-        let args = buildFileSizeArguments(
+        let arguments = buildFileSizeArguments(
             videoData: videoData,
             strategy: strategy,
             bitrate: bitrate,
             duration: duration
         )
         
-        guard await ffmpegService.runAsync(arguments: args)
-        else { return false }
+        do {
+            try await ffmpegService.runAsync(arguments: arguments)
+        }
+        catch {
+            throw VideoGenerationError.smallFileExact(error.localizedDescription)
+        }
         
-        let currentSize = await tempFileService.getFileSizeAsync(at: videoData.outputUrl) ?? 0
+        let currentSize = fileService.getFileSize(at: videoData.outputUrl) ?? 0
         let padding = targetBytes - currentSize
         
         if padding > 0 {
-            strategy.padFile(
-                to: videoData.outputUrl,
-                padding: padding)
-            
-            return true
+            try strategy.padFile(to: videoData.outputUrl, padding: padding)
         }
         
-        return await retryWithReducedBitrateAsync(
+        try await retryWithReducedBitrateAsync(
             videoData: videoData,
             strategy: strategy,
             targetBytes: targetBytes,
             currentSize: currentSize,
             previousBitrate: bitrate,
-            duration: duration
+            duration: duration,
+            onOperationComplete: onOperationComplete
         )
-    }
-    
-    // MARK: Private functions
-    
-    func calculateBitrate(targetBytes: Int, duration: TimeInterval) -> Int {
-        let calculatedBitrate = Int(Double(targetBytes) * 8.0 / duration * 0.85)
         
-        return max(Constants.minBitrate, calculatedBitrate)
+        await onOperationComplete?(.generateSmallFileExact)
     }
     
-    private func retryWithReducedBitrateAsync(
+    func generateLargeFileExactAsync(
         videoData: VideoData,
         strategy: VideoGenerationStrategyType,
         targetBytes: Int,
-        currentSize: Int,
-        previousBitrate: Int,
-        duration: TimeInterval
-    ) async -> Bool {
-        let reducedBitrate = max(
-            Constants.minBitrate,
-            Int(Double(previousBitrate)
-                * Double(targetBytes)
-                / Double(currentSize))
-        )
+        onOperationComplete:
+        (@Sendable (_ increment: VideoProgress) async -> Void)?
+    ) async throws {
+        let undershootTarget = Int(Double(targetBytes) * Constants.undersizedFactor)
         
-        let retryArguments = buildFileSizeArguments(
-            videoData: videoData,
-            strategy: strategy,
-            bitrate: reducedBitrate,
-            duration: duration
-        )
-        
-        guard await ffmpegService.runAsync(arguments: retryArguments)
-        else { return false }
-        
-        let retrySize = await tempFileService.getFileSizeAsync(at: videoData.outputUrl) ?? 0
-        let retryPadding = targetBytes - retrySize
-        
-        guard retryPadding > 0
-        else { return false }
-        
-        strategy.padFile(
-            to: videoData.outputUrl,
-            padding: retryPadding)
-        
-        return true
-    }
-    
-    func buildLargeFile(
-        videoData: VideoData,
-        strategy: VideoGenerationStrategyType,
-        targetBytes: Int
-    ) async -> Bool {
-        let undershootTarget = Int(Double(targetBytes) * Constants.undershootFactor)
-        
-        guard let base = await singleVideoGenerationService.withDoublingAsync(
+        guard let base = try await singleVideoGenerationService.withDoublingAsync(
             videoData: videoData,
             strategy: strategy,
             target: VideoGenerationMode.fileSize(Constants.largeFileThreshold),
-            useHighBitrate: true
-        ) else { return false }
+            useHighBitrate: true,
+            onOperationComplete: onOperationComplete)
+        else { return }
         
-        defer { Task
-            { await tempFileService.deleteFileAsync(at: base.url) }
+        defer {
+            Task {
+                try await fileService.deleteFileAsync(at: base.url)
+            }
         }
         
-        guard let baseSize = await tempFileService.getFileSizeAsync(at: base.url),
-                baseSize > 0
-        else { return false }
+        guard let baseSize = fileService.getFileSize(at: base.url),
+              baseSize > 0
+        else { return }
         
         let loopCount = max(1, Int(Double(undershootTarget) / Double(baseSize)))
-        
         let loopArguments = [
             "-stream_loop", "\(loopCount - 1)",
             "-i", base.url.path,
@@ -179,19 +120,72 @@ final class VideoFileSizeService: BaseVideoGenerationService, VideoFileSizeServi
             "-y", videoData.outputUrl.path
         ]
         
-        guard await ffmpegService.runAsync(arguments: loopArguments)
-        else { return false }
+        do {
+            try await ffmpegService.runAsync(arguments: loopArguments)
+        }
+        catch {
+            throw VideoGenerationError.largeFileExact(error.localizedDescription)
+        }
         
-        let currentSize = await tempFileService.getFileSizeAsync(at: videoData.outputUrl)
-            ?? 0
+        let currentSize = fileService.getFileSize(at: videoData.outputUrl) ?? 0
         let padding = targetBytes - currentSize
         
         if padding > 0 {
-            strategy.padFile(
-                to: videoData.outputUrl,
-                padding: padding)
+            try strategy.padFile(to: videoData.outputUrl, padding: padding)
         }
         
-        return true
+        await onOperationComplete?(.streamLoopLargeFile)
+    }
+    
+    // MARK: Private functions
+    
+    private func retryWithReducedBitrateAsync(
+        videoData: VideoData,
+        strategy: VideoGenerationStrategyType,
+        targetBytes: Int,
+        currentSize: Int,
+        previousBitrate: Int,
+        duration: TimeInterval,
+        onOperationComplete:
+        (@Sendable (_ increment: VideoProgress) async -> Void)?
+    ) async throws {
+        let reducedBitrate = max(
+            Constants.minBitrate,
+            Int(Double(previousBitrate)
+                * Double(targetBytes)
+                / Double(currentSize))
+        )
+        let retryArguments = buildFileSizeArguments(
+            videoData: videoData,
+            strategy: strategy,
+            bitrate: reducedBitrate,
+            duration: duration
+        )
+        
+        do {
+            try await ffmpegService.runAsync(arguments: retryArguments)
+            await onOperationComplete?(.retry)
+        }
+        catch {
+            throw VideoGenerationError.retryWithReducedBitrate( error.localizedDescription)
+        }
+        
+        let retrySize = fileService.getFileSize(at: videoData.outputUrl) ?? 0
+        let retryPadding = targetBytes - retrySize
+        
+        guard retryPadding > 0
+        else {
+            loggingService.write(
+                message: String(
+                    format: Constants.lmVideoSizeTooSmallToExactSize,
+                    targetBytes,
+                    retrySize
+                ),
+            type: .warning)
+            
+            return
+        }
+        
+        try strategy.padFile(to: videoData.outputUrl, padding: retryPadding)
     }
 }

@@ -8,7 +8,14 @@
 import Foundation
 
 final class ComputerService: ComputerServiceType {
-     func getOptimalWorkerCount() -> Int {
+    private var activeProcesses: Set<Process> = []
+    private let processLock = NSLock()
+    
+    deinit {
+        terminateAppProcesses()
+    }
+
+    func getOptimalWorkerCount() -> Int {
         var perfCores: Int32 = 0
         var size = MemoryLayout<Int32>.size
         
@@ -40,17 +47,95 @@ final class ComputerService: ComputerServiceType {
         
         return max(1, ProcessInfo.processInfo.activeProcessorCount - 2)
     }
-    
+
     func isAppleSilicon() -> Bool {
-        var type: UInt32 = 0
-        var size = MemoryLayout<UInt32>.size
+        var type: cpu_type_t = 0
+        var size = MemoryLayout<cpu_type_t>.size
         
         sysctlbyname(
             Constants.sysctlbynameCpuType,
-            &type, &size,
+            &type,
+            &size,
             nil,
-            0)
+            0
+        )
+
+        return type == CPU_TYPE_ARM64
+    }
+
+    func runProcessAsync(
+        executable: URL,
+        arguments: [String]) async -> ProcessResult {
+        await withCheckedContinuation { continuation in
+            let process = Process()
+            process.executableURL = executable
+            process.arguments = arguments
+            
+            let pipe = Pipe()
+            process.standardOutput = pipe
+            process.standardError = Pipe()
+            
+            process.terminationHandler = { proc in
+                let data = pipe.fileHandleForReading.readDataToEndOfFile()
+                let output = String(data: data, encoding: .utf8)
+                
+                continuation.resume(returning: ProcessResult(
+                    success: proc.terminationStatus == 0,
+                    output: output
+                ))
+            }
+            
+            do {
+                try process.run()
+            } catch {
+                continuation.resume(
+                    returning: ProcessResult(success: false, output: nil))
+            }
+        }
+    }
+
+    func createProcess(url: URL, arguments: [String]) -> Process {
+        let process = Process()
         
-        return type == Constants.cpuTypeAppleSilicon
+        process.executableURL = url
+        process.arguments = arguments
+        process.standardOutput = Pipe()
+        
+        registerProcess(process)
+        
+        return process
+    }
+    
+    func terminateProcess(process: Process) {
+        if process.isRunning {
+            process.terminate()
+        }
+        
+        unregisterProcess(process)
+    }
+    
+    func terminateAppProcesses() {
+        processLock.lock()
+        let processes = activeProcesses
+        activeProcesses.removeAll()
+        processLock.unlock()
+        
+        processes.forEach { process in
+            terminateProcess(process: process)
+        }
+    }
+
+    // MARK: Private functions
+
+    private func registerProcess(_ process: Process) {
+        processLock.lock()
+        activeProcesses.insert(process)
+        processLock.unlock()
+    }
+
+    private func unregisterProcess(_ process: Process) {
+        processLock.lock()
+        activeProcesses.remove(process)
+        processLock.unlock()
     }
 }

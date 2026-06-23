@@ -9,73 +9,260 @@ import Foundation
 import Factory
 
 final class FfmpegService: FfmpegServiceType {
+    @Injected(\.appState) var appState
     @Injected(\.computerService) private var computerService
+    @Injected(\.fileService) private var fileService
+    @Injected(\.loggingService) private var loggingService
     
-    @discardableResult
-    func runAsync(arguments: [String]) async -> Bool {
-        guard let ffmpegUrl = getFfmpegUrl()
-        else { return false }
+    private var currentUrl: URL? = nil
+
+    func runAsync(arguments: [String]) async throws {
+        let ffmpegUrl = try await resolveFfmpegUrl()
+        let process = computerService.createProcess(
+            url: ffmpegUrl,
+            arguments: arguments
+        )
         
-        let process = Process()
-        process.executableURL = ffmpegUrl
-        process.arguments = arguments
-        process.standardOutput = Pipe()
+        let errorPipe = Pipe()
+        process.standardError = errorPipe
         
-        let stderrPipe = Pipe()
-        process.standardError = stderrPipe
+        return await execute(process: process, errorPipe: errorPipe)
+    }
+    
+    func resolveExecutableAsync() async throws -> URL {
+        if let url = await resolveUserConfigurationAsync() { return url }
+        if let url = await resloveSystemConfigurationAsync() { return url }
+        if let url = await resolveShellConfiguration() { return url }
+        if let url = await resolveDownloadedConfiguration() { return url }
         
-        return await withCheckedContinuation { continuation in
-            process.terminationHandler = { process in
-                if process.terminationStatus != 0 {
-                    Task {
-                        let errData = stderrPipe.fileHandleForReading.readDataToEndOfFile()
-                        if let msg = String(data: errData, encoding: .utf8) {
-                            print("FFmpeg failed (\(process.terminationStatus)):\n\(msg)")
-                        }
-                    }
-                }
-                continuation.resume(returning: process.terminationStatus == 0)
-            }
-            
-            do {
-                try process.run()
-            } catch {
-                print("FFmpeg launch error: \(error)")
-                continuation.resume(returning: false)
-            }
+        throw FfmpegError.binaryNotFound
+    }
+    
+    func setCustomExecutablePathAsync(_ url: URL) async throws {
+        guard fileService.doesFileExist(filePath: url.path),
+              fileService.fileManager.isExecutableFile(atPath: url.path)
+        else { throw FfmpegError.notExecutable }
+        
+        await MainActor.run {
+            appState.system.ffmpegPath = url.path
         }
+    }
+    
+    func downloadAndInstallAsync(
+        onPhaseChange: @escaping (FfmpegInstallPhase) -> Void
+    ) async throws -> URL {
+        let remoteUrl = getDownloadUrl(forAppleSilicon: computerService.isAppleSilicon())
+        let downloader = ProgressDownloader()
+        
+        let tempUrl = try await downloader.downloadAsync(from: remoteUrl) { progress in
+            onPhaseChange(.downloading(progress: progress))
+        }
+        
+        onPhaseChange(.finalizing)
+        
+        let destinationUrl = try getDownloadedBinaryUrl()
+        let destinationFolder = destinationUrl.deletingLastPathComponent()
+        
+        try fileService.copy(
+            at: tempUrl,
+            toFolder: destinationFolder,
+            withNewName: Constants.ffmpegBinaryName)
+        try await fileService.deleteFileAsync(at: tempUrl)
+        try fileService.ensureExecutable(url: destinationUrl)
+        try await fileService.removeQuarantineAttributeAsync(from: destinationUrl)
+        
+        return destinationUrl
     }
     
     // MARK: Private functions
     
-    private func getFfmpegUrl() -> URL? {
-        let binaryName = computerService.isAppleSilicon() 
+    private func resolveFfmpegUrl() async throws -> URL {
+        if let url = currentUrl { return url }
+        
+        let url = try await resolveExecutableAsync()
+        currentUrl = url
+        
+        return url
+    }
+    
+    private func execute(process: Process, errorPipe: Pipe) async {
+        await withTaskCancellationHandler {
+            await withCheckedContinuation { continuation in
+                process.terminationHandler = { [weak self] process in
+                    self?.logFfmpegOutput(
+                        pipe: errorPipe,
+                        success: process.terminationStatus == 0)
+                    continuation.resume()
+                }
+                
+                do {
+                    try process.run()
+                } catch {
+                    self.computerService.terminateProcess(process: process)
+                    self.loggingService.write(
+                        message: FfmpegError.launchFailed(error.localizedDescription)
+                            .localizedDescription,
+                        type: .error
+                    )
+                    continuation.resume()
+                }
+            }
+        } onCancel: {
+            computerService.terminateProcess(process: process)
+        }
+    }
+    
+    private func resolveUserConfigurationAsync() async -> URL? {
+        let snapshot = await MainActor.run { StateSnapshot(appState) }
+        
+        guard fileService.fileManager.isExecutableFile(atPath: snapshot.ffmpegPath)
+        else { return nil }
+        
+        return await validateBinary(
+            url: URL(fileURLWithPath: snapshot.ffmpegPath),
+            source: .userConfiguration)
+    }
+    
+    private func resloveSystemConfigurationAsync() async -> URL? {
+        for path in Constants.ffmpegKnownInstallPaths {
+            if let url = await validateBinary(
+                url: URL(fileURLWithPath: path),
+                source: .systemPath) {
+                return url
+            }
+        }
+        
+        return nil
+    }
+    
+    private func resolveShellConfiguration() async -> URL? {
+        let result = await computerService.runProcessAsync(
+            executable: URL(fileURLWithPath: Constants.shellPath),
+            arguments: [
+                Constants.shellLoginFlag,
+                Constants.shellCommandFlag,
+                Constants.shellCommand
+            ]
+        )
+        
+        guard let output = result.output?
+            .trimmingCharacters(in: .whitespacesAndNewlines),
+              !output.isEmpty
+        else { return nil }
+        
+        return await validateBinary(
+            url: URL(fileURLWithPath: output),
+            source: .shellPath)
+    }
+    
+    private func resolveDownloadedConfiguration() async -> URL? {
+        guard let url = try? getDownloadedBinaryUrl()
+        else { return nil }
+        
+        return await validateBinary(
+            url: url,
+            source: .downloadedBinary)
+    }
+    
+    private func logFfmpegOutput(pipe: Pipe, success: Bool) {
+        let errorData = pipe.fileHandleForReading.readDataToEndOfFile()
+        
+        if let output = String(data: errorData, encoding: .utf8) {
+            parseAndLogFfmpegOutput(output: output, success: success)
+        }
+        
+        if !success {
+            loggingService.write(
+                message: FfmpegError.processFailed.localizedDescription,
+                type: .error
+            )
+        }
+    }
+    
+    private func validateBinary(url: URL, source: FfmpegSource) async -> URL? {
+        let process = await computerService.runProcessAsync(
+            executable: url,
+            arguments: [Constants.ffmpegVersionFlag])
+        
+        guard process.success,
+              let output = process.output,
+              output.contains(Constants.ffmpegVersionPrefix)
+        else { return nil }
+        
+        let version = output
+            .components(separatedBy: .newlines)
+            .first?
+            .components(separatedBy: Constants.space)
+            .dropFirst(2)
+            .first ?? Constants.unknown
+        
+        loggingService.write(
+            message: String(
+                format: Constants.ffmpegFound,
+                url.path,
+                version,
+                source.rawValue
+            ),
+            type: .success
+        )
+        
+        currentUrl = url
+        
+        return url
+    }
+    
+    private func getDownloadUrl(forAppleSilicon: Bool) -> URL {
+        let filename = forAppleSilicon
             ? Constants.ffmpegAppleSilicon
             : Constants.ffmpegIntel
         
-        guard let result = Bundle.main.url(
-            forResource: binaryName,
-            withExtension: nil)
-        else { return nil }
-        
-        ensureExecutable(url: result)
-        
-        return result
+        return URL(string: Constants.downloadBaseUrl + filename)!
     }
     
-    private func ensureExecutable(url: URL) {
-        guard let attrs = try? FileManager.default.attributesOfItem(
-            atPath: url.path),
-              let permissions = attrs[.posixPermissions] as? Int
-        else { return }
+    private func getDownloadedBinaryUrl() throws -> URL {
+        try fileService.getAppSupportFolder()
+            .appendingPathComponent(Constants.ffmpegInternalPath)
+            .appendingPathComponent(Constants.slash)
+            .appendingPathComponent(Constants.ffmpegBinaryName)
+    }
+    
+    private func parseAndLogFfmpegOutput(output: String, success: Bool) {
+        output.components(separatedBy: .newlines)
+            .filter { !$0.isEmpty }
+            .forEach { line in
+                let type = classifyLine(line)
+                if type != .unknown {
+                    loggingService.write(message: line, type: type)
+                }
+            }
+    }
+    
+    private func classifyLine(_ line: String) -> LogEntryType {
+        let lower = line.trimmingCharacters(in: .whitespaces).lowercased()
         
-        let executableBits = 0o111
+        let classifiers: [(LogEntryType, [String])] = [
+            (.unknown, Constants.ffmpegNoisePatterns),
+            (.error, Constants.ffmpegErrorPatterns),
+            (.warning, Constants.ffmpegWarningPatterns)
+        ]
         
-        guard permissions & executableBits == 0
-        else { return }
+        for (type, patterns) in classifiers {
+            if patterns.contains(where: { lower.contains($0) }) {
+                return type
+            }
+        }
         
-        try? FileManager.default.setAttributes(
-            [.posixPermissions: permissions | executableBits],
-            ofItemAtPath: url.path)
+        return .info
+    }
+    
+    // MARK: Inner types
+    
+    private struct StateSnapshot {
+        let ffmpegPath: String
+        
+        @MainActor
+        init(_ appState: AppState) {
+            self.ffmpegPath = appState.system.ffmpegPath
+        }
     }
 }

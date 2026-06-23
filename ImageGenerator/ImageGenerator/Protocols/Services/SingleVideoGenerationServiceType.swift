@@ -12,18 +12,22 @@ protocol SingleVideoGenerationServiceType {
         videoData: VideoData,
         strategy: VideoGenerationStrategyType,
         duration: TimeInterval
-    ) async -> Bool
+    ) async throws
     
     func withStreamLoopAsync(
         videoData: VideoData,
         strategy: VideoGenerationStrategyType,
-        duration: TimeInterval
-    ) async -> Bool
+        duration: TimeInterval,
+        onOperationComplete:
+            (@Sendable (_ increment: VideoProgress) async -> Void)?
+    ) async throws
     
     func withDoublingAsync(
         videoData: VideoData,
         strategy: VideoGenerationStrategyType,
         target: VideoGenerationMode,
-        useHighBitrate: Bool
-    ) async -> VideoGenerationResult?
+        useHighBitrate: Bool,
+        onOperationComplete:
+            (@Sendable (_ increment: VideoProgress) async -> Void)?
+    ) async throws -> VideoGenerationResult?
 }

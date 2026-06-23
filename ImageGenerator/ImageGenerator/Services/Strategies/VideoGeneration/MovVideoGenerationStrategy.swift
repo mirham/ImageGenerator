@@ -9,6 +9,7 @@ import Factory
 import Foundation
 
 final class MovVideoGenerationStrategy: VideoGenerationStrategyType {
+    @Injected(\.fileService) internal var fileService
     @Injected(\.computerService) private var computerService
     
     let format: VideoOutputFormat = .mov
@@ -18,76 +19,34 @@ final class MovVideoGenerationStrategy: VideoGenerationStrategyType {
         switch videoData.mode {
             case .duration:
                 return computerService.isAppleSilicon()
-                    ? appleSiliconDurationArguments()
-                    : intelDurationArguments()
+                ? appleSiliconDurationArguments()
+                : intelDurationArguments()
             case .fileSize(let bytes):
-                let bitrate = calculateBitrate(for: bytes)
-                
+                let bitrate = calculateBitrate(
+                    for: bytes,
+                    maxBitrate: 50_000_000,
+                    minBitrate: 1_000_000)
                 return computerService.isAppleSilicon()
                     ? appleSiliconFileSizeArguments(bitrate: bitrate)
                     : intelFileSizeArguments(bitrate: bitrate)
         }
     }
     
-    func padFile(to url: URL, padding: Int) {
-        guard padding > 0
-        else { return }
-        
-        guard padding >= 8 else {
-            padWithZeros(to: url, padding: padding)
-            
-            return
-        }
-        
-        do {
-            let fileHandle = try FileHandle(forWritingTo: url)
-            
-            defer { try? fileHandle.close() }
-            
-            try fileHandle.seekToEnd()
-            
-            let typeData = Constants.vfDataFree.data(using: .ascii)!
-            
-            if padding <= Int(UInt32.max) {
-                var boxSize = UInt32(padding).bigEndian
-                let sizeData = Data(bytes: &boxSize, count: 4)
-                
-                try fileHandle.write(contentsOf: sizeData)
-                try fileHandle.write(contentsOf: typeData)
-            } else {
-                guard padding >= 16
-                else {
-                    padWithZeros(to: url, padding: padding)
-                    
-                    return
-                }
-                
-                var marker = UInt32(1).bigEndian
-                let markerData = Data(bytes: &marker, count: 4)
-                var boxSize64 = UInt64(padding).bigEndian
-                let sizeData64 = Data(bytes: &boxSize64, count: 8)
-                
-                try fileHandle.write(contentsOf: markerData)
-                try fileHandle.write(contentsOf: typeData)
-                try fileHandle.write(contentsOf: sizeData64)
-            }
-            
-            let headerSize = padding <= Int(UInt32.max) ? 8 : 16
-            let dataSize = padding - headerSize
-            
-            if dataSize > 0 {
-                writeZeros(fileHandle: fileHandle, count: dataSize)
-            }
-        } catch {
-            print("MOV padding failed: \(error)")
-        }
+    func padFile(to url: URL, padding: Int) throws {
+        try padFile(
+            to: url,
+            padding: padding,
+            format: .isoBmff(type: Constants.vfDataFree)
+        )
     }
     
-    func trimFile(
-        sourceUrl: URL,
-        targetBytes: Int,
-        outputUrl: URL) -> Bool {
-        return false
+    func trimFile(sourceUrl: URL, targetBytes: Int, outputUrl: URL) throws {
+        try exactSizePadOnly(
+            sourceUrl: sourceUrl,
+            targetBytes: targetBytes,
+            outputUrl: outputUrl,
+            padFormat: .isoBmff(type: Constants.vfDataFree)
+        )
     }
     
     // MARK: Private functions
@@ -142,18 +101,5 @@ final class MovVideoGenerationStrategy: VideoGenerationStrategyType {
             "-pix_fmt", "yuv420p",
             "-movflags", "+faststart"
         ]
-    }
-    
-    private func calculateBitrate(for targetBytes: Int) -> Int {
-        let maxBitrate = 50_000_000
-        let minBitrate = 1_000_000
-        
-        let targetDuration = max(
-            10.0,
-            Double(targetBytes) * 8.0 / Double(maxBitrate)
-        )
-        let bitrate = Int(Double(targetBytes) * 8.0 / targetDuration)
-        
-        return max(minBitrate, min(maxBitrate, bitrate))
     }
 }

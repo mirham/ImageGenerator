@@ -7,9 +7,9 @@
 
 import SwiftUI
 
-protocol ImageGeneratorView : View {}
+protocol MediaGeneratorView : View {}
 
-extension ImageGeneratorView {
+extension MediaGeneratorView {
     func isWidthValid(width: Int) -> Bool {
         let result = width >= Constants.minWidth
             && width <= Constants.maxWidth

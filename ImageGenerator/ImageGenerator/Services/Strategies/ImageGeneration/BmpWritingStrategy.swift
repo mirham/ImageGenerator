@@ -7,40 +7,71 @@
 
 import CoreImage
 import UniformTypeIdentifiers
+import Factory
 
 final class BmpWritingStrategy: ImageWritingStrategyType {
+    @Injected(\.fileService) private var fileService
+    
     let colorSpace: ImageColorSpace = .any
     let outputFormat: ImageOutputFormat = .bmp
+    let isAnimated = false
     
-    func write(_ image: CIImage,
-               to url: URL,
-               colorSpace: CGColorSpace,
-               quality: CGFloat,
-               ppi: CGFloat,
-               context: CIContext) throws {
+    func write(image: CIImage,
+               options: ImageOutputOptions,
+               to folder: URL) throws {
+        try validateColorSpace(options.colorSpace)
         
-        let format: CIFormat = colorSpace.model == .monochrome ? .L8 : .RGBA8
+        let destinationURL = folder.appendingPathComponent(options.fileName)
+        let cgImage = try createCgImage(from: image, options: options)
+        let destination = try createDestination(at: destinationURL)
+        let properties = ppiProperties(options.ppi)
         
-        guard let cgImage = context.createCGImage(
+        CGImageDestinationAddImage(
+            destination,
+            cgImage,
+            properties as CFDictionary
+        )
+        
+        try finalize(destination: destination)
+    }
+    
+    // MARK: Private functions
+    
+    private func createCgImage(
+        from image: CIImage,
+        options: ImageOutputOptions) throws -> CGImage {
+        guard let result = options.context.createCGImage(
             image,
             from: image.extent,
-            format: format,
-            colorSpace: colorSpace)
-        else { return }
+            format: .RGBA8,
+            colorSpace: options.colorSpace.cgColorSpace)
+        else { throw ImageGenerationError.cgImageCreationFailed }
         
-        guard let destination = CGImageDestinationCreateWithURL(
+        return result
+    }
+    
+    private func createDestination(at url: URL) throws -> CGImageDestination {
+        try fileService.ensureWritable(url: url)
+        
+        guard let result = CGImageDestinationCreateWithURL(
             url as CFURL,
             UTType.bmp.identifier as CFString,
             1,
             nil)
-        else { return }
+        else { throw ImageGenerationError.destinationCreationFailed }
         
-        let properties: [CFString: Any] = [
+        return result
+    }
+    
+    private func ppiProperties(_ ppi: Double) -> [CFString: Any] {
+        [
             kCGImagePropertyDPIWidth: ppi,
             kCGImagePropertyDPIHeight: ppi
         ]
-        
-        CGImageDestinationAddImage(destination, cgImage, properties as CFDictionary)
-        CGImageDestinationFinalize(destination)
+    }
+    
+    private func finalize(destination: CGImageDestination) throws {
+        guard CGImageDestinationFinalize(destination)
+        else { throw ImageGenerationError.destinationFinalizationFailed }
     }
 }

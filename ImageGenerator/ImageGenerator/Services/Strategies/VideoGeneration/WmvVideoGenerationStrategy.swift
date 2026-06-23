@@ -9,6 +9,9 @@ import Factory
 import Foundation
 
 final class WmvVideoGenerationStrategy: VideoGenerationStrategyType {
+    @Injected(\.fileService) internal var fileService
+    @Injected(\.loggingService) var loggingService
+    
     let format: VideoOutputFormat = .wmv
     let isSupportsStreamLoop: Bool = false
     
@@ -17,21 +20,30 @@ final class WmvVideoGenerationStrategy: VideoGenerationStrategyType {
             case .duration:
                 return durationArguments()
             case .fileSize(let bytes):
-                let bitrate = calculateBitrate(for: bytes)
-                
+                let bitrate = calculateBitrate(
+                    for: bytes,
+                    maxBitrate: 50_000_000,
+                    minBitrate: 1_000_000)
                 return fileSizeArguments(bitrate: bitrate)
         }
     }
     
-    func padFile(to url: URL, padding: Int) {
-        // WMV cannot be padded exactly, accept approximate
+    func padFile(to url: URL, padding: Int) throws {
+        loggingService.write(
+            message: Constants.lmVideoWmvPadSizeWarning,
+            type: .warning
+        )
     }
     
-    func trimFile(
-        sourceUrl: URL,
-        targetBytes: Int,
-        outputUrl: URL) -> Bool {
-        return false
+    func trimFile(sourceUrl: URL, targetBytes: Int, outputUrl: URL) throws {
+        if sourceUrl != outputUrl {
+            try fileService.copy(at: sourceUrl, to: outputUrl)
+        }
+        
+        loggingService.write(
+            message: Constants.lmVideoWmvTrimSizeWarning,
+            type: .warning
+        )
     }
     
     // MARK: Private functions
@@ -52,18 +64,5 @@ final class WmvVideoGenerationStrategy: VideoGenerationStrategyType {
             "-g", "600",
             "-pix_fmt", "yuv420p"
         ]
-    }
-    
-    private func calculateBitrate(for targetBytes: Int) -> Int {
-        let maxBitrate = 50_000_000
-        let minBitrate = 1_000_000
-        
-        let targetDuration = max(
-            10.0,
-            Double(targetBytes) * 8.0 / Double(maxBitrate)
-        )
-        let bitrate = Int(Double(targetBytes) * 8.0 / targetDuration)
-        
-        return max(minBitrate, min(maxBitrate, bitrate))
     }
 }
