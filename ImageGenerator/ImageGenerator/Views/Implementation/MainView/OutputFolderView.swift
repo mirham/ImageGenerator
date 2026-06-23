@@ -53,6 +53,7 @@ struct OutputFolderView: View {
         folderPicker.canChooseDirectories = true
         folderPicker.canChooseFiles = false
         folderPicker.allowsMultipleSelection = false
+        folderPicker.canCreateDirectories = true
         
         folderPicker.begin { response in
             if response == .OK {
