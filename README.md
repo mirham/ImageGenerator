@@ -46,7 +46,7 @@ Download the DMG installer from the [releases](https://github.com/mirham/ImageGe
 
 ### FFmpeg
 
-This application uses [FFmpeg](https://ffmpeg.org/) for video generation—an outstanding, high-performance multimedia library. You can install it via [Homebrew](https://brew.sh/) by running:
+This application uses [FFmpeg](https://ffmpeg.org/) for video generation — an outstanding, high-performance multimedia library. You can install it via [Homebrew](https://brew.sh/) by running:
 
 ```bash
 brew install ffmpeg-full
