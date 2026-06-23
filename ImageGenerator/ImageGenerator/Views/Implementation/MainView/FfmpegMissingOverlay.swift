@@ -75,9 +75,15 @@ struct FfmpegMissingOverlay: View {
     @ViewBuilder
     private var errorSection: some View {
         if let errorMessage {
-            Text(errorMessage)
-                .font(.caption)
-                .foregroundStyle(.red)
+            Button(action: {
+                AppHelper.copyTextToClipboard(text: errorMessage)
+            }) {
+                Text(errorMessage)
+                    .font(.caption)
+                    .foregroundStyle(.red)
+            }
+            .buttonStyle(.plain)
+            .help(Constants.hintClickToCopy)
         }
     }
     

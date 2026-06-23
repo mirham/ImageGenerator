@@ -201,6 +201,7 @@ struct Constants {
     static let hintIncrease = "Increase value"
     static let hintDecrease = "Decrease value"
     static let hintNoLogEntries = "No log entries found"
+    static let hintClickToCopy = "Click to copy"
     
     // MARK: Element names
     static let ok = "OK"
