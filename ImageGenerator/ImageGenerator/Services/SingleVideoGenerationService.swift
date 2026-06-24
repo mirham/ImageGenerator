@@ -150,7 +150,6 @@ final class SingleVideoGenerationService: BaseVideoGenerationService, SingleVide
             outputUrl: videoData.outputUrl,
             ext: nil
         )
-        
         let baseArgs = inputArguments(
             videoData: videoData,
             useHighBitrate: highBitrate)
@@ -159,8 +158,21 @@ final class SingleVideoGenerationService: BaseVideoGenerationService, SingleVide
             + ["-t", "\(Constants.defaultVideoDuration)", "-y", baseVideoUrl.path]
         
         do {
+            loggingService.write(
+                message: String(
+                    format: Constants.lmBeforeGeneratingBaseVideo,
+                    videoData.videoNumber),
+                type: .info)
+            
+            await onOperationComplete?(.beforeBaseFile)
             try await ffmpegService.runAsync(arguments: baseArgs)
             await onOperationComplete?(.baseFile)
+            
+            loggingService.write(
+                message: String(
+                    format: Constants.lmGeneratedBaseVideo,
+                    videoData.videoNumber),
+                type: .info)
         }
         catch {
             try await fileService.deleteFileAsync(at: baseVideoUrl)
@@ -223,6 +235,12 @@ final class SingleVideoGenerationService: BaseVideoGenerationService, SingleVide
                 try await ffmpegService.runAsync(arguments: concatArguments)
                 await onOperationComplete?(.doubling(expectedCount: expectedCount))
                 try await fileService.deleteFileAsync(at: concatUrl)
+                
+                loggingService.write(
+                    message: String(
+                        format: Constants.lmDoublingPhaseCompleted,
+                        videoData.videoNumber),
+                    type: .info)
             }
             catch {
                 try await fileService.deleteFileAsync(at: doubledUrl)
@@ -309,6 +327,12 @@ final class SingleVideoGenerationService: BaseVideoGenerationService, SingleVide
             try await ffmpegService.runAsync(arguments: finalConcatArgs)
             await onOperationComplete?(.finalMerge)
             try await fileService.deleteFileAsync(at: finalConcatFileUrl)
+            
+            loggingService.write(
+                message: String(
+                    format: Constants.lmFinalMergeCompleted,
+                    videoData.videoNumber),
+                type: .info)
         }
         catch {
             try await fileService.deleteFileAsync(at: finalUrl)
@@ -357,6 +381,12 @@ final class SingleVideoGenerationService: BaseVideoGenerationService, SingleVide
         do {
             try await ffmpegService.runAsync(arguments: topupArgs)
             await onOperationComplete?(.topup)
+            
+            loggingService.write(
+                message: String(
+                    format: Constants.lmTopupVideoCompleted,
+                    videoData.videoNumber),
+                type: .info)
         }
         catch {
             try await fileService.deleteFileAsync(at: topupUrl)

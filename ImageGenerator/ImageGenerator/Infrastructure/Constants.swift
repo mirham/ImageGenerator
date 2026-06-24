@@ -293,6 +293,12 @@ struct Constants {
     static let lmVideoWmvSizeWarning = "WMV does not support precise size control, target size will be approximated"
     static let lmVideoSizeTooSmallToExactSize = "Cannot achieve a target file size of %d bytes, the minimum file size with current settings is %d bytes"
     static let lmLogFilesFolderCreationFailed = "Failed to create a folder for log files: %@"
+    static let lmBeforeGeneratingBaseVideo = "Preparing to generate base video %lld."
+    static let lmGeneratedBaseVideo = "Generated base video %lld."
+    static let lmDoublingPhaseCompleted = "Doubling phase for video %lld is completed."
+    static let lmTopupVideoCompleted = "Topup video for video %lld is generated."
+    static let lmFinalMergeCompleted = "Final merge for video %lld is completed."
+    static let lmRetryGenerateVideoWithReducedBitrate = "Retry generate a video  %lld with reduced bitrate is completed."
     
     // MARK: About
     static let aboutSupportMail = "bWlyaGFtQGFidi5iZw=="

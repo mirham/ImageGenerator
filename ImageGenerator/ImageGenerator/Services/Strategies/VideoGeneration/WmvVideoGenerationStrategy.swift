@@ -23,7 +23,9 @@ final class WmvVideoGenerationStrategy: VideoGenerationStrategyType {
                 let bitrate = calculateBitrate(
                     for: bytes,
                     maxBitrate: 50_000_000,
-                    minBitrate: 1_000_000)
+                    minBitrate: 1_000_000
+                )
+                
                 return fileSizeArguments(bitrate: bitrate)
         }
     }

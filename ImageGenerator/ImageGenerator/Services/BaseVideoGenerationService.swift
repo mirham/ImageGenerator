@@ -11,6 +11,7 @@ import Factory
 class BaseVideoGenerationService {
     @Injected(\.ffmpegService) var ffmpegService
     @Injected(\.fileService) var fileService
+    @Injected(\.loggingService) var loggingService
     
     func inputArguments(
         videoData: VideoData,

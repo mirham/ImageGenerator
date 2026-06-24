@@ -6,6 +6,7 @@
 //
 
 enum VideoProgress {
+    case beforeBaseFile
     case baseFile
     case streamLoop
     case streamLoopLargeFile
@@ -19,7 +20,8 @@ enum VideoProgress {
     
     var value: Double {
         switch self {
-            case .baseFile: return 0.2
+            case .beforeBaseFile: return 0.05
+            case .baseFile: return 0.15
             case .streamLoop: return 0.8
             case .streamLoopLargeFile: return 0.1
             case .doubling(let expectedCount): return  0.5 / Double(expectedCount)
