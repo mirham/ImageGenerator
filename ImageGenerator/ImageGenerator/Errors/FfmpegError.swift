@@ -14,6 +14,7 @@ enum FfmpegError: LocalizedError {
     case notExecutable
     case downloadFailed(statusCode: Int)
     case appSupportUnavailable
+    case executionFailed(String?)
     
     var errorDescription: String? {
         switch self {
@@ -29,6 +30,8 @@ enum FfmpegError: LocalizedError {
                 return "Failed to download FFmpeg (server returned status \(statusCode))"
             case .appSupportUnavailable:
                 return "Couldn't access the app's storage location"
+            case .executionFailed(let error):
+                return "FFmpeg execution failed: \(error ?? "with no error output")"
         }
     }
 }

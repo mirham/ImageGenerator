@@ -45,6 +45,7 @@ class ImageJobService: BaseJobService, ImageJobServiceType {
         let concurrencyLimit = getConcurrencyLimit()
         let chunkSize = chunkingStrategy.calculateChunkSize(count: snapshot.count)
         let endAt = snapshot.count + snapshot.startAt - Constants.step
+        let jobStart = Date()
         
         for chunkStart in stride(
             from: snapshot.startAt,
@@ -65,6 +66,16 @@ class ImageJobService: BaseJobService, ImageJobServiceType {
                 generationStrategy: generationStrategy,
                 concurrencyLimit: concurrencyLimit)
         }
+        
+        let duration = Date().timeIntervalSince(jobStart)
+        
+        loggingService.write(
+            message: String(
+                format: Constants.jobEnd,
+                snapshot.mode.completedMessage,
+                formatDuration(duration)),
+            type: .success
+        )
     }
     
     private func processImageChunkAsync(

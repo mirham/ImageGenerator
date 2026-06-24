@@ -46,6 +46,7 @@ class VideoJobService: BaseJobService, VideoJobServiceType {
             duration: snapshot.duration,
             format: snapshot.videoOutputFormat)
         let endAt = snapshot.count + snapshot.startAt - Constants.step
+        let jobStart = Date()
         
         for chunkStart in stride(
             from: snapshot.startAt,
@@ -65,6 +66,16 @@ class VideoJobService: BaseJobService, VideoJobServiceType {
                 snapshot: snapshot,
                 concurrencyLimit: concurrencyLimit)
         }
+        
+        let duration = Date().timeIntervalSince(jobStart)
+        
+        loggingService.write(
+            message: String(
+                format: Constants.jobEnd,
+                snapshot.mode.completedMessage,
+                formatDuration(duration)),
+            type: .success
+        )
     }
     
     private func processVideoChunkAsync(
@@ -175,6 +186,7 @@ class VideoJobService: BaseJobService, VideoJobServiceType {
     // MARK: Inner types
     
     private struct StateSnapshot {
+        let mode: GenerationMode
         let count: Int
         let startAt: Int
         let videoOutputFormat: VideoOutputFormat
@@ -187,6 +199,7 @@ class VideoJobService: BaseJobService, VideoJobServiceType {
         
         @MainActor
         init(_ appState: AppState) {
+            self.mode = appState.userData.mode
             self.count = appState.userData.count
             self.startAt = appState.userData.startAt
             self.videoOutputFormat = appState.userData.videoOutputFormat

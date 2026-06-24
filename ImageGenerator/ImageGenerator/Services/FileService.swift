@@ -173,7 +173,8 @@ final class FileService: FileServiceType {
                 Constants.xattrDeleteFlag,
                 Constants.xattrQuarantineAttribute,
                 url.path
-            ]
+            ],
+            captureErrors: true
         )
         
         guard result.success else {

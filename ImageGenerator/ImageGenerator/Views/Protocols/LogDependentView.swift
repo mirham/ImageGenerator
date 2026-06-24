@@ -8,14 +8,14 @@
 import SwiftUI
 
 protocol LogDependentView : View {
-    var appState: AppState { get }
+    var loggingService: LoggingServiceType { get }
 }
 
 extension LogDependentView {
     @MainActor
     var logSummary: LogSummary {
-        let errors = appState.log.filter { $0.type == .error }.count
-        let warnings = appState.log.filter { $0.type == .warning }.count
+        let errors = loggingService.getCount(for: .error)
+        let warnings = loggingService.getCount(for: .warning)
         
         return LogSummary(errors: errors, warnings: warnings)
     }

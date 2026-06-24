@@ -100,21 +100,23 @@ extension VideoGenerationStrategyType {
         )
     }
     
-    func safetyFactor(for targetBytes: Int) -> Double {
-        targetBytes < 500_000 ? 0.85 : 0.95
-    }
-    
     func calculateBitrate(
         for targetBytes: Int,
         maxBitrate: Int,
-        minBitrate: Int) -> Int {
-        let factor = safetyFactor(for: targetBytes)
+        minBitrate: Int,
+        bitrateThresholdBytes: Int = Constants.maxBitrateThresholdSize
+    ) -> Int {
+        guard targetBytes < bitrateThresholdBytes
+        else { return maxBitrate }
         
-        let targetDuration = max(
-            10.0,
-            Double(targetBytes) * 8.0 * factor / Double(maxBitrate)
+        let sizeRatio = Double(targetBytes) / Double(bitrateThresholdBytes)
+        let eased = pow(sizeRatio, Constants.quadraticExponent)
+        
+        let bitrate = Int(
+            Double(minBitrate)
+            + (Double(maxBitrate)
+            - Double(minBitrate)) * eased
         )
-        let bitrate = Int(Double(targetBytes) * 8.0 * factor / targetDuration)
         
         return max(minBitrate, min(maxBitrate, bitrate))
     }
