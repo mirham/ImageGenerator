@@ -10,7 +10,6 @@ import Factory
 
 final class VideoFileSizeService: BaseVideoGenerationService, VideoFileSizeServiceType {
     @Injected(\.singleVideoGenerationService) private var singleVideoGenerationService
-    @Injected(\.loggingService) private var loggingService
         
     func trimToDurationExactAsync(
         sourceUrl: URL,
@@ -165,6 +164,12 @@ final class VideoFileSizeService: BaseVideoGenerationService, VideoFileSizeServi
         do {
             try await ffmpegService.runAsync(arguments: retryArguments)
             await onOperationComplete?(.retry)
+            
+            loggingService.write(
+                message: String(
+                    format: Constants.lmRetryGenerateVideoWithReducedBitrate,
+                    videoData.videoNumber),
+                type: .info)
         }
         catch {
             throw VideoGenerationError.retryWithReducedBitrate( error.localizedDescription)

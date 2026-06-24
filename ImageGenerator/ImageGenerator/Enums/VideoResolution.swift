@@ -56,4 +56,28 @@ enum VideoResolution: Int, CaseIterable, Identifiable, Codable, Equatable, Descr
                 return CGSize(width: 7680, height: 4320)
         }
     }
+    
+    var is8KOrHigher: Bool {
+        guard let size = predefinedSize
+        else { return false }
+        
+        return size.width >= 7680 || size.height >= 4320
+    }
+    
+    static func from(size: CGSize) -> VideoResolution {
+        let width = Int(size.width)
+        let height = Int(size.height)
+        
+        switch (width, height) {
+            case (1920, 1080): return .fullhd
+            case (1280, 720): return .hd
+            case (1080, 1080): return .square
+            case (1080, 1920): return .vertical
+            case (3840, 2160): return .uhd
+            case (640, 480): return .sd
+            case (2560, 1080): return .cinematic
+            case (7680, 4320): return .uhd8k
+            default: return .custom
+        }
+    }
 }

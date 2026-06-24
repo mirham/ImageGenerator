@@ -22,7 +22,9 @@ final class AviVideoGenerationStrategy: VideoGenerationStrategyType {
                 let bitrate = calculateBitrate(
                     for: bytes,
                     maxBitrate: 50_000_000,
-                    minBitrate: 1_000_000)
+                    minBitrate: 1_000_000
+                )
+                
                 return fileSizeArguments(bitrate: bitrate)
         }
     }
@@ -31,7 +33,8 @@ final class AviVideoGenerationStrategy: VideoGenerationStrategyType {
         try padFile(
             to: url,
             padding: padding,
-            format: .riff(type: "JUNK", maxChunkSize: Int(UInt32.max)))
+            format: .riff(type: "JUNK", maxChunkSize: Int(UInt32.max))
+        )
     }
     
     func trimFile(sourceUrl: URL, targetBytes: Int, outputUrl: URL) throws {
