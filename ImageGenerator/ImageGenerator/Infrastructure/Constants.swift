@@ -162,10 +162,9 @@ struct Constants {
         "-> stream",
         "->",
         "compatible_brands",
-        "Side data",
+        "side data",
         "cpb",
-        "Last message repeated",
-        "Side data"
+        "last message repeated"
     ]
     static let ffmpegErrorPatterns = [
         "error", "invalid", "failed", "no such file",
@@ -204,6 +203,7 @@ struct Constants {
     static let hintDecrease = "Decrease value"
     static let hintNoLogEntries = "No log entries found"
     static let hintClickToCopy = "Click to copy"
+    static let hintLogMemoryLimit = "Showing last \(logMaxInMemoryEntries) entries. Older entries are available in the full log file."
     
     // MARK: Element names
     static let ok = "OK"
@@ -273,11 +273,12 @@ struct Constants {
     static let sizeFormatTemplate = "%.2f %@"
     static let intSuffix = ".0"
     static let double2Signs = "%.2f"
+    static let jobEnd = "%@ in %@"
     
     // MARK: Log
     static let logExtension = "log"
     static let logPath = "/Logs"
-    static let logMaxInMemoryEntries = 500
+    static let logMaxInMemoryEntries = 100000
     static let logMaxLogAgeDays = 30
     static let logSummaryErrors = "%d errors "
     static let logSummaryWarnings = "%d warnings "
@@ -289,11 +290,9 @@ struct Constants {
     static let lmSuccessfullyGeneratedVideo = "Successfully generated video %lld."
     static let lmPhotoGenerationFailed = "Failed to generate photo %lld: %@"
     static let lmVideoGenerationFailed = "Failed to generate video %lld: %@"
-    static let lmVideoWmvPadSizeWarning = "WMV cannot be padded exactly, accept approximate size"
-    static let lmVideoWmvTrimSizeWarning = "WMV cannot be trimmed exactly, accept approximate size"
+    static let lmVideoWmvSizeWarning = "WMV does not support precise size control, target size will be approximated"
     static let lmVideoSizeTooSmallToExactSize = "Cannot achieve a target file size of %d bytes, the minimum file size with current settings is %d bytes"
     static let lmLogFilesFolderCreationFailed = "Failed to create a folder for log files: %@"
-    static let lmLogOperationCanceled = "Operation canceled."
     
     // MARK: About
     static let aboutSupportMail = "bWlyaGFtQGFidi5iZw=="

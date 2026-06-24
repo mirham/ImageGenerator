@@ -29,8 +29,8 @@ final class WmvVideoGenerationStrategy: VideoGenerationStrategyType {
     }
     
     func padFile(to url: URL, padding: Int) throws {
-        loggingService.write(
-            message: Constants.lmVideoWmvPadSizeWarning,
+        loggingService.writeOnce(
+            message: Constants.lmVideoWmvSizeWarning,
             type: .warning
         )
     }
@@ -40,8 +40,8 @@ final class WmvVideoGenerationStrategy: VideoGenerationStrategyType {
             try fileService.copy(at: sourceUrl, to: outputUrl)
         }
         
-        loggingService.write(
-            message: Constants.lmVideoWmvTrimSizeWarning,
+        loggingService.writeOnce(
+            message: Constants.lmVideoWmvSizeWarning,
             type: .warning
         )
     }

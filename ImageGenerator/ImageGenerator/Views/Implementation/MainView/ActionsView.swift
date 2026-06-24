@@ -11,11 +11,11 @@ import Factory
 struct ActionsView: MediaGeneratorView, LogDependentView {
     @EnvironmentObject var appState: AppState
     
+    @Injected(\.loggingService) internal var loggingService
     @Injected(\.imageJobService) private var imageJobService
     @Injected(\.videoJobService) private var videoJobService
     @Injected(\.computerService) private var computerService
     @Injected(\.fileService) private var fileService
-    @Injected(\.loggingService) private var loggingService
     
     @State private var activeAlert: ActiveAlert?
     @State private var overCancelButton = false
@@ -179,7 +179,7 @@ struct ActionsView: MediaGeneratorView, LogDependentView {
         }
         
         loggingService.write(
-            message: Constants.lmLogOperationCanceled,
+            message: appState.userData.mode.cancelledMessage,
             type: .success)
         
         loggingService.suspend()

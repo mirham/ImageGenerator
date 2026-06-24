@@ -45,7 +45,7 @@ struct LogView: View {
     @ViewBuilder
     private var actionsBar: some View {
         HStack(spacing: 6) {
-            logRecordsCount
+            logEntriesCount
             filterButton(type: nil)
             filterButton(type: .info)
             filterButton(type: .success)
@@ -79,13 +79,16 @@ struct LogView: View {
     }
     
     @ViewBuilder
-    private var logRecordsCount: some View {
-        Text(String(format: filteredEntries.count == 1
+    private var logEntriesCount: some View {
+        let count = loggingService.getCount(for: selectedType)
+        Text(
+            String(
+                format: count == 1
                     ? Constants.toolbarLogEntry
                     : Constants.toolbarLogEntries,
-                    selectedType != nil
-                    ? filteredEntries.count
-                    : loggingService.entriesCount))
+                count
+            )
+        )
         .font(.system(size: 9))
         .foregroundStyle(.tertiary)
         .frame(width: 70)
@@ -140,29 +143,46 @@ struct LogView: View {
     
     @ViewBuilder
     private var logRecordsView: some View {
-        if filteredEntries.isEmpty {
-            emptyState
-        } else {
-            ScrollViewReader { proxy in
-                ScrollView {
-                    LazyVStack(alignment: .leading, spacing: 0, pinnedViews: []) {
-                        ForEach(filteredEntries) { entry in
-                            LogEntryRow(entry: entry, dateFormatter: dateFormatter)
-                                .id(entry.id)
-                            Divider()
-                                .opacity(0.4)
-                        }
-                    }
-                }
-                .scrollIndicators(.visible)
-                .onChange(of: appState.log.first?.id) { _, id in
-                    guard let id else { return }
-                    withAnimation(.easeOut(duration: 0.2)) {
-                        proxy.scrollTo(id, anchor: .top)
+        memoryLimitBanner
+            .isHidden(loggingService
+            .getCount(for: nil) < Constants.logMaxInMemoryEntries)
+        emptyState
+            .isHidden(!filteredEntries.isEmpty)
+        ScrollViewReader { proxy in
+            ScrollView {
+                LazyVStack(alignment: .leading, spacing: 0, pinnedViews: []) {
+                    ForEach(filteredEntries) { entry in
+                        LogEntryRow(entry: entry, dateFormatter: dateFormatter)
+                            .id(entry.id)
+                        Divider()
+                            .opacity(0.4)
                     }
                 }
             }
+            .scrollIndicators(.visible)
+            .onChange(of: appState.log.first?.id) { _, id in
+                guard let id else { return }
+                withAnimation(.easeOut(duration: 0.2)) {
+                    proxy.scrollTo(id, anchor: .top)
+                }
+            }
         }
+        .isHidden(filteredEntries.isEmpty)
+    }
+    
+    @ViewBuilder
+    private var memoryLimitBanner: some View {
+        HStack(spacing: 6) {
+            Image(systemName: Constants.iconInfo)
+                .font(.system(size: 10))
+            Text(Constants.hintLogMemoryLimit)
+                .font(.system(size: 12))
+        }
+        .foregroundStyle(.orange)
+        .padding(.horizontal, 10)
+        .padding(.vertical, 6)
+        .frame(maxWidth: .infinity, alignment: .center)
+        .background(Color.secondary.opacity(0.05))
     }
     
     @ViewBuilder

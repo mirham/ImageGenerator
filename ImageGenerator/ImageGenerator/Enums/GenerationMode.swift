@@ -27,4 +27,19 @@ enum GenerationMode : Int, CaseIterable, Identifiable, Codable, Equatable {
             case .generateVideos: return "videos"
         }
     }
+    
+    var mediaNameSingular: String {
+        switch self {
+            case .generateImages, .duplicateImages: return "image"
+            case .generateVideos: return "video"
+        }
+    }
+    
+    var completedMessage: String {
+        "\(mediaNameSingular.capitalized) generation completed"
+    }
+    
+    var cancelledMessage: String {
+        "\(mediaNameSingular.capitalized) generation cancelled"
+    }
 }

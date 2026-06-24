@@ -11,6 +11,7 @@ import Factory
 struct LogSummaryView: LogDependentView {
     @EnvironmentObject var appState: AppState
     
+    @Injected(\.loggingService) internal var loggingService
     @Injected(\.windowManager) private var windowManager
     
     var body: some View {

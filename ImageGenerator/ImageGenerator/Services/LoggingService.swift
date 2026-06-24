@@ -14,6 +14,12 @@ final class LoggingService: LoggingServiceType {
     @Injected(\.fileService) private var fileService
     
     private(set) var entriesCount = 0
+    private(set) var entriesCountByType: [LogEntryType: Int] = [:]
+    
+    private let dedupeLock = NSLock()
+    private let countLock = NSLock()
+    
+    private var loggedFingerprints: Set<LogFingerprint> = []
     private var isSuspended: Bool = false
     
     var isWritingToFile: Bool {
@@ -44,13 +50,26 @@ final class LoggingService: LoggingServiceType {
         cleanOldLogs()
     }
     
+    func getCount(for type: LogEntryType?) -> Int {
+        countLock.lock()
+        defer { countLock.unlock() }
+        
+        guard let type
+        else { return entriesCount }
+        
+        return entriesCountByType[type, default: 0]
+    }
+    
     func write(message: String, type: LogEntryType = .info) {
         guard !isSuspended
         else { return }
         
         let logEntry = LogEntry(message: message, type: type)
         
+        countLock.lock()
         entriesCount += 1
+        entriesCountByType[type, default: 0] += 1
+        countLock.unlock()
         
         writeToFile(logEntry)
         
@@ -64,6 +83,19 @@ final class LoggingService: LoggingServiceType {
                 appState.log.removeLast()
             }
         }
+    }
+    
+    func writeOnce(message: String, type: LogEntryType = .info) {
+        let fingerprint = LogFingerprint(message: message, type: type)
+        
+        dedupeLock.lock()
+        defer { dedupeLock.unlock() }
+        
+        guard !loggedFingerprints.contains(fingerprint)
+        else { return }
+        
+        loggedFingerprints.insert(fingerprint)
+        write(message: message, type: type)
     }
     
     func copy() {
@@ -81,6 +113,8 @@ final class LoggingService: LoggingServiceType {
     
     func clear() {
         entriesCount = 0
+        entriesCountByType.removeAll()
+        loggedFingerprints.removeAll()
         
         Task { @MainActor [weak self] in
             guard let self
@@ -177,5 +211,12 @@ final class LoggingService: LoggingServiceType {
                 try? await fileService.deleteFileAsync(at: file)
             }
         }
+    }
+    
+    // MARK: Inner types
+    
+    private struct LogFingerprint: Hashable {
+        let message: String
+        let type: LogEntryType
     }
 }
