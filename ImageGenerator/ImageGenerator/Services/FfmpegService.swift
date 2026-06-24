@@ -18,15 +18,22 @@ final class FfmpegService: FfmpegServiceType {
 
     func runAsync(arguments: [String]) async throws {
         let ffmpegUrl = try await resolveFfmpegUrl()
-        let process = computerService.createProcess(
-            url: ffmpegUrl,
-            arguments: arguments
+        let result = await computerService.runProcessAsync(
+            executable: ffmpegUrl,
+            arguments: arguments,
+            captureErrors: true
         )
         
-        let errorPipe = Pipe()
-        process.standardError = errorPipe
+        logFfmpegOutput(
+            error: result.errorOutput,
+            success: result.success
+        )
         
-        return await execute(process: process, errorPipe: errorPipe)
+        guard result.success else {
+            throw FfmpegError.executionFailed(
+                result.errorOutput
+            )
+        }
     }
     
     func resolveExecutableAsync() async throws -> URL {
@@ -85,33 +92,6 @@ final class FfmpegService: FfmpegServiceType {
         return url
     }
     
-    private func execute(process: Process, errorPipe: Pipe) async {
-        await withTaskCancellationHandler {
-            await withCheckedContinuation { continuation in
-                process.terminationHandler = { [weak self] process in
-                    self?.logFfmpegOutput(
-                        pipe: errorPipe,
-                        success: process.terminationStatus == 0)
-                    continuation.resume()
-                }
-                
-                do {
-                    try process.run()
-                } catch {
-                    self.computerService.terminateProcess(process: process)
-                    self.loggingService.write(
-                        message: FfmpegError.launchFailed(error.localizedDescription)
-                            .localizedDescription,
-                        type: .error
-                    )
-                    continuation.resume()
-                }
-            }
-        } onCancel: {
-            computerService.terminateProcess(process: process)
-        }
-    }
-    
     private func resolveUserConfigurationAsync() async -> URL? {
         let snapshot = await MainActor.run { StateSnapshot(appState) }
         
@@ -142,7 +122,8 @@ final class FfmpegService: FfmpegServiceType {
                 Constants.shellLoginFlag,
                 Constants.shellCommandFlag,
                 Constants.shellCommand
-            ]
+            ],
+            captureErrors: true
         )
         
         guard let output = result.output?
@@ -164,12 +145,11 @@ final class FfmpegService: FfmpegServiceType {
             source: .downloadedBinary)
     }
     
-    private func logFfmpegOutput(pipe: Pipe, success: Bool) {
-        let errorData = pipe.fileHandleForReading.readDataToEndOfFile()
+    private func logFfmpegOutput(error: String?, success: Bool) {
+        guard let output = error, !output.isEmpty
+        else { return }
         
-        if let output = String(data: errorData, encoding: .utf8) {
-            parseAndLogFfmpegOutput(output: output, success: success)
-        }
+        parseAndLogFfmpegOutput(output: output, success: success)
         
         if !success {
             loggingService.write(
@@ -182,7 +162,8 @@ final class FfmpegService: FfmpegServiceType {
     private func validateBinary(url: URL, source: FfmpegSource) async -> URL? {
         let process = await computerService.runProcessAsync(
             executable: url,
-            arguments: [Constants.ffmpegVersionFlag])
+            arguments: [Constants.ffmpegVersionFlag],
+            captureErrors: true)
         
         guard process.success,
               let output = process.output,

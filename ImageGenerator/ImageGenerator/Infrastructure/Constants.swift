@@ -61,6 +61,8 @@ struct Constants {
     static let undersizedFactor: Double = 0.95
     static let largeFileThreshold: Int = Int(10 * kibi * kibi * kibi)
     static let minBitrate: Int = 100_000
+    static let maxBitrateThresholdSize = 4_294_967_296
+    static let quadraticExponent = 2.0
     static let defaultStartAt: Int = 1
     static let tempFolder = "Image_Generator_Tmp_Video"
     static let jpeg2000: CFString = "public.jpeg-2000" as CFString

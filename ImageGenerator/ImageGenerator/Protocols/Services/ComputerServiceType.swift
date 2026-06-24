@@ -12,7 +12,8 @@ protocol ComputerServiceType {
     func isAppleSilicon() -> Bool
     func runProcessAsync(
         executable: URL,
-        arguments: [String]) async -> ProcessResult
+        arguments: [String],
+        captureErrors: Bool) async -> ProcessResult
     func createProcess(url: URL, arguments: [String]) -> Process
     func terminateProcess(process: Process)
     func terminateAppProcesses()

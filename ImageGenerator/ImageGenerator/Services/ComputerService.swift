@@ -65,31 +65,59 @@ final class ComputerService: ComputerServiceType {
 
     func runProcessAsync(
         executable: URL,
-        arguments: [String]) async -> ProcessResult {
-        await withCheckedContinuation { continuation in
-            let process = Process()
-            process.executableURL = executable
-            process.arguments = arguments
-            
-            let pipe = Pipe()
-            process.standardOutput = pipe
-            process.standardError = Pipe()
-            
-            process.terminationHandler = { proc in
-                let data = pipe.fileHandleForReading.readDataToEndOfFile()
-                let output = String(data: data, encoding: .utf8)
+        arguments: [String],
+        captureErrors: Bool = false
+    ) async -> ProcessResult {
+        let process = Process()
+        process.executableURL = executable
+        process.arguments = arguments
+        
+        let stdoutPipe = Pipe()
+        let stderrPipe = Pipe()
+        process.standardOutput = stdoutPipe
+        process.standardError = stderrPipe
+        
+        return await withTaskCancellationHandler {
+            await withCheckedContinuation { continuation in
+                let cleanup = {
+                    process.closeAllPipes()
+                }
                 
-                continuation.resume(returning: ProcessResult(
-                    success: proc.terminationStatus == 0,
-                    output: output
-                ))
+                process.terminationHandler = { proc in
+                    let stdoutData = stdoutPipe
+                        .fileHandleForReading.availableData
+                    let stdout = String(data: stdoutData, encoding: .utf8)
+                    let stderrData = captureErrors
+                        ? stderrPipe.fileHandleForReading.availableData
+                        : Data()
+                    let stderr = captureErrors
+                        ? String(data: stderrData, encoding: .utf8)
+                        : nil
+                    
+                    cleanup()
+                    
+                    continuation.resume(returning: ProcessResult(
+                        success: proc.terminationStatus == 0,
+                        output: stdout,
+                        errorOutput: stderr
+                    ))
+                }
+                
+                do {
+                    try process.run()
+                } catch {
+                    cleanup()
+                    continuation.resume(
+                        returning: ProcessResult(
+                            success: false,
+                            output: nil,
+                            errorOutput: error.localizedDescription)
+                    )
+                }
             }
-            
-            do {
-                try process.run()
-            } catch {
-                continuation.resume(
-                    returning: ProcessResult(success: false, output: nil))
+        } onCancel: {
+            if process.isRunning {
+                process.terminate()
             }
         }
     }
@@ -99,7 +127,6 @@ final class ComputerService: ComputerServiceType {
         
         process.executableURL = url
         process.arguments = arguments
-        process.standardOutput = Pipe()
         
         registerProcess(process)
         
